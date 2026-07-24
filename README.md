@@ -1,38 +1,65 @@
-# .
+## 👥 팀원 및 역할분담
 
-This template should help get you started developing with Vue 3 in Vite.
+<div align="center">
+<table>
+  <tr align="center">
+    <td width="180">
+      <a href="https://github.com/HwangSeo">
+        <img src="https://avatars.githubusercontent.com/HwangSeo" width="100" height="100"/><br/>
+        <b>황서진</b>
+      </a><br/>
+      카드 전략 추천
+    </td>
+    <td width="180">
+      <a href="https://github.com/happysongtan">
+        <img src="https://avatars.githubusercontent.com/happysongtan" width="100" height="100"/><br/>
+        <b>강태규</b>
+      </a><br/>
+      마이페이지<br/>
+      홈
+    </td>
+    <td width="180">
+      <a href="https://github.com/1juyoung">
+        <img src="https://avatars.githubusercontent.com/1juyoung" width="100" height="100"/><br/>
+        <b>김주영</b>
+      </a><br/>
+      알림 <br/>
+      결혼 목표 설정
+    </td>
+  </tr>
+  <tr align="center">
+    <td width="180">
+      <a href="https://github.com/kht9938">
+        <img src="https://avatars.githubusercontent.com/kht9938" width="100" height="100"/><br/>
+        <b>김현태</b>
+      </a><br/>
+      캘린더
+    </td>
+    <td width="180">
+      <a href="https://github.com/parkgijumg-hue">
+        <img src="https://avatars.githubusercontent.com/parkgijumg-hue" width="100" height="100"/><br/>
+        <b>박기정</b>
+      </a><br/>
+      로그인/회원가입 <br/> 
+      온보딩
+    </td>
+    <td width="180">
+      <a href="https://github.com/KoHo512">
+        <img src="https://avatars.githubusercontent.com/KoHo512" width="100" height="100"/><br/>
+        <b>정여원</b>
+      </a><br/>
+      월별 지출 관리<br/>
+      공동 예산 관리
+    </td>
+  </tr>
+</table>
+</div>
 
-## Recommended IDE Setup
+## 🛠 기술스택
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+| 구분            | 기술                     |
+| --------------- | ------------------------ |
+| **Frontend**    | Vue 3, JavaScript, Pinia |
+| **Styling**     | Tailwind CSS, shadcn-vue |
+| **실시간 통신** | SSE (Server-Sent Events) |
+| **기타**        | PWA                      |
