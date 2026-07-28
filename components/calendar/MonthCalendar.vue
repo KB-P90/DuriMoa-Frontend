@@ -11,18 +11,20 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 </script>
 
 <template>
-  <section class="min-w-0 rounded-[22px] border border-[#e4e5eb] bg-white px-2 pb-5 pt-4 shadow-[0_5px_12px_rgba(35,35,45,0.08)] sm:px-5">
-    <div class="mb-3 flex items-center justify-between px-1 text-[#9293a2]">
+  <section
+    class="min-w-0 rounded-3xl border border-dm-gray/30 bg-dm-gray-light px-2 pb-4 pt-4 shadow-sm sm:px-5"
+  >
+    <div class="mb-3 flex items-center justify-between px-1 text-dm-gray-dark">
       <button type="button" aria-label="이전 달">‹</button>
-      <strong class="text-[17px] text-[#292934]">2026. 7</strong>
+      <strong class="text-base font-semibold text-gray-800">2026. 7</strong>
       <button type="button" aria-label="다음 달">›</button>
     </div>
     <div class="grid grid-cols-7 text-center">
       <span
         v-for="(weekday, index) in WEEKDAYS"
         :key="weekday"
-        class="pb-3 text-[13px] font-semibold"
-        :class="index === 0 ? 'text-[#f28f86]' : 'text-[#9293a2]'"
+        class="pb-2 text-xs font-medium"
+        :class="index === 0 ? 'text-btn-pk' : 'text-dm-gray-dark'"
       >
         {{ weekday }}
       </span>
@@ -30,12 +32,12 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
         v-for="(day, index) in days"
         :key="`${index}-${day.date}`"
         type="button"
-        class="relative mx-auto flex h-10 w-10 flex-col items-center justify-center rounded-[13px] text-[14px] font-bold sm:h-[48px] sm:w-[48px] sm:text-[15px]"
+        class="relative mx-auto flex h-10 w-10 flex-col items-center justify-center rounded-xl text-sm font-semibold sm:h-11 sm:w-11"
         :class="[
-          !day.currentMonth && 'text-[#d7d7df]',
-          day.currentMonth && index % 7 === 0 && 'text-[#f28f86]',
-          day.currentMonth && index % 7 !== 0 && 'text-[#292934]',
-          day.currentMonth && day.date === selectedDate && '!bg-[#f28f86] !text-white',
+          !day.currentMonth && 'text-dm-gray/50',
+          day.currentMonth && index % 7 === 0 && 'text-btn-pk',
+          day.currentMonth && index % 7 !== 0 && 'text-gray-800',
+          day.currentMonth && day.date === selectedDate && '!bg-btn-pk !text-white',
         ]"
         :disabled="!day.currentMonth"
         @click="emit('select', day.date)"
@@ -46,7 +48,13 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
             v-for="marker in day.markers"
             :key="marker"
             class="h-1 w-1 rounded-full"
-            :class="day.date === selectedDate ? 'bg-white' : marker === 'expense' ? 'bg-[#f28f86]' : 'bg-[#7da5a8]'"
+            :class="
+              day.date === selectedDate
+                ? 'bg-white'
+                : marker === 'expense'
+                  ? 'bg-btn-pk'
+                  : 'bg-dm-mint-dark'
+            "
           />
         </span>
       </button>
