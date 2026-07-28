@@ -1,75 +1,25 @@
-<script setup lang="ts">
+<script setup>
 import AuthScreen from '@/components/auth/AuthScreen.vue';
-import LoadingButton from '@/components/auth/LoadingButton.vue';
-import { useAuthSession } from '@/composables/useAuthSession';
-
-const { session, isSubmitting, logout } = useAuthSession();
 </script>
 
 <template>
   <AuthScreen>
-    <section class="session-view">
-      <span
-        class="session-view__mark"
-        aria-hidden="true"
-        >💍</span
-      >
-      <p class="session-view__eyebrow">로그인 완료</p>
-      <h1>{{ session?.member.name }}님,<br />두리모아에 오신 걸 환영해요</h1>
-      <p class="session-view__copy">
-        홈 화면 API가 연결되기 전까지 인증 상태와 로그아웃 흐름을 확인하는 임시 진입 화면이에요.
+    <!-- 로그인 버튼의 화면 이동을 검토하기 위한 정적 도착 화면 -->
+    <section class="flex flex-1 flex-col items-center justify-center px-6 pb-14 text-center">
+      <span class="text-[46px]" aria-hidden="true">💍</span>
+      <p class="mb-2 mt-5 text-[11px] font-extrabold text-btn-pk-dark">로그인 화면 미리보기</p>
+      <h1 class="text-2xl font-extrabold leading-[1.45] tracking-[-0.045em] text-[#232631]">
+        두리모아에 오신 걸<br />환영해요
+      </h1>
+      <p class="mt-3 break-keep text-xs leading-6 text-[#969ca9]">
+        현재는 퍼블리싱 단계로 실제 인증 상태를 저장하지 않습니다.
       </p>
-      <LoadingButton
-        class="session-view__logout"
-        :loading="isSubmitting"
-        @click="logout"
+      <RouterLink
+        class="mt-8 grid min-h-[50px] w-full place-items-center rounded-xl border border-[#e8eaf0] bg-white px-5 text-[15px] font-extrabold text-[#4b505c] no-underline transition hover:bg-gray-50 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#ff898047]"
+        to="/login"
       >
-        로그아웃
-      </LoadingButton>
+        로그인 화면으로 돌아가기
+      </RouterLink>
     </section>
   </AuthScreen>
 </template>
-
-<style scoped>
-.session-view {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 36px 25px 52px;
-  text-align: center;
-}
-
-.session-view__mark {
-  font-size: 46px;
-}
-
-.session-view__eyebrow {
-  margin: 20px 0 7px;
-  color: var(--auth-primary-pressed);
-  font-size: 11px;
-  font-weight: 850;
-}
-
-.session-view h1 {
-  margin: 0;
-  color: var(--auth-ink);
-  font-size: 24px;
-  line-height: 1.45;
-  letter-spacing: -0.045em;
-}
-
-.session-view__copy {
-  max-width: 285px;
-  margin: 13px 0 0;
-  color: var(--auth-muted);
-  font-size: 12px;
-  line-height: 1.65;
-  word-break: keep-all;
-}
-
-.session-view__logout {
-  margin-top: 31px;
-}
-</style>

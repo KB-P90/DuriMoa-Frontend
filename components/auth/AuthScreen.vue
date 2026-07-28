@@ -1,134 +1,30 @@
-<script setup lang="ts">
-import '@/assets/auth.css';
-
-defineProps<{
-  scrollable?: boolean;
-}>();
-</script>
-
 <template>
-  <main class="auth-stage">
-    <section
-      class="auth-device"
-      :class="{ 'auth-device--scrollable': scrollable }"
-    >
+  <!-- 최대 너비를 제한하지 않는 인증 전용 전체 화면 컨테이너 -->
+  <main
+    class="min-h-dvh w-full bg-white font-sans text-[#232631] antialiased [font-synthesis:none]"
+  >
+    <section class="flex min-h-dvh w-full flex-col bg-white">
+      <!-- Figma 모바일 시안의 상태 표시 영역 -->
       <div
-        class="auth-status-bar"
+        class="flex h-[30px] shrink-0 items-center justify-between bg-white px-5 text-[11px] font-extrabold text-[#222631]"
         aria-hidden="true"
       >
         <span>9:41</span>
-        <span class="auth-status-icons"> <i></i><i></i><i></i><b></b> </span>
+        <span class="flex items-end gap-[3px]">
+          <i class="block h-1 w-[3px] rounded-sm bg-[#252936]"></i>
+          <i class="block h-1.5 w-[3px] rounded-sm bg-[#252936]"></i>
+          <i class="block h-2 w-[3px] rounded-sm bg-[#252936]"></i>
+          <b
+            class="ml-[5px] h-2 w-[17px] rounded-sm border-[1.5px] border-[#252936]"
+          ></b>
+        </span>
       </div>
-      <div class="auth-device__content">
+      <!-- 긴 회원가입·약관 화면도 같은 컨테이너 안에서 스크롤된다. -->
+      <div
+        class="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
         <slot />
       </div>
     </section>
   </main>
 </template>
-
-<style scoped>
-.auth-stage {
-  display: block;
-  width: 100%;
-  min-height: 100dvh;
-  padding: 0;
-  background: #fff;
-  color: var(--auth-ink);
-  font-family:
-    Pretendard,
-    'Pretendard Variable',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
-  font-synthesis: none;
-  line-height: 1.5;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-}
-
-.auth-stage,
-.auth-stage * {
-  box-sizing: border-box;
-}
-
-.auth-stage :is(button, input) {
-  font: inherit;
-}
-
-.auth-device {
-  display: flex;
-  width: 100%;
-  height: 100dvh;
-  min-height: 100dvh;
-  flex-direction: column;
-  overflow: hidden;
-  border: 0;
-  border-radius: 0;
-  background: #fff;
-  box-shadow: none;
-}
-
-.auth-status-bar {
-  display: flex;
-  height: 30px;
-  flex: 0 0 30px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 21px;
-  background: #fff;
-  color: #222631;
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.auth-status-icons {
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-}
-
-.auth-status-icons i {
-  display: block;
-  width: 3px;
-  border-radius: 2px;
-  background: #252936;
-}
-
-.auth-status-icons i:nth-child(1) {
-  height: 4px;
-}
-
-.auth-status-icons i:nth-child(2) {
-  height: 6px;
-}
-
-.auth-status-icons i:nth-child(3) {
-  height: 8px;
-}
-
-.auth-status-icons b {
-  width: 17px;
-  height: 8px;
-  margin-left: 5px;
-  border: 1.5px solid #252936;
-  border-radius: 2px;
-}
-
-.auth-device__content {
-  display: flex;
-  min-height: 0;
-  flex: 1;
-  flex-direction: column;
-}
-
-.auth-device--scrollable .auth-device__content {
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-  scrollbar-width: none;
-}
-
-.auth-device--scrollable .auth-device__content::-webkit-scrollbar {
-  display: none;
-}
-</style>

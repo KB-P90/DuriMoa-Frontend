@@ -1,61 +1,28 @@
-<script setup lang="ts">
+<script setup>
 import AuthHeader from '@/components/auth/AuthHeader.vue';
 import AuthScreen from '@/components/auth/AuthScreen.vue';
-import { AUTH_ROUTE_NAMES } from '@/constants/auth';
 </script>
 
 <template>
   <AuthScreen>
     <AuthHeader
       title="계정 찾기"
-      @back="$router.back()"
+      back-to="/login"
     />
-    <section class="account-help">
-      <span aria-hidden="true">🔐</span>
-      <h2>계정 찾기는 준비 중이에요</h2>
-      <p>아이디·비밀번호 찾기 상세 기능은 백엔드 인증 정책이 확정된 뒤 제공할 예정이에요.</p>
+    <!-- 백엔드 정책 확정 전 사용하는 계정 찾기 안내 화면 -->
+    <section class="flex flex-1 flex-col items-center justify-center px-6 pb-14 text-center">
+      <span class="text-[42px]" aria-hidden="true">🔐</span>
+      <h2 class="mb-2 mt-4 text-xl font-extrabold text-[#232631]">계정 찾기는 준비 중이에요</h2>
+      <p class="break-keep text-xs leading-6 text-[#969ca9]">
+        아이디·비밀번호 찾기 상세 화면은<br />
+        백엔드 인증 정책이 확정된 뒤 연결할 예정이에요.
+      </p>
       <RouterLink
-        class="auth-primary-button"
-        :to="{ name: AUTH_ROUTE_NAMES.LOGIN }"
+        class="mt-7 grid min-h-[50px] w-full place-items-center rounded-xl bg-btn-pk px-5 text-[15px] font-extrabold text-white no-underline transition hover:bg-btn-pk-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#ff898047]"
+        to="/login"
       >
         로그인으로 돌아가기
       </RouterLink>
     </section>
   </AuthScreen>
 </template>
-
-<style scoped>
-.account-help {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 24px 52px;
-  text-align: center;
-}
-
-.account-help > span {
-  font-size: 42px;
-}
-
-.account-help h2 {
-  margin: 18px 0 8px;
-  color: var(--auth-ink);
-  font-size: 19px;
-}
-
-.account-help p {
-  max-width: 290px;
-  margin: 0;
-  color: var(--auth-muted);
-  font-size: 12px;
-  line-height: 1.65;
-  word-break: keep-all;
-}
-
-.account-help a {
-  margin-top: 28px;
-  text-decoration: none;
-}
-</style>
