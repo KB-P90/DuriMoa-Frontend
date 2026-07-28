@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import '@/assets/auth.css';
+
 defineProps<{
   scrollable?: boolean;
 }>();
@@ -26,24 +28,45 @@ defineProps<{
 
 <style scoped>
 .auth-stage {
-  display: grid;
+  display: block;
+  width: 100%;
   min-height: 100dvh;
-  place-items: center;
-  padding: 28px;
-  background: #f4f4f4;
+  padding: 0;
+  background: #fff;
+  color: var(--auth-ink);
+  font-family:
+    Pretendard,
+    'Pretendard Variable',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  font-synthesis: none;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.auth-stage,
+.auth-stage * {
+  box-sizing: border-box;
+}
+
+.auth-stage :is(button, input) {
+  font: inherit;
 }
 
 .auth-device {
   display: flex;
-  width: min(100%, 390px);
-  height: min(844px, calc(100dvh - 56px));
-  min-height: 640px;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgb(35 38 49 / 5%);
-  border-radius: 30px;
+  border: 0;
+  border-radius: 0;
   background: #fff;
-  box-shadow: 0 24px 50px -22px rgb(32 38 50 / 30%);
+  box-shadow: none;
 }
 
 .auth-status-bar {
@@ -107,22 +130,5 @@ defineProps<{
 
 .auth-device--scrollable .auth-device__content::-webkit-scrollbar {
   display: none;
-}
-
-@media (max-width: 480px) {
-  .auth-stage {
-    display: block;
-    padding: 0;
-    background: #fff;
-  }
-
-  .auth-device {
-    width: 100%;
-    height: 100dvh;
-    min-height: 100dvh;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
 }
 </style>

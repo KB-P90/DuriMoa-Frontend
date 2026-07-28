@@ -155,11 +155,11 @@ const isDemoMode = import.meta.env.VITE_AUTH_MODE === 'demo';
   min-height: 100%;
   flex: 1;
   flex-direction: column;
-  padding: 43px 20px 26px;
+  padding: clamp(28px, 5dvh, 43px) clamp(20px, 5vw, 40px) 26px;
 }
 
 .login-view__brand {
-  margin-bottom: 32px;
+  margin-bottom: clamp(24px, 4dvh, 32px);
 }
 
 .login-view__fields {
@@ -260,15 +260,5 @@ const isDemoMode = import.meta.env.VITE_AUTH_MODE === 'demo';
 .login-view__demo p {
   margin: 5px 0 0;
   font-variant-numeric: tabular-nums;
-}
-
-@media (max-height: 720px) {
-  .login-view {
-    padding-top: 28px;
-  }
-
-  .login-view__brand {
-    margin-bottom: 24px;
-  }
 }
 </style>
