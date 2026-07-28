@@ -6,6 +6,38 @@ export default {
     extend: {
       colors: {
         border: 'hsl(var(--border))',
+        'dm-mint': {
+          lighter: '#FAFFFF',
+          light: '#EBF7F7',
+          DEFAULT: '#D0ECEB',
+          dark: '#9DCACD',
+          darker: '#15AEA9',
+        },
+        'dm-rose': {
+          light: '#F8DFDB',
+          DEFAULT: '#F6C6C1',
+          dark: '#D79A95',
+        },
+        'dm-co': {
+          lighter: '#F8C9BE',
+          light: '#FFBFA1',
+          DEFAULT: '#F2A390',
+          dark: '#FFA28C',
+          darker: '#D17C69',
+        },
+        'dm-cb': {
+          light: '#FFF8F8',
+          DEFAULT: '#FBE6E5',
+          dark: '#E6BFBC',
+        },
+        'btn-pk': {
+          DEFAULT: '#FF8F84',
+          dark: '#FF6E70',
+        },
+        'btn-mt': {
+          DEFAULT: '#EBF7F7',
+          dark: '#2CAEAA',
+        },
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
