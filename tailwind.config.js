@@ -38,6 +38,11 @@ export default {
           DEFAULT: '#EBF7F7',
           dark: '#2CAEAA',
         },
+        'dm-gray': {
+          light: '#FFFFFF',
+          DEFAULT: '#B9B9C4',
+          dark: '#9293A2',
+        },
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
