@@ -26,6 +26,12 @@
 - `.vue`(View)에는 비즈니스 로직을 두지 않는다. 상태·로직은 store/composable에서 가져와 쓴다.
 - 서버 통신은 `api/`에서만 한다. `.vue`에서 axios 직접 호출 금지.
 - snake_case → camelCase 변환은 **store의 `.map(toXxx)` 한 곳에서만** 한다.
+- 색상은 반드시 tailwind config의 토큰명으로 쓴다.
+  - 작업 전 `tailwind.config`의 color 정의를 먼저 확인한다.
+  - config에 같은 색(HEX)이 있으면 무조건 토큰명 사용. `bg-dm-mint-light` (O) / `bg-[#EBF7F7]` (X)
+  - config에 없는 색만 arbitrary value(`bg-[#XXXXXX]`)로 적고, 옆에 `<!-- TODO: 토큰 등록 검토 -->`를 남긴다.
+  - config에 색을 임의로 추가하지 않는다 (공용 파일 → 별도 PR).
+- Figma·디자인에서 가져온 HEX는 붙여넣기 전에 config 토큰과 먼저 매칭한다.
 
 ### 네이밍 규칙
 
