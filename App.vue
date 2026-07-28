@@ -1,17 +1,16 @@
-<script setup></script>
+<script setup lang="ts">
+import { ref } from 'vue';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+
+const active = ref('home');
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit
-    <a
-      href="https://vuejs.org/"
-      target="_blank"
-      rel="noopener"
-      >vuejs.org</a
-    >
-    to read the documentation
-  </p>
+  <DefaultLayout :active="active" @select="active = $event">
+    <div class="p-4">
+      <h1 class="text-lg font-bold">{{ active }} 화면</h1>
+    </div>
+  </DefaultLayout>
 </template>
 
 <style scoped></style>
