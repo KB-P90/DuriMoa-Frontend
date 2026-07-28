@@ -26,10 +26,14 @@ const NAV_ITEMS = [
       :key="item.key"
       type="button"
       class="flex flex-1 flex-col items-center justify-center gap-1 text-xs"
-      :class="active === item.key ? 'text-blue-600' : 'text-gray-400'"
+      :class="active === item.key ? 'text-btn-pk-dark' : 'text-dm-gray'"
       @click="emit('select', item.key)"
     >
-      <component :is="item.icon" class="h-6 w-6" :stroke-width="active === item.key ? 2.5 : 2" />
+      <component
+        :is="item.icon"
+        class="h-6 w-6"
+        :stroke-width="active === item.key ? 2.5 : 2"
+      />
       <span>{{ item.label }}</span>
     </button>
   </nav>
