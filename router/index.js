@@ -1,11 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
+import MainLayout from '@/layouts/MainLayout.vue';
 import AccountHelpView from '@/views/auth/AccountHelpView.vue';
 import AuthSessionView from '@/views/auth/AuthSessionView.vue';
 import LoginView from '@/views/auth/LoginView.vue';
 import OnboardingEntryView from '@/views/auth/OnboardingEntryView.vue';
 import SignupView from '@/views/auth/SignupView.vue';
 import TermDetailView from '@/views/auth/TermDetailView.vue';
+import CalendarPageView from '@/views/CalendarPageView.vue';
+import PlaceholderView from '@/views/PlaceholderView.vue';
 
 // 약관 내용은 백엔드 연결 전에도 각 전문 화면을 검토할 수 있도록 정적 데이터로 관리한다.
 const TERM_PAGES = {
@@ -103,7 +106,17 @@ const termRoutes = Object.entries(TERM_PAGES).map(([termId, term]) => ({
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', redirect: '/login' },
+    {
+      path: '/',
+      component: MainLayout,
+      children: [
+        { path: '', redirect: { name: 'calendar' } },
+        { path: 'home', name: 'home', component: PlaceholderView, props: { title: '홈' } },
+        { path: 'calendar', name: 'calendar', component: CalendarPageView },
+        { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
+        { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
+      ],
+    },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/signup', name: 'signup', component: SignupView },
     ...termRoutes,
