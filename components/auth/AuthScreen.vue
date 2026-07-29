@@ -2,9 +2,9 @@
   <!-- 최대 너비를 제한하지 않는 인증 전용 전체 화면 컨테이너 -->
   <!-- TODO: #232631 진한 본문 색상 토큰 등록 검토 -->
   <main
-    class="min-h-dvh w-full bg-dm-gray-light font-sans text-[#232631] antialiased [font-synthesis:none]"
+    class="h-dvh min-h-dvh w-full overflow-hidden bg-dm-gray-light font-sans text-[#232631] antialiased [font-synthesis:none]"
   >
-    <section class="flex min-h-dvh w-full flex-col bg-dm-gray-light">
+    <section class="flex h-full min-h-0 w-full flex-col bg-dm-gray-light">
       <!-- Figma 모바일 시안의 상태 표시 영역 -->
       <!-- TODO: #222631, #252936 상태 표시 색상 토큰 등록 검토 -->
       <div

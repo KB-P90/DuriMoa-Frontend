@@ -1,7 +1,25 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+
+// 회원가입 화면에서만 사용하는 약관 선택 상태다.
+const serviceAgreed = ref(false);
+const privacyAgreed = ref(false);
+const financeAgreed = ref(false);
+
+// 전체 동의 선택 시 모든 약관을 같은 값으로 변경하고, 개별 상태도 전체 동의에 반영한다.
+const allAgreed = computed<boolean>({
+  get: () => serviceAgreed.value && privacyAgreed.value && financeAgreed.value,
+  set: (checked) => {
+    serviceAgreed.value = checked;
+    privacyAgreed.value = checked;
+    financeAgreed.value = checked;
+  },
+});
+</script>
+
 <template>
   <!--
-    퍼블리싱 단계에서는 체크박스의 기본 선택 동작만 제공한다.
-    전체 동의와 개별 동의의 상태 연동은 회원가입 로직을 연결할 때 추가한다.
+    퍼블리싱 단계의 화면 전용 상태이며, 가입 API 연결 시 부모 폼 상태로 이동한다.
   -->
   <fieldset
     class="m-0 min-w-0 rounded-2xl border border-dm-gray/40 bg-dm-gray-light p-3.5 shadow-lg shadow-dm-gray/20"
@@ -10,8 +28,10 @@
 
     <label class="flex cursor-pointer items-center gap-2.5">
       <input
+        v-model="allAgreed"
         class="peer sr-only"
         type="checkbox"
+        name="agreeAll"
       />
       <span
         class="grid h-[22px] w-[22px] place-items-center rounded-[7px] border border-dm-gray/50 bg-dm-gray-light text-[13px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
@@ -29,8 +49,10 @@
     <div class="flex min-h-9 items-center justify-between gap-2">
       <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
         <input
+          v-model="serviceAgreed"
           class="peer sr-only"
           type="checkbox"
+          name="agreeService"
         />
         <span
           class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
@@ -63,8 +85,10 @@
     <div class="flex min-h-9 items-center justify-between gap-2">
       <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
         <input
+          v-model="privacyAgreed"
           class="peer sr-only"
           type="checkbox"
+          name="agreePrivacy"
         />
         <span
           class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
@@ -97,8 +121,10 @@
     <div class="flex min-h-9 items-center justify-between gap-2">
       <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
         <input
+          v-model="financeAgreed"
           class="peer sr-only"
           type="checkbox"
+          name="agreeFinance"
         />
         <span
           class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
