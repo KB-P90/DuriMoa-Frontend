@@ -5,11 +5,11 @@
       aria-hidden="true"
       >💍</span
     >
-    <strong
-      class="mt-[13px] block text-[25px] font-black tracking-[-0.055em] text-[#232631]"
+    <!-- TODO: #232631 진한 제목 색상 토큰 등록 검토 -->
+    <strong class="mt-[13px] block text-[25px] font-black tracking-[-0.055em] text-[#232631]"
       >두리모아</strong
     >
-    <p class="mt-2 text-xs leading-[1.55] text-[#969ca9]">
+    <p class="mt-2 text-xs leading-[1.55] text-dm-gray-dark">
       결혼 준비에 필요한 만큼만<br />함께 보고 함께 모아요
     </p>
   </div>

@@ -26,13 +26,13 @@ defineProps({
       back-to="/signup"
     />
 
-    <article class="px-5 pb-8 pt-4 text-[#565c6b] sm:px-10 lg:px-16">
+    <article class="px-5 pb-8 pt-4 text-dm-gray-dark sm:px-10 lg:px-16">
       <!-- 약관명과 시행일 요약 카드 -->
       <section
-        class="flex items-center gap-3.5 rounded-[18px] border border-[#e8eaf0] bg-white p-5 shadow-[0_16px_32px_rgb(32_38_52/8%)]"
+        class="flex items-center gap-3.5 rounded-[18px] border border-dm-gray/40 bg-dm-gray-light p-5 shadow-lg shadow-dm-gray/20"
       >
         <span
-          class="grid h-[50px] w-[50px] shrink-0 place-items-center rounded-full bg-[#fff0ee] text-btn-pk"
+          class="grid h-[50px] w-[50px] shrink-0 place-items-center rounded-full bg-dm-cb-light text-btn-pk"
           aria-hidden="true"
         >
           <svg
@@ -44,14 +44,15 @@ defineProps({
           </svg>
         </span>
         <div>
+          <!-- TODO: #232631 진한 제목 색상 토큰 등록 검토 -->
           <h2 class="mb-1.5 text-base font-extrabold text-[#232631]">{{ title }}</h2>
-          <p class="text-[11px] leading-5 text-[#8f95a2]">시행일자 2026.07.01</p>
-          <p class="text-[11px] leading-5 text-[#8f95a2]">최종 업데이트 2026.07.01</p>
+          <p class="text-[11px] leading-5 text-dm-gray-dark">시행일자 2026.07.01</p>
+          <p class="text-[11px] leading-5 text-dm-gray-dark">최종 업데이트 2026.07.01</p>
         </div>
       </section>
 
       <p
-        class="mt-6 rounded-xl bg-[#fafafb] px-3.5 py-3 text-[11px] leading-[1.65] text-[#7a808d]"
+        class="mt-6 rounded-xl bg-dm-gray/10 px-3.5 py-3 text-[11px] leading-[1.65] text-dm-gray-dark"
       >
         {{ intro }}
       </p>
@@ -60,15 +61,16 @@ defineProps({
       <section
         v-for="section in sections"
         :key="section.heading"
-        class="border-b border-[#eef0f3] py-5"
+        class="border-b border-dm-gray/30 py-5"
       >
+        <!-- TODO: #232631 진한 제목 색상 토큰 등록 검토 -->
         <h2 class="mb-3.5 text-sm font-extrabold tracking-[-0.02em] text-[#232631]">
           {{ section.heading }}
         </h2>
         <p
           v-for="paragraph in section.paragraphs"
           :key="paragraph"
-          class="mt-2 break-keep text-xs leading-7 text-[#5d6371]"
+          class="mt-2 break-keep text-xs leading-7 text-dm-gray-dark"
         >
           {{ paragraph }}
         </p>
