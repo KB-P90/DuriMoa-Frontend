@@ -8,6 +8,11 @@ defineProps<{
 
 const emit = defineEmits<{ select: [date: number] }>();
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
+const MARKER_COLORS = {
+  income: 'bg-[#65C466]',
+  expense: 'bg-[#F09488]',
+  saving: 'bg-[#3B86F7]',
+} as const;
 </script>
 
 <template>
@@ -24,7 +29,7 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
         v-for="(weekday, index) in WEEKDAYS"
         :key="weekday"
         class="pb-2 text-xs font-medium"
-        :class="index === 0 ? 'text-btn-pk' : 'text-dm-gray-dark'"
+        :class="index === 0 ? 'text-[#F09488]' : 'text-dm-gray-dark'"
       >
         {{ weekday }}
       </span>
@@ -35,9 +40,9 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
         class="relative mx-auto flex h-10 w-10 flex-col items-center justify-center rounded-xl text-sm font-semibold sm:h-11 sm:w-11"
         :class="[
           !day.currentMonth && 'text-dm-gray/50',
-          day.currentMonth && index % 7 === 0 && 'text-btn-pk',
+          day.currentMonth && index % 7 === 0 && 'text-[#F09488]',
           day.currentMonth && index % 7 !== 0 && 'text-gray-800',
-          day.currentMonth && day.date === selectedDate && '!bg-btn-pk !text-white',
+          day.currentMonth && day.date === selectedDate && '!bg-[#F09488] !text-white',
         ]"
         :disabled="!day.currentMonth"
         @click="emit('select', day.date)"
@@ -51,9 +56,7 @@ const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
             :class="
               day.date === selectedDate
                 ? 'bg-white'
-                : marker === 'expense'
-                  ? 'bg-btn-pk'
-                  : 'bg-dm-mint-dark'
+                : MARKER_COLORS[marker]
             "
           />
         </span>

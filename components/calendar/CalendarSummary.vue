@@ -5,10 +5,17 @@ import { formatAmount } from '@/utils/format';
 defineProps<{ items: readonly SummaryItem[] }>();
 
 const DOT_COLORS = {
-  goal: 'bg-dm-mint-dark',
-  income: 'bg-btn-mt-dark',
-  expense: 'bg-btn-pk',
-  saving: 'bg-btn-mt-dark',
+  goal: 'bg-[#65C466]',
+  income: 'bg-[#65C466]',
+  expense: 'bg-[#F09488]',
+  saving: 'bg-[#3B86F7]',
+} as const;
+
+const LABEL_COLORS = {
+  goal: 'text-[#65C466]',
+  income: 'text-[#65C466]',
+  expense: 'text-[#F09488]',
+  saving: 'text-[#3B86F7]',
 } as const;
 </script>
 
@@ -21,7 +28,7 @@ const DOT_COLORS = {
     >
       <div
         class="flex items-center gap-1.5 text-xs font-medium"
-        :class="item.type === 'expense' ? 'text-btn-pk' : 'text-dm-mint-dark'"
+        :class="LABEL_COLORS[item.type]"
       >
         <span class="h-2.5 w-2.5 rounded-full" :class="DOT_COLORS[item.type]" />
         {{ item.label }}

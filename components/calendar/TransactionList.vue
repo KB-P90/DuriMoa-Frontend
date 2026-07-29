@@ -13,10 +13,12 @@ const TRANSACTION_ICONS: Record<TransactionType, Component> = {
   saving: Landmark,
 };
 
-function amountColor(transaction: Transaction) {
-  if (transaction.type === 'expense') return 'text-btn-pk-dark';
-  return 'text-dm-mint-dark';
-}
+const TYPE_COLORS: Record<TransactionType, string> = {
+  income: 'text-[#65C466]',
+  expense: 'text-[#F09488]',
+  saving: 'text-[#3B86F7]',
+};
+
 </script>
 
 <template>
@@ -28,7 +30,10 @@ function amountColor(transaction: Transaction) {
       class="flex w-full items-center gap-3 border-b border-dm-gray/30 px-4 py-3.5 text-left last:border-b-0"
       @click="emit('select', transaction)"
     >
-      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-dm-mint-light text-dm-mint-darker">
+      <span
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-dm-gray/15"
+        :class="TYPE_COLORS[transaction.type]"
+      >
         <component :is="TRANSACTION_ICONS[transaction.type]" class="h-5 w-5" :stroke-width="1.8" />
       </span>
       <span class="min-w-0 flex-1">
@@ -37,7 +42,7 @@ function amountColor(transaction: Transaction) {
           {{ transaction.category }} · {{ transaction.owner }}
         </small>
       </span>
-      <strong class="shrink-0 text-sm font-semibold tracking-tight" :class="amountColor(transaction)">
+      <strong class="shrink-0 text-sm font-semibold tracking-tight" :class="TYPE_COLORS[transaction.type]">
         {{ formatSignedAmount(transaction.amount) }}
       </strong>
     </button>

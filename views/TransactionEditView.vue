@@ -23,6 +23,12 @@ const TRANSACTION_ICONS: Record<TransactionType, Component> = {
   saving: Landmark,
 };
 
+const TYPE_COLORS: Record<TransactionType, string> = {
+  income: 'text-[#65C466]',
+  expense: 'text-[#F09488]',
+  saving: 'text-[#3B86F7]',
+};
+
 function save() {
   const numericAmount = parseFormattedAmount(amount.value);
   emit('save', {
@@ -47,7 +53,10 @@ function save() {
     <section
       class="flex items-center gap-3 rounded-2xl border border-dm-gray/30 p-4 shadow-sm"
     >
-      <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-dm-mint-light text-dm-mint-darker">
+      <span
+        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-dm-gray/15"
+        :class="TYPE_COLORS[transaction.type]"
+      >
         <component :is="TRANSACTION_ICONS[transaction.type]" class="h-6 w-6" :stroke-width="1.8" />
       </span>
       <div class="min-w-0 flex-1">
@@ -55,7 +64,7 @@ function save() {
         <span class="block text-xs text-dm-gray-dark">{{ transaction.category }} · {{ transaction.owner }}</span>
         <span class="block text-xs text-dm-gray-dark">{{ transaction.date }}</span>
       </div>
-      <strong class="whitespace-nowrap text-sm font-semibold tracking-tight text-dm-mint-dark">
+      <strong class="whitespace-nowrap text-sm font-semibold tracking-tight" :class="TYPE_COLORS[transaction.type]">
         {{ formatSignedAmount(transaction.amount, '원') }}
       </strong>
     </section>
@@ -88,7 +97,7 @@ function save() {
       <label class="block">
         <span class="mb-2 block text-sm font-semibold">카테고리</span>
         <span class="flex items-center rounded-2xl border border-dm-gray/30 px-4 py-3">
-          <span class="mr-3 rounded-lg bg-dm-mint-light p-2 text-dm-mint-darker">
+          <span class="mr-3 rounded-lg bg-dm-gray/15 p-2" :class="TYPE_COLORS[transaction.type]">
             <component :is="TRANSACTION_ICONS[transaction.type]" class="h-4 w-4" :stroke-width="1.8" />
           </span>
           <strong class="flex-1 text-sm font-semibold">{{ transaction.title }}</strong>
