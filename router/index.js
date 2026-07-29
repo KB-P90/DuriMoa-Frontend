@@ -110,7 +110,7 @@ const router = createRouter({
       path: '/',
       component: MainLayout,
       children: [
-        { path: '', redirect: { name: 'calendar' } },
+        { path: '', redirect: { name: 'home' } },
         { path: 'home', name: 'home', component: PlaceholderView, props: { title: '홈' } },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
