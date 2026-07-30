@@ -4,9 +4,10 @@ import { useCalendar } from '@/composables/useCalendar';
 import DefaultLayout from '@/layouts/DefaultLayout.vue';
 import CalendarView from '@/views/CalendarView.vue';
 import TransactionEditView from '@/views/TransactionEditView.vue';
+import HomeView from '@/views/HomeView.vue';
 
 // TODO: 라우터 연결 전 캘린더 화면 확인용
-const active = ref('calendar');
+const active = ref('home');
 const {
   mode,
   selectedDate,
@@ -22,6 +23,7 @@ const {
 
 <template>
   <DefaultLayout :active="active" @select="active = $event">
+    <HomeView v-if="active === 'home'" />
     <TransactionEditView
       v-if="active === 'calendar' && selectedTransaction"
       :transaction="selectedTransaction"
@@ -40,7 +42,7 @@ const {
       @select-date="selectedDate = $event"
       @select-transaction="selectTransaction"
     />
-    <div v-else class="p-4">
+    <div v-else-if="active !== 'home'" class="p-4">
       <h1 class="text-lg font-bold">{{ active }} 화면</h1>
     </div>
   </DefaultLayout>
