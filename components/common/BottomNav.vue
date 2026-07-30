@@ -19,20 +19,20 @@ const NAV_ITEMS = [
 
 <template>
   <nav
-    class="absolute inset-x-0 bottom-0 z-50 mx-auto flex h-[62px] w-full max-w-[390px] items-stretch border-t border-[#F5F5F9] bg-white"
+    class="fixed inset-x-0 bottom-0 z-50 mx-auto flex h-16 w-full max-w-[768px] items-stretch border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]"
   >
     <button
       v-for="item in NAV_ITEMS"
       :key="item.key"
       type="button"
-      class="flex h-[49px] flex-1 flex-col items-center justify-center gap-[3px] pt-[5px] pb-[9px] text-[9.5px]"
+      class="flex flex-1 flex-col items-center justify-center gap-1 text-xs"
       :class="active === item.key ? 'text-btn-pk-dark' : 'text-dm-gray'"
       @click="emit('select', item.key)"
     >
       <component
         :is="item.icon"
-        class="h-[21px] w-[21px]"
-        :stroke-width="active === item.key ? 2.2 : 1.5"
+        class="h-6 w-6"
+        :stroke-width="active === item.key ? 2.5 : 2"
       />
       <span>{{ item.label }}</span>
     </button>
