@@ -18,11 +18,13 @@ const {
   selectTransaction,
   closeTransaction,
 } = useCalendar();
-
 </script>
 
 <template>
-  <DefaultLayout :active="active" @select="active = $event">
+  <DefaultLayout
+    :active="active"
+    @select="active = $event"
+  >
     <HomeView v-if="active === 'home'" />
     <TransactionEditView
       v-if="active === 'calendar' && selectedTransaction"
@@ -42,10 +44,11 @@ const {
       @select-date="selectedDate = $event"
       @select-transaction="selectTransaction"
     />
-    <div v-else-if="active !== 'home'" class="p-4">
+    <div
+      v-else-if="active !== 'home'"
+      class="p-4"
+    >
       <h1 class="text-lg font-bold">{{ active }} 화면</h1>
     </div>
   </DefaultLayout>
 </template>
-
-<style scoped></style>
