@@ -9,6 +9,7 @@ import SignupView from '@/views/auth/SignupView.vue';
 import TermDetailView from '@/views/auth/TermDetailView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
+import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
 
 // 약관 내용은 백엔드 연결 전에도 각 전문 화면을 검토할 수 있도록 정적 데이터로 관리한다.
 const TERM_PAGES = {
@@ -115,6 +116,15 @@ const router = createRouter({
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
         { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
+        {
+          path: 'expense/:yearMonth(\\d{4}-\\d{2})?',
+          name: 'expense',
+          component: MonthlyExpenseView,
+          props: (route) => ({
+            title: '월별 지출 관리',
+            yearMonth: route.params.yearMonth,
+          }),
+        },
       ],
     },
     { path: '/login', name: 'login', component: LoginView },
