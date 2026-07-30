@@ -13,6 +13,7 @@ export interface BudgetGoal {
 }
 
 export interface HomeDashboard {
+  coupleStatus: 'CONNECTED' | 'WAIT' | 'DISCONNECTED';
   groomName: string;
   brideName: string;
   totalAccumulatedAmount: number;

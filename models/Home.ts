@@ -2,6 +2,7 @@ import type { HomeDashboardResponseDto, SavingMissionDto } from '@/types/dto/hom
 import type { HomeDashboard, SavingMission } from '@/types/home';
 
 export const toHomeDashboard = (dto: HomeDashboardResponseDto): HomeDashboard => ({
+  coupleStatus: dto.couple.status,
   groomName: dto.couple.groom.name,
   brideName: dto.couple.bride.name,
   totalAccumulatedAmount: dto.asset_summary.total_accumulated_amount,

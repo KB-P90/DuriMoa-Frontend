@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Bell, CalendarDays, ChevronRight, Coffee, Menu } from '@lucide/vue';
 import MenuPanel from '@/components/common/MenuPanel.vue';
 import { useHomeStore } from '@/stores/homeStore';
 import { formatWon } from '@/utils/format';
+import NewUserHomeView from '@/views/NewUserHomeView.vue';
 
 const homeStore = useHomeStore();
 const { dashboard, missions } = storeToRefs(homeStore);
@@ -14,6 +15,7 @@ const missionCarousel = ref<HTMLElement | null>(null);
 const dragStartX = ref<number | null>(null);
 const dragStartScrollLeft = ref(0);
 const isMenuOpen = ref(false);
+const isNewUser = computed(() => dashboard.value.coupleStatus === 'DISCONNECTED');
 
 const updateMissionIndex = (event: Event) => {
   const carousel = event.currentTarget as HTMLElement;
@@ -42,7 +44,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="home-stage">
+  <NewUserHomeView v-if="isNewUser" />
+  <div v-else class="home-stage">
     <div class="home-canvas relative h-[799px] w-[390px] overflow-hidden bg-white font-[Pretendard,Inter,sans-serif] text-[#292934]">
     <div class="flex h-[27px] items-center justify-between px-[22px] text-[11px] font-bold leading-[13px]">
       <span>9:41</span>
