@@ -3,11 +3,14 @@ import { Check, ChevronDown, Landmark } from '@lucide/vue';
 import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFooter.vue';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
 
-// 계좌 입력 완료 여부를 상위 화면에서 전달받는다.
-const props = defineProps<{ canContinue: boolean }>();
+// 계좌 입력 완료 여부와 연결 실패 안내를 상위 화면에서 전달받는다.
+const props = defineProps<{
+  canContinue: boolean;
+  connectionErrorMessage: string;
+}>();
 
-// 이전·다음 단계 이동을 상위 화면에 요청한다.
-const emit = defineEmits<{ back: []; next: [] }>();
+// 이전 이동·계좌 연결·온보딩 건너뛰기를 상위 화면에 요청한다.
+const emit = defineEmits<{ back: []; connect: []; skip: [] }>();
 
 // 계좌 연결 화면에서 입력하는 은행과 인터넷뱅킹 정보다.
 const bank = defineModel<string>('bank', { required: true });
@@ -18,10 +21,10 @@ const internetBankingPassword = defineModel<string>('internetBankingPassword', {
   required: true,
 });
 
-// 필수 입력을 완료한 경우에만 다음 단계로 이동한다.
+// 필수 입력을 완료한 경우에만 계좌 연결을 요청한다.
 function handleSubmit() {
   if (props.canContinue) {
-    emit('next');
+    emit('connect');
   }
 }
 </script>
@@ -125,6 +128,13 @@ function handleSubmit() {
             />
             비밀번호가 입력되었어요
           </p>
+          <p
+            v-if="connectionErrorMessage"
+            class="mt-2 text-[11px] leading-4 text-btn-pk-dark"
+            role="alert"
+          >
+            {{ connectionErrorMessage }}
+          </p>
         </div>
 
         <button
@@ -139,8 +149,10 @@ function handleSubmit() {
 
     <OnboardingActionFooter
       label="은행 선택하기"
+      secondary-label="다음에 하기"
       :disabled="!canContinue"
       @primary="handleSubmit"
+      @secondary="$emit('skip')"
     />
   </section>
 </template>

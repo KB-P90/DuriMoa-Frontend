@@ -164,14 +164,6 @@ const {
         파트너 연결이 완료되었어요.
       </div>
 
-      <button
-        type="button"
-        class="mt-4 h-[52px] w-full rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[13px] font-bold text-dm-gray-dark shadow-sm transition hover:bg-dm-gray/5 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
-        @click="$emit('skip')"
-      >
-        나중에 연결할게요
-      </button>
-
       <p class="mt-3 text-center text-[11px] leading-4 text-dm-gray-dark">
         한 계정은 하나의 커플만 연결할 수 있어요
       </p>
@@ -179,7 +171,9 @@ const {
 
     <OnboardingActionFooter
       label="다음"
+      secondary-label="다음에 하기"
       @primary="$emit('next')"
+      @secondary="$emit('skip')"
     />
   </section>
 </template>

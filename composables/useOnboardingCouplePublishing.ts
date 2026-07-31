@@ -2,12 +2,12 @@ import { computed, ref } from 'vue';
 import { ONBOARDING_COUPLE_MESSAGES, ONBOARDING_INVITE_CODE_PATTERN } from '@/constants/onboard';
 import type { OnboardingCoupleRequest, PublishingPartner } from '@/types/onboarding';
 
-// fixture가 없어도 빌드할 수 있도록 테스트 데이터 모듈을 선택적으로 불러온다.
+// 테스트 데이터 파일이 없어도 빌드할 수 있도록 커플 데이터를 선택적으로 불러온다.
 const PUBLISHING_PARTNER_MODULES = import.meta.glob<{
   default: readonly PublishingPartner[];
-}>('../mocks/onboardingCouple*.fixture.ts', { eager: true });
+}>('../mocks/onboardingCouple.ts', { eager: true });
 
-// fixture 파일을 제외한 환경에서는 빈 사용자 목록을 사용한다.
+// 테스트 데이터 파일을 제외한 환경에서는 빈 사용자 목록을 사용한다.
 const PUBLISHING_PARTNERS = Object.values(PUBLISHING_PARTNER_MODULES)[0]?.default ?? [];
 
 // 입력값과 연결 요청 상태에 따라 하나의 커플 연결 화면을 변경한다.

@@ -1,17 +1,19 @@
 <script setup lang="ts">
-// 하단 주요 버튼의 문구와 비활성화 상태다.
+// 하단 주요 버튼과 선택적인 나중에 하기 버튼의 문구·비활성화 상태다.
 withDefaults(
   defineProps<{
     disabled?: boolean;
     label: string;
+    secondaryLabel?: string;
   }>(),
   {
     disabled: false,
+    secondaryLabel: '',
   }
 );
 
-// 주요 버튼 클릭을 현재 단계 화면에 전달한다.
-defineEmits<{ primary: [] }>();
+// 주요 버튼과 나중에 하기 버튼 클릭을 현재 단계 화면에 전달한다.
+defineEmits<{ primary: []; secondary: [] }>();
 </script>
 
 <template>
@@ -25,6 +27,15 @@ defineEmits<{ primary: [] }>();
       @click="$emit('primary')"
     >
       {{ label }}
+    </button>
+
+    <button
+      v-if="secondaryLabel"
+      type="button"
+      class="mt-2 h-10 w-full rounded-[11px] text-[13px] font-bold text-dm-gray-dark transition hover:bg-dm-gray/5 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+      @click="$emit('secondary')"
+    >
+      {{ secondaryLabel }}
     </button>
   </footer>
 </template>

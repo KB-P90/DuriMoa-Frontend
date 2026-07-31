@@ -4,8 +4,8 @@ import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFoot
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
 import type { CoupleRole } from '@/types/onboarding';
 
-// 이전 단계 이동과 온보딩 완료를 상위 화면에 요청한다.
-defineEmits<{ back: []; complete: [] }>();
+// 이전 이동·온보딩 완료·온보딩 건너뛰기를 상위 화면에 요청한다.
+defineEmits<{ back: []; complete: []; skip: [] }>();
 
 // 사용자가 선택한 커플 역할이다.
 const selection = defineModel<CoupleRole>({ required: true });
@@ -92,7 +92,9 @@ const ROLE_OPTIONS = [
 
     <OnboardingActionFooter
       label="완료"
+      secondary-label="다음에 하기"
       @primary="$emit('complete')"
+      @secondary="$emit('skip')"
     />
   </section>
 </template>

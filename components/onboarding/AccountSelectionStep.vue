@@ -12,10 +12,11 @@ defineProps<{
   selectedAccountIds: number[];
 }>();
 
-// 이전·다음 단계 이동과 계좌 선택 변경을 상위 화면에 요청한다.
+// 이전·다음 이동, 계좌 선택 변경과 온보딩 건너뛰기를 상위 화면에 요청한다.
 defineEmits<{
   back: [];
   next: [];
+  skip: [];
   toggle: [accountId: number];
 }>();
 </script>
@@ -82,8 +83,10 @@ defineEmits<{
 
     <OnboardingActionFooter
       label="계좌 선택하기"
+      secondary-label="다음에 하기"
       :disabled="!canContinue"
       @primary="$emit('next')"
+      @secondary="$emit('skip')"
     />
   </section>
 </template>

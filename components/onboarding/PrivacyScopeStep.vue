@@ -4,8 +4,8 @@ import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFoot
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
 import type { FinancialVisibility } from '@/types/onboarding';
 
-// 이전·다음 단계 이동을 상위 화면에 요청한다.
-defineEmits<{ back: []; next: [] }>();
+// 이전·다음 단계 이동과 온보딩 건너뛰기를 상위 화면에 요청한다.
+defineEmits<{ back: []; next: []; skip: [] }>();
 
 // 사용자가 선택한 재무정보 공개 범위다.
 const selection = defineModel<FinancialVisibility>({ required: true });
@@ -97,7 +97,9 @@ const PRIVACY_OPTIONS = [
 
     <OnboardingActionFooter
       label="다음"
+      secondary-label="다음에 하기"
       @primary="$emit('next')"
+      @secondary="$emit('skip')"
     />
   </section>
 </template>

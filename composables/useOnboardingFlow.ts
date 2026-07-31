@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   ONBOARDING_DEFAULT_VALUES,
@@ -13,13 +13,23 @@ import type {
   PublishingAccount,
 } from '@/types/onboarding';
 
-// fixture가 없어도 빌드할 수 있도록 계좌 테스트 데이터를 선택적으로 불러온다.
+// 테스트 데이터 파일이 없어도 빌드할 수 있도록 계좌 데이터를 선택적으로 불러온다.
 const PUBLISHING_ACCOUNT_MODULES = import.meta.glob<{
   default: readonly PublishingAccount[];
-}>('../mocks/onboardingAccount*.fixture.ts', { eager: true });
+}>('../mocks/onboardingAccount.ts', { eager: true });
 
-// fixture 파일을 제외한 환경에서는 빈 계좌 목록을 사용한다.
+// 테스트 데이터 파일을 제외한 환경에서는 빈 계좌 목록을 사용한다.
 const PUBLISHING_ACCOUNTS = Object.values(PUBLISHING_ACCOUNT_MODULES)[0]?.default ?? [];
+
+// 현재 조회 가능한 계좌에 포함된 기본 선택 계좌만 반환한다.
+function getInitialSelectedAccountIds() {
+  // 임시 계좌 목록에서 실제로 존재하는 계좌 식별자다.
+  const publishingAccountIds = new Set(PUBLISHING_ACCOUNTS.map((account) => account.accountId));
+
+  return ONBOARDING_DEFAULT_VALUES.selectedAccountIds.filter((accountId) =>
+    publishingAccountIds.has(accountId)
+  );
+}
 
 // 라우트 쿼리값이 문자열일 때만 값을 반환한다.
 function getQueryValue(value: unknown) {
@@ -48,7 +58,9 @@ export function useOnboardingFlow() {
   const bank = ref<string>(ONBOARDING_DEFAULT_VALUES.bank);
   const internetBankingId = ref('');
   const internetBankingPassword = ref('');
-  const selectedAccountIds = ref<number[]>([...ONBOARDING_DEFAULT_VALUES.selectedAccountIds]);
+  const selectedAccountIds = ref<number[]>(getInitialSelectedAccountIds());
+  const isAccountConnected = ref(false);
+  const accountConnectionErrorMessage = ref('');
   const financialVisibility = ref<FinancialVisibility>(
     ONBOARDING_DEFAULT_VALUES.financialVisibility
   );
@@ -65,8 +77,20 @@ export function useOnboardingFlow() {
       internetBankingPassword.value.length > 0
   );
 
-  // 하나 이상의 계좌를 선택했는지 나타낸다.
-  const canContinueAccountSelection = computed(() => selectedAccountIds.value.length > 0);
+  // 계좌 연결이 완료되고 조회된 계좌를 하나 이상 선택했는지 나타낸다.
+  const canContinueAccountSelection = computed(
+    () =>
+      isAccountConnected.value &&
+      selectedAccountIds.value.some((selectedId) =>
+        PUBLISHING_ACCOUNTS.some((account) => account.accountId === selectedId)
+      )
+  );
+
+  // 계좌 연결 정보가 변경되면 이전 연결 완료 상태를 해제한다.
+  watch([bank, internetBankingId, internetBankingPassword], () => {
+    isAccountConnected.value = false;
+    accountConnectionErrorMessage.value = '';
+  });
 
   // 지정한 온보딩 화면으로 이동한다.
   function goToScreen(nextScreen: OnboardingScreen) {
@@ -74,6 +98,23 @@ export function useOnboardingFlow() {
       name: ONBOARDING_ROUTE_NAMES.ONBOARDING,
       query: { screen: nextScreen },
     });
+  }
+
+  // 입력 정보와 조회된 계좌를 확인한 뒤에만 계좌 선택 화면으로 이동한다.
+  function connectAccount() {
+    if (!canContinueAccount.value) {
+      return;
+    }
+
+    if (PUBLISHING_ACCOUNTS.length === 0) {
+      isAccountConnected.value = false;
+      accountConnectionErrorMessage.value = '연결 가능한 계좌를 찾지 못했어요.';
+      return;
+    }
+
+    isAccountConnected.value = true;
+    accountConnectionErrorMessage.value = '';
+    goToScreen('account-selection');
   }
 
   // 현재 계좌의 선택 여부를 반대로 변경한다.
@@ -103,10 +144,12 @@ export function useOnboardingFlow() {
 
   // 화면에서 사용할 상태와 동작만 공개한다.
   return {
+    accountConnectionErrorMessage,
     accounts: PUBLISHING_ACCOUNTS,
     bank,
     canContinueAccount,
     canContinueAccountSelection,
+    connectAccount,
     financialVisibility,
     goBack,
     goHome,

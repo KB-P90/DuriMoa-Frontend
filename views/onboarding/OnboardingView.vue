@@ -9,10 +9,12 @@ import { useOnboardingFlow } from '@/composables/useOnboardingFlow';
 
 // 온보딩 전체 단계에서 공유하는 상태와 화면 이동 동작이다.
 const {
+  accountConnectionErrorMessage,
   accounts,
   bank,
   canContinueAccount,
   canContinueAccountSelection,
+  connectAccount,
   financialVisibility,
   goBack,
   goHome,
@@ -38,8 +40,10 @@ const {
         v-model:internet-banking-id="internetBankingId"
         v-model:internet-banking-password="internetBankingPassword"
         :can-continue="canContinueAccount"
+        :connection-error-message="accountConnectionErrorMessage"
         @back="goBack"
-        @next="goToScreen('account-selection')"
+        @connect="connectAccount"
+        @skip="goHome"
       />
 
       <AccountSelectionStep
@@ -49,6 +53,7 @@ const {
         :can-continue="canContinueAccountSelection"
         :selected-account-ids="selectedAccountIds"
         @back="goBack"
+        @skip="goHome"
         @toggle="toggleAccount"
         @next="goToScreen('couple')"
       />
@@ -65,6 +70,7 @@ const {
         v-model="financialVisibility"
         @back="goBack"
         @next="goToScreen('role')"
+        @skip="goHome"
       />
 
       <RoleSelectionStep
@@ -72,6 +78,7 @@ const {
         v-model="role"
         @back="goBack"
         @complete="goHome"
+        @skip="goHome"
       />
     </div>
   </AuthScreen>
