@@ -49,8 +49,8 @@ const REGIONAL_BUDGETS = [
         <ChevronRight class="h-6 w-6" :stroke-width="2" />
       </button>
 
-      <img src="/characters/groom.png" alt="신랑 캐릭터" class="groom-intro-character absolute right-[71px] top-[49px] z-10 h-[225px] w-[141px] object-contain" />
-      <img src="/characters/bride.png" alt="신부 캐릭터" class="bride-intro-character absolute right-[28px] top-[92px] z-20 h-[154px] w-[104px] object-contain" />
+      <img src="/characters/groom.png" alt="신랑 캐릭터" class="groom-intro-character absolute right-[71px] top-[49px] z-20 h-[225px] w-[141px] object-contain" />
+      <img src="/characters/bride.png" alt="신부 캐릭터" class="bride-intro-character absolute right-[28px] top-[92px] z-10 h-[154px] w-[104px] object-contain" />
 
     </section>
 

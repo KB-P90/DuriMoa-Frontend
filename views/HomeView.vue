@@ -74,8 +74,8 @@ onMounted(() => {
         </div>
       </div>
 
-      <img src="/characters/groom.png" alt="" class="groom-character absolute left-[193px] top-[100px] z-10 h-[245px] w-[146px] object-contain md:left-auto md:right-[130px] md:top-[73px] md:h-[352px] md:w-[209px]" />
-      <img src="/characters/bride.png" alt="" class="bride-character absolute left-[140px] top-[195px] z-20 h-[124px] w-[91px] object-contain md:left-auto md:right-[340px] md:top-[198px] md:h-[182px] md:w-[132px]" />
+      <img src="/characters/groom.png" alt="" class="groom-character absolute left-[193px] top-[100px] z-20 h-[245px] w-[146px] object-contain md:left-auto md:right-[130px] md:top-[73px] md:h-[352px] md:w-[209px]" />
+      <img src="/characters/bride.png" alt="" class="bride-character absolute left-[140px] top-[195px] z-10 h-[124px] w-[91px] object-contain md:left-auto md:right-[340px] md:top-[198px] md:h-[182px] md:w-[132px]" />
       <div aria-hidden="true" class="saving-graph absolute left-[314px] top-[125px] h-[251px] w-[42px] rounded-xl bg-white/80 p-[6px] shadow-sm md:left-auto md:right-14 md:top-[92px] md:h-[270px] md:w-11">
         <div class="relative h-full overflow-hidden rounded-lg bg-[#F1F2F5]">
           <div class="absolute inset-x-0 bottom-0 rounded-lg bg-[#FF8580]" :style="{ height: jointGoalGraphHeight }" />
