@@ -8,6 +8,8 @@ import SignupView from '@/views/auth/SignupView.vue';
 import TermDetailView from '@/views/auth/TermDetailView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
+import HomeView from '@/views/HomeView.vue';
+import OnboardingView from '@/views/onboarding/OnboardingView.vue';
 
 // 약관 fixture가 없어도 라우터를 빌드할 수 있도록 선택적으로 불러온다.
 const TERM_PAGE_MODULES = import.meta.glob('../constants/authTerms*.fixture.ts', {
