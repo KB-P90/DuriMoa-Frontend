@@ -44,7 +44,7 @@ const REGIONAL_BUDGETS = [
       <p class="intro-description relative z-10 mt-4 w-[220px] text-[15px] leading-[26px] tracking-[-0.35px] text-[#424552]">
         커플을 연결하고 목표를 설정하면<br />우리의 여정이 시작돼요.
       </p>
-      <button type="button" class="intro-cta relative z-10 mt-[19px] flex h-[58px] items-center gap-3 rounded-[17px] bg-gradient-to-r from-[#EF7F73] to-[#FF6E70] px-[22px] text-[17px] font-black text-white shadow-[0_8px_18px_rgba(241,111,106,0.18)]">
+      <button type="button" class="intro-cta relative z-10 mt-[19px] flex h-[58px] items-center gap-3 rounded-[17px] bg-gradient-to-r from-[#EF7F73] to-btn-pk-dark px-[22px] text-[17px] font-black text-white shadow-[0_8px_18px_rgba(241,111,106,0.18)]">
         커플 연결 및 목표 설정하기
         <ChevronRight class="h-6 w-6" :stroke-width="2" />
       </button>

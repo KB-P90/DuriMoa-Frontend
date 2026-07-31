@@ -17,7 +17,7 @@ const quickLinks = [
   { label: '마이페이지', icon: UserRound, color: 'text-[#517CA6]' },
   { label: '목표 설정', icon: Target, color: 'text-[#E45B62]' },
   { label: '월별 지출 관리', icon: BarChart3, color: 'text-[#19A786]' },
-  { label: '고객센터 (약관)', icon: MessageCircle, color: 'text-[#9293A2]' },
+  { label: '고객센터 (약관)', icon: MessageCircle, color: 'text-dm-gray-dark' },
 ] as const;
 
 const notifications = ref([
@@ -52,7 +52,7 @@ const notifications = ref([
               <component :is="link.icon" class="h-[13px] w-[13px]" :class="link.color" :stroke-width="1.8" />
               {{ link.label }}
             </span>
-            <ChevronRight class="h-[11px] w-[11px] text-[#9293A2]" :stroke-width="1.5" />
+            <ChevronRight class="h-[11px] w-[11px] text-dm-gray-dark" :stroke-width="1.5" />
           </button>
         </div>
       </section>
@@ -73,7 +73,7 @@ const notifications = ref([
             </span>
           </label>
         </div>
-        <p class="text-[11px] leading-4 text-[#9293A2]">기기 권한이 없으면 설정 안내가 표시돼요. 명세 10.2</p>
+        <p class="text-[11px] leading-4 text-dm-gray-dark">기기 권한이 없으면 설정 안내가 표시돼요. 명세 10.2</p>
       </section>
     </main>
     </div>

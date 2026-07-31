@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { Bell, CalendarDays, ChevronRight, Coffee, Menu } from '@lucide/vue';
+import { Bell, ChevronRight, Coffee, Menu } from '@lucide/vue';
 import MenuPanel from '@/components/common/MenuPanel.vue';
 import { useHomeStore } from '@/stores/homeStore';
 import { formatWon } from '@/utils/format';
@@ -10,18 +10,12 @@ import NewUserHomeView from '@/views/NewUserHomeView.vue';
 const homeStore = useHomeStore();
 const { dashboard, missions } = storeToRefs(homeStore);
 
-const activeMissionIndex = ref(0);
 const missionCarousel = ref<HTMLElement | null>(null);
 const dragStartX = ref<number | null>(null);
 const dragStartScrollLeft = ref(0);
 const isMenuOpen = ref(false);
 const isNewUser = computed(() => dashboard.value.coupleStatus === 'DISCONNECTED');
 const jointGoalGraphHeight = computed(() => `${Math.min(Math.max(dashboard.value.jointGoal.achievementRate, 0), 100)}%`);
-
-const updateMissionIndex = (event: Event) => {
-  const carousel = event.currentTarget as HTMLElement;
-  activeMissionIndex.value = Math.round(carousel.scrollLeft / carousel.clientWidth);
-};
 
 const startMissionDrag = (event: PointerEvent) => {
   if (!missionCarousel.value) return;
@@ -94,8 +88,8 @@ onMounted(() => {
     </section>
 
     <section class="home-content relative -mt-[14px] h-[393px] rounded-t-[24px] bg-white px-5 pt-[18px] md:h-auto md:min-h-[359px] md:px-10 md:pb-9 md:pt-5">
-      <button type="button" class="saving-alert flex h-[39px] w-[350px] items-center gap-2 rounded-[11px] bg-[#FFF8F8] px-[13px] text-left md:h-11 md:w-full">
-        <span class="text-[10px] font-extrabold leading-3 text-[#FF8F84]">알림</span>
+      <button type="button" class="saving-alert flex h-[39px] w-[350px] items-center gap-2 rounded-[11px] bg-dm-cb-light px-[13px] text-left md:h-11 md:w-full">
+        <span class="text-[10px] font-extrabold leading-3 text-btn-pk">알림</span>
         <span class="truncate text-[11.5px] font-medium leading-[14px] text-[#5A5B69]">{{ dashboard.savingAlert.message }}</span>
       </button>
 
@@ -103,14 +97,13 @@ onMounted(() => {
 
       <div class="flex h-[19px] items-center justify-between">
         <h2 class="text-[13.5px] font-bold leading-4 tracking-[-0.27px]">이번 달 절약 미션</h2>
-        <span class="text-[11px] leading-4 text-[#9293A2]">{{ dashboard.inProgressMissionCount }} / {{ dashboard.totalMissionCount }} 진행</span>
+        <span class="text-[11px] leading-4 text-dm-gray-dark">{{ dashboard.inProgressMissionCount }} / {{ dashboard.totalMissionCount }} 진행</span>
       </div>
 
       <div
         ref="missionCarousel"
         class="mission-carousel mt-[9px] flex h-[62px] snap-x snap-mandatory overflow-x-auto overscroll-x-contain touch-pan-y select-none [&::-webkit-scrollbar]:hidden md:h-[72px]"
         aria-label="절약 미션 목록"
-        @scroll.passive="updateMissionIndex"
         @pointerdown="startMissionDrag"
         @pointermove="moveMissionDrag"
         @pointerup="endMissionDrag"
@@ -126,9 +119,9 @@ onMounted(() => {
           <span class="grid h-8 w-8 place-items-center rounded-[11px] bg-[#FFFAFA] text-[#5A5B69]"><Coffee class="h-3 w-3" :stroke-width="1.6" /></span>
           <span class="ml-[18px] flex flex-1 flex-col gap-px">
             <strong class="text-[12.5px] font-bold leading-[15px] tracking-[-0.25px]">{{ mission.title }}</strong>
-            <span class="text-[11px] leading-4 text-[#9293A2]">{{ mission.actionMethod }}</span>
+            <span class="text-[11px] leading-4 text-dm-gray-dark">{{ mission.actionMethod }}</span>
           </span>
-          <span class="rounded-full bg-[#E4F5F4] px-[9px] py-[4px] text-[10px] font-extrabold leading-3 text-[#2CAEAA]">{{ mission.status }}</span>
+          <span class="rounded-full bg-dm-mint-light px-[9px] py-[4px] text-[10px] font-extrabold leading-3 text-btn-mt-dark">{{ mission.status }}</span>
         </button>
       </div>
 
@@ -143,8 +136,8 @@ onMounted(() => {
         </article>
         <article class="goal-card h-[134px] w-[165px] rounded-2xl border border-white/90 bg-[#F4FFFF] p-4 md:h-[150px] md:w-auto md:flex-1 md:p-[18px]">
           <p class="text-[11px] font-extrabold leading-4 text-[#5A5B69]">개인 예산 달성률</p>
-          <p class="mt-[7px] text-[24.6px] font-bold leading-[30px] tracking-[-1.35px] text-[#15AEA9]">{{ dashboard.personalGoal.achievementRate }}<span class="text-[15px]">%</span></p>
-          <div class="mt-[7px] h-2 w-[131px] overflow-hidden rounded-full bg-white"><span class="block h-full rounded-full bg-[#15AEA9]" :style="{ width: `${dashboard.personalGoal.achievementRate}%` }" /></div>
+          <p class="mt-[7px] text-[24.6px] font-bold leading-[30px] tracking-[-1.35px] text-dm-mint-darker">{{ dashboard.personalGoal.achievementRate }}<span class="text-[15px]">%</span></p>
+          <div class="mt-[7px] h-2 w-[131px] overflow-hidden rounded-full bg-white"><span class="block h-full rounded-full bg-dm-mint-darker" :style="{ width: `${dashboard.personalGoal.achievementRate}%` }" /></div>
           <p class="mt-[7px] text-[12.3px] font-bold leading-[19px] tracking-[-0.375px] text-[#5A5B69]">{{ formatWon(dashboard.personalGoal.currentAmount) }} / {{ formatWon(dashboard.personalGoal.targetAmount) }}</p>
         </article>
       </div>
