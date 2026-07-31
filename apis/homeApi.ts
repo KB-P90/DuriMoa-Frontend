@@ -1,4 +1,4 @@
-import { api } from '@/api/axios.js';
+import { api } from '@/apis/axios.js';
 import type { ApiResponse } from '@/types/common';
 import type { HomeDashboardResponseDto, MonthlySavingMissionsResponseDto } from '@/types/dto/home.dto';
 

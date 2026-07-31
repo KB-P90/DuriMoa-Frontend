@@ -14,7 +14,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '^/api/(?!.*\\.(?:js|ts|vue|css|map)$)': {
+      '/api/': {
         target: 'http://localhost:8080',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),

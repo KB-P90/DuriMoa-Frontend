@@ -20,11 +20,11 @@
 ### 코드 작성 규칙
 
 - 아키텍처는 **MVVM**을 따른다.
-  - **Model** — `api/`, `types/`, `models/`
+  - **Model** — `apis/`, `types/`, `models/`
   - **ViewModel** — `stores/`, `composables/`
   - **View** — `views/`, `components/`, `layouts/`
 - `.vue`(View)에는 비즈니스 로직을 두지 않는다. 상태·로직은 store/composable에서 가져와 쓴다.
-- 서버 통신은 `api/`에서만 한다. `.vue`에서 axios 직접 호출 금지.
+- 서버 통신은 `apis/`에서만 한다. `.vue`에서 axios 직접 호출 금지.
 - snake_case → camelCase 변환은 **store의 `.map(toXxx)` 한 곳에서만** 한다.
 - 색상은 반드시 tailwind config의 토큰명으로 쓴다.
   - 작업 전 `tailwind.config`의 color 정의를 먼저 확인한다.
@@ -60,7 +60,7 @@
 
 ```
 src/
-├── api/                # Model - 서버 통신
+├── apis/               # Model - 서버 통신
 │   ├── axios.js        #   인스턴스, 인터셉터(토큰)
 │   ├── goalApi.ts
 │   └── notificationApi.ts
