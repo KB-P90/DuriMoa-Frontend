@@ -5,7 +5,7 @@ import type { HomeDashboard, SavingMission } from '@/types/home';
 
 const MOCK_DASHBOARD: HomeDashboard = {
   coupleStatus: 'CONNECTED',
-  groomName: '김준',
+  groomName: '김서준',
   brideName: '이서연',
   totalAccumulatedAmount: 31_190_000,
   usedAmount: 18_790_000,
