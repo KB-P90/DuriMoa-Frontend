@@ -34,3 +34,23 @@ export const ExpenseCategoryName: Record<ExpenseCategoryCode, string> = {
 
   ETC: '기타',
 };
+
+export const ExpenseCategoryColors = {
+  FOOD: '#FF8F84',
+  CAFE: '#7DD3C7',
+  SHOPPING: '#8B5CF6',
+  TRANSPORT: '#FBBF24',
+  DELIVERY: '#60A5FA',
+  SUBSCRIPTION: '#64748B',
+  CULTURE: '#A78BFA',
+  BEAUTY: '#EC4899',
+
+  WEDDINGHALL: '#F2A390',
+  STUDIO: '#D79A95',
+  MAKEUP: '#FFBFA1',
+  DRESS: '#FFA28C',
+  JEWELRY: '#D17C69',
+
+  EMERGENCY: '#EF4444',
+  ETC: '#9CA3AF',
+};
