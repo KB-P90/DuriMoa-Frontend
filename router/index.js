@@ -7,7 +7,6 @@ import LoginView from '@/views/auth/LoginView.vue';
 import SignupView from '@/views/auth/SignupView.vue';
 import TermDetailView from '@/views/auth/TermDetailView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
-import OnboardingView from '@/views/onboarding/OnboardingView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
 
 // 약관 fixture가 없어도 라우터를 빌드할 수 있도록 선택적으로 불러온다.
@@ -44,7 +43,7 @@ const router = createRouter({
       component: MainLayout,
       children: [
         { path: '', redirect: { name: 'home' } },
-        { path: 'home', name: 'home', component: PlaceholderView, props: { title: '홈' } },
+        { path: 'home', name: 'home', component: HomeView },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
         { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },

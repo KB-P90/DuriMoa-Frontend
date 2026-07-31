@@ -13,3 +13,5 @@ export function formatSignedAmount(amount: number, unit = ''): string {
 export function parseFormattedAmount(amount: string): number {
   return Number(amount.replaceAll(',', ''));
 }
+
+export const formatWon = (amount: number) => `${new Intl.NumberFormat('ko-KR').format(amount / 10_000)}만원`;
