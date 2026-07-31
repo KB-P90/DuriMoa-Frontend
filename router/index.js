@@ -8,6 +8,7 @@ import OnboardingEntryView from '@/views/auth/OnboardingEntryView.vue';
 import SignupView from '@/views/auth/SignupView.vue';
 import TermDetailView from '@/views/auth/TermDetailView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
+import HomeView from '@/views/HomeView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
 import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
 
@@ -112,7 +113,7 @@ const router = createRouter({
       component: MainLayout,
       children: [
         { path: '', redirect: { name: 'home' } },
-        { path: 'home', name: 'home', component: PlaceholderView, props: { title: '홈' } },
+        { path: 'home', name: 'home', component: HomeView },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
         { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
