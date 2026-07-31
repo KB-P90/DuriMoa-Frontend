@@ -1,10 +1,10 @@
-import { api } from './axios';
+import { api } from '@/api/axios';
 import { MonthlyExpenseResponse, MonthlySavingMissionResponse } from '@/types/expense';
 import { ApiResponse } from '@/types/common';
 
 export const getMonthlyExpense = async (
-  year: string,
-  month: string
+  year: number,
+  month: number
 ): Promise<MonthlyExpenseResponse> => {
   const { data } = await api.get<ApiResponse<MonthlyExpenseResponse>>('/expense/monthly', {
     params: {
