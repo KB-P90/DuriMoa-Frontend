@@ -30,13 +30,6 @@ const notifications = ref([
 <template>
   <section class="absolute inset-0 z-[60] bg-gray-100 font-[Pretendard,Inter,sans-serif] text-[#292934]">
     <div class="h-[553px] overflow-hidden rounded-b-[30px] bg-white shadow-[0_16px_44px_-18px_rgba(60,40,38,0.2),0_0_0_1px_rgba(60,40,38,0.07)]">
-    <div class="h-[30px] w-full px-[22px] pt-[8px]">
-      <div class="flex items-center justify-between text-[11px] font-bold leading-[13px]">
-        <span>9:41</span>
-        <span class="flex items-center gap-[3px] text-[8px] tracking-[1px]">●●●<i class="h-2 w-[13px] rounded-[2px] border border-[#292934]" /></span>
-      </div>
-    </div>
-
     <header class="flex h-[42px] items-center gap-[10px] border-b border-[#F5F5F9] px-5 pb-[11px] pt-2">
       <button type="button" aria-label="홈으로 돌아가기" class="grid h-[22px] w-[17px] place-items-center" @click="emit('close')">
         <ArrowLeft class="h-[17px] w-[17px] text-black" :stroke-width="2" />

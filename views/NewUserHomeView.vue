@@ -26,11 +26,6 @@ const REGIONAL_BUDGETS = [
 
 <template>
   <div class="new-user-page relative mx-auto min-h-full w-full bg-white pb-24 font-[Pretendard,Inter,sans-serif] text-[#222432]">
-    <div class="flex h-[27px] items-center justify-between px-6 text-[11px] font-bold">
-      <span>9:41</span>
-      <span class="flex items-center gap-[3px] text-[8px] tracking-[1px]">●●●<i class="h-2 w-[13px] rounded-[2px] border border-[#292934]" /></span>
-    </div>
-
     <section class="new-user-hero relative h-[390px] overflow-hidden bg-[radial-gradient(139%_109%_at_82%_12%,rgba(255,226,220,0.85)_0%,rgba(255,226,220,0)_38%),linear-gradient(180deg,#FFF7F4_0%,#FFFAF8_100%)] px-7 pt-[59px]">
       <div class="new-user-header absolute right-6 top-[6px] flex items-center gap-4">
         <button type="button" aria-label="알림" class="grid h-[30px] w-[30px] place-items-center">
