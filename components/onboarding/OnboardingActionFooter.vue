@@ -4,10 +4,12 @@ withDefaults(
   defineProps<{
     disabled?: boolean;
     label: string;
+    secondaryDisabled?: boolean;
     secondaryLabel?: string;
   }>(),
   {
     disabled: false,
+    secondaryDisabled: false,
     secondaryLabel: '',
   }
 );
@@ -32,7 +34,8 @@ defineEmits<{ primary: []; secondary: [] }>();
     <button
       v-if="secondaryLabel"
       type="button"
-      class="mt-2 h-10 w-full rounded-[11px] text-[13px] font-bold text-dm-gray-dark transition hover:bg-dm-gray/5 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+      class="mt-2 h-10 w-full rounded-[11px] text-[13px] font-bold text-dm-gray-dark transition enabled:hover:bg-dm-gray/5 disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+      :disabled="secondaryDisabled"
       @click="$emit('secondary')"
     >
       {{ secondaryLabel }}

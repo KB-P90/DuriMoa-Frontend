@@ -2,13 +2,15 @@
 import { Landmark } from '@lucide/vue';
 import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFooter.vue';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
-import type { PublishingAccount } from '@/types/onboarding';
+import type { OnboardingAccount } from '@/types/onboarding';
 
-// 조회된 계좌 목록과 현재 선택 상태를 표시한다.
+// 조회된 계좌 목록과 API 저장 상태를 표시한다.
 defineProps<{
-  accounts: readonly PublishingAccount[];
+  accounts: readonly OnboardingAccount[];
   bank: string;
   canContinue: boolean;
+  errorMessage: string;
+  isLoading: boolean;
   selectedAccountIds: number[];
 }>();
 
@@ -49,7 +51,10 @@ defineEmits<{
         <strong class="text-[14px]">{{ bank }}</strong>
       </div>
 
-      <fieldset class="mt-3 overflow-hidden rounded-[14px] border border-dm-rose-dark/55">
+      <fieldset
+        v-if="accounts.length > 0"
+        class="mt-3 overflow-hidden rounded-[14px] border border-dm-rose-dark/55"
+      >
         <legend class="sr-only">연결할 계좌 선택</legend>
         <label
           v-for="(account, index) in accounts"
@@ -61,6 +66,7 @@ defineEmits<{
             class="peer sr-only"
             type="checkbox"
             :checked="selectedAccountIds.includes(account.accountId)"
+            :disabled="isLoading"
             @change="$emit('toggle', account.accountId)"
           />
           <span class="min-w-0 flex-1">
@@ -79,12 +85,28 @@ defineEmits<{
           </span>
         </label>
       </fieldset>
+
+      <p
+        v-else
+        class="mt-3 rounded-[13px] border border-dm-gray/25 px-4 py-4 text-center text-[12px] text-dm-gray-dark"
+      >
+        조회된 계좌가 없어요. 이전 화면에서 계좌를 다시 연결해주세요.
+      </p>
+
+      <p
+        v-if="errorMessage"
+        class="mt-3 text-[11px] leading-4 text-btn-pk-dark"
+        role="alert"
+      >
+        {{ errorMessage }}
+      </p>
     </div>
 
     <OnboardingActionFooter
-      label="계좌 선택하기"
+      :label="isLoading ? '계좌 저장하는 중...' : '계좌 선택하기'"
       secondary-label="다음에 하기"
-      :disabled="!canContinue"
+      :disabled="!canContinue || isLoading"
+      :secondary-disabled="isLoading"
       @primary="$emit('next')"
       @secondary="$emit('skip')"
     />

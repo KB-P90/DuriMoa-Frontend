@@ -21,8 +21,8 @@ export interface OnboardingCoupleRequest {
   status: CoupleRequestStatus;
 }
 
-// 계좌 선택 화면에 표시할 계좌 정보다.
-export interface PublishingAccount {
+// 계좌 선택 화면에 표시할 온보딩 계좌 정보다.
+export interface OnboardingAccount {
   accountId: number;
   accountName: string;
   accountNumber: string;

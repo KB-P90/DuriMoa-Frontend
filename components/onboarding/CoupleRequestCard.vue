@@ -3,14 +3,16 @@ import { UserRound } from '@lucide/vue';
 import { computed } from 'vue';
 import type { OnboardingCoupleRequest } from '@/types/onboarding';
 
-// 연결 요청 정보와 다른 파트너 연결 후의 비활성화 상태다.
+// 연결 요청 정보와 수락 버튼의 비활성화·로딩 상태다.
 const props = withDefaults(
   defineProps<{
     acceptDisabled?: boolean;
+    isLoading?: boolean;
     request: OnboardingCoupleRequest;
   }>(),
   {
     acceptDisabled: false,
+    isLoading: false,
   }
 );
 
@@ -32,6 +34,10 @@ const roleLabel = computed(() => {
 
 // 요청 상태에 따라 버튼 문구를 결정한다.
 const statusLabel = computed(() => {
+  if (props.isLoading) {
+    return '수락 중';
+  }
+
   if (props.request.status === 'WAIT') {
     return '연결 대기';
   }
@@ -45,7 +51,7 @@ const statusLabel = computed(() => {
 
 // 아직 연결되지 않은 받은 요청만 수락한다.
 function handleAccept() {
-  if (props.acceptDisabled || props.request.status !== 'REQUESTED') {
+  if (props.acceptDisabled || props.isLoading || props.request.status !== 'REQUESTED') {
     return;
   }
 
@@ -79,7 +85,7 @@ function handleAccept() {
     <button
       type="button"
       class="shrink-0 rounded-full bg-dm-rose px-3 py-1.5 text-[11px] font-extrabold text-btn-pk-dark transition enabled:hover:bg-dm-rose-dark disabled:cursor-default disabled:opacity-80 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
-      :disabled="acceptDisabled || request.status !== 'REQUESTED'"
+      :disabled="acceptDisabled || isLoading || request.status !== 'REQUESTED'"
       :aria-label="`${request.name}님의 연결 요청 ${statusLabel}`"
       @click="handleAccept"
     >

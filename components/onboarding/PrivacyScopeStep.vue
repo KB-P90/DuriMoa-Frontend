@@ -4,6 +4,12 @@ import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFoot
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
 import type { FinancialVisibility } from '@/types/onboarding';
 
+// 공개범위 저장 상태와 오류 안내를 상위 화면에서 전달받는다.
+defineProps<{
+  errorMessage: string;
+  isLoading: boolean;
+}>();
+
 // 이전·다음 단계 이동과 온보딩 건너뛰기를 상위 화면에 요청한다.
 defineEmits<{ back: []; next: []; skip: [] }>();
 
@@ -64,6 +70,7 @@ const PRIVACY_OPTIONS = [
             type="radio"
             name="financialVisibility"
             :value="option.value"
+            :disabled="isLoading"
           />
           <span
             class="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-dm-gray-light text-btn-pk-dark"
@@ -93,11 +100,21 @@ const PRIVACY_OPTIONS = [
           </span>
         </label>
       </fieldset>
+
+      <p
+        v-if="errorMessage"
+        class="mt-3 text-[11px] leading-4 text-btn-pk-dark"
+        role="alert"
+      >
+        {{ errorMessage }}
+      </p>
     </div>
 
     <OnboardingActionFooter
-      label="다음"
+      :label="isLoading ? '저장하는 중...' : '다음'"
       secondary-label="다음에 하기"
+      :disabled="isLoading"
+      :secondary-disabled="isLoading"
       @primary="$emit('next')"
       @secondary="$emit('skip')"
     />

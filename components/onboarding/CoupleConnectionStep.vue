@@ -3,23 +3,34 @@ import { Check, TriangleAlert } from '@lucide/vue';
 import CoupleRequestCard from '@/components/onboarding/CoupleRequestCard.vue';
 import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFooter.vue';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
-import { useOnboardingCouplePublishing } from '@/composables/useOnboardingCouplePublishing';
+import type { OnboardingCoupleRequest } from '@/types/onboarding';
 
-// 이전·다음 단계 이동과 온보딩 건너뛰기 이벤트다.
-defineEmits<{ back: []; next: []; skip: [] }>();
+// 커플 연결 API의 요청 목록과 로딩·오류 상태다.
+defineProps<{
+  acceptingUserIds: number[];
+  canConfirm: boolean;
+  errorMessage: string;
+  feedbackMessage: string;
+  hasInviteCodeError: boolean;
+  isConnected: boolean;
+  isInviting: boolean;
+  isLoadingStatus: boolean;
+  requests: OnboardingCoupleRequest[];
+  statusErrorMessage: string;
+}>();
 
-// 입력값과 연결 상태에 따라 한 화면을 변경하는 상태와 동작이다.
-const {
-  acceptRequest,
-  canConfirm,
-  confirmInviteCode,
-  errorMessage,
-  feedbackMessage,
-  hasInviteCodeError,
-  inviteCode,
-  isConnected,
-  requests,
-} = useOnboardingCouplePublishing();
+// 이전·다음 이동과 커플 API 동작을 상위 화면에 요청한다.
+defineEmits<{
+  accept: [userId: number];
+  back: [];
+  confirm: [];
+  next: [];
+  retryStatus: [];
+  skip: [];
+}>();
+
+// 백엔드에 전달할 정규화된 초대 코드다.
+const inviteCode = defineModel<string>('inviteCode', { required: true });
 </script>
 
 <template>
@@ -44,7 +55,7 @@ const {
       <form
         class="mt-5"
         aria-label="파트너 초대 코드 확인"
-        @submit.prevent="confirmInviteCode"
+        @submit.prevent="$emit('confirm')"
       >
         <label
           class="mb-2 block text-[12px] font-extrabold"
@@ -71,8 +82,10 @@ const {
             autocomplete="off"
             autocapitalize="characters"
             spellcheck="false"
-            pattern="[A-Z0-9]+"
-            placeholder="SEOYEON4444"
+            pattern="[A-Z0-9]{6}"
+            maxlength="6"
+            placeholder="ABC123"
+            :disabled="isInviting"
             :aria-invalid="hasInviteCodeError || errorMessage.length > 0"
             :aria-describedby="
               hasInviteCodeError || errorMessage
@@ -86,7 +99,7 @@ const {
             class="grid h-[52px] place-items-center rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[13px] font-extrabold transition enabled:hover:border-btn-pk enabled:hover:bg-dm-cb-light disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
             :disabled="!canConfirm"
           >
-            확인
+            {{ isInviting ? '확인 중' : '확인' }}
           </button>
         </div>
 
@@ -96,7 +109,7 @@ const {
           class="mt-2 text-[11px] leading-4 text-btn-pk-dark"
           role="alert"
         >
-          영문 대문자와 숫자만 입력해주세요.
+          영문 대문자와 숫자 6자리로 입력해주세요.
         </p>
         <p
           v-else-if="errorMessage"
@@ -116,7 +129,7 @@ const {
           id="couple-invite-code-description"
           class="mt-2 text-[11px] leading-4 text-dm-gray-dark"
         >
-          공백 없이 영문 대문자와 숫자로 입력해주세요.
+          공백 없이 영문 대문자와 숫자 6자리로 입력해주세요.
         </p>
       </form>
 
@@ -138,6 +151,32 @@ const {
         </p>
       </div>
 
+      <div
+        v-if="statusErrorMessage"
+        class="mt-2.5 flex items-center justify-between gap-3 rounded-[13px] border border-btn-pk/30 px-3.5 py-3"
+        role="alert"
+      >
+        <p class="text-[11px] leading-4 text-btn-pk-dark">
+          {{ statusErrorMessage }}
+        </p>
+        <button
+          type="button"
+          class="shrink-0 rounded-[9px] px-2.5 py-1.5 text-[11px] font-extrabold text-btn-pk-dark transition hover:bg-dm-cb-light focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+          :disabled="isLoadingStatus"
+          @click="$emit('retryStatus')"
+        >
+          재시도
+        </button>
+      </div>
+
+      <p
+        v-else-if="isLoadingStatus && requests.length === 0"
+        class="mt-2.5 text-center text-[11px] text-dm-gray-dark"
+        role="status"
+      >
+        연결 상태를 불러오는 중이에요.
+      </p>
+
       <ul
         v-if="requests.length > 0"
         class="mt-2.5 flex flex-col gap-2"
@@ -146,9 +185,10 @@ const {
         <CoupleRequestCard
           v-for="request in requests"
           :key="request.userId"
-          :accept-disabled="isConnected"
+          :accept-disabled="isConnected || acceptingUserIds.length > 0"
+          :is-loading="acceptingUserIds.includes(request.userId)"
           :request="request"
-          @accept="acceptRequest"
+          @accept="$emit('accept', $event)"
         />
       </ul>
 
@@ -172,6 +212,8 @@ const {
     <OnboardingActionFooter
       label="다음"
       secondary-label="다음에 하기"
+      :disabled="isInviting || isLoadingStatus || acceptingUserIds.length > 0"
+      :secondary-disabled="isInviting || isLoadingStatus || acceptingUserIds.length > 0"
       @primary="$emit('next')"
       @secondary="$emit('skip')"
     />

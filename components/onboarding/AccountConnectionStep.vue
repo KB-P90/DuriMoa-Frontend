@@ -2,11 +2,13 @@
 import { Check, ChevronDown, Landmark } from '@lucide/vue';
 import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFooter.vue';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
+import { ONBOARDING_BANK_OPTIONS } from '@/constants/onboard';
 
-// 계좌 입력 완료 여부와 연결 실패 안내를 상위 화면에서 전달받는다.
+// 계좌 입력 완료 여부와 API 연결 상태를 상위 화면에서 전달받는다.
 const props = defineProps<{
   canContinue: boolean;
   connectionErrorMessage: string;
+  isLoading: boolean;
 }>();
 
 // 이전 이동·계좌 연결·온보딩 건너뛰기를 상위 화면에 요청한다.
@@ -69,11 +71,15 @@ function handleSubmit() {
               v-model="bank"
               class="h-[52px] w-full appearance-none rounded-[13px] border border-dm-gray/35 bg-dm-gray-light pl-11 pr-11 text-[14px] font-bold outline-none transition focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
               name="bank"
+              :disabled="isLoading"
             >
-              <option value="국민은행">국민은행</option>
-              <option value="신한은행">신한은행</option>
-              <option value="하나은행">하나은행</option>
-              <option value="우리은행">우리은행</option>
+              <option
+                v-for="bankOption in ONBOARDING_BANK_OPTIONS"
+                :key="bankOption.bankCode"
+                :value="bankOption.label"
+              >
+                {{ bankOption.label }}
+              </option>
             </select>
             <ChevronDown
               class="pointer-events-none absolute right-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-dm-gray-dark"
@@ -98,6 +104,7 @@ function handleSubmit() {
             type="text"
             autocomplete="username"
             placeholder="인터넷뱅킹 아이디"
+            :disabled="isLoading"
           />
         </div>
 
@@ -116,6 +123,7 @@ function handleSubmit() {
             type="password"
             autocomplete="current-password"
             placeholder="인터넷뱅킹 비밀번호"
+            :disabled="isLoading"
           />
           <p
             v-if="internetBankingPassword.length > 0"
@@ -148,9 +156,10 @@ function handleSubmit() {
     </div>
 
     <OnboardingActionFooter
-      label="은행 선택하기"
+      :label="isLoading ? '계좌 불러오는 중...' : '은행 선택하기'"
       secondary-label="다음에 하기"
-      :disabled="!canContinue"
+      :disabled="!canContinue || isLoading"
+      :secondary-disabled="isLoading"
       @primary="handleSubmit"
       @secondary="$emit('skip')"
     />
