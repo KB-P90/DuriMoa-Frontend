@@ -11,6 +11,7 @@ export interface ExpenseCategory {
 export interface MonthlyExpenseResponse {
   year: number;
   month: number;
+  totalAmount: number;
   expenseCategories: ExpenseCategory[];
 }
 

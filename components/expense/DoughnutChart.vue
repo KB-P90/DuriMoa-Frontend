@@ -1,9 +1,67 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { Doughnut } from 'vue-chartjs';
+import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
+import type { ExpenseCategoryCode } from '@/types/category';
+import { ExpenseCategoryName, ExpenseCategoryColors } from '@/types/category';
+import { computed } from 'vue';
+
+interface ExpenseCategory {
+  categoryId: number;
+  categoryCode: ExpenseCategoryCode;
+  amount: number;
+  comparisonRate: number;
+  expenseRate: number;
+}
+
+const props = defineProps<{
+  month: number;
+  categories: ExpenseCategory[];
+  totalAmount: number;
+}>();
+
+ChartJS.register(ArcElement, Tooltip);
+
+const chartData = computed(() => ({
+  labels: props.categories.map((category) => ExpenseCategoryName[category.categoryCode]),
+
+  datasets: [
+    {
+      data: props.categories.map((category) => category.amount),
+
+      backgroundColor: props.categories.map(
+        (category) => ExpenseCategoryColors[category.categoryCode]
+      ),
+
+      borderWidth: 0,
+    },
+  ],
+}));
+
+const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+
+  cutout: '70%',
+
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+};
+</script>
 
 <template>
-  <div
-    class="flex h-full w-full items-center justify-center rounded-full border-2 border-dashed border-dm-gray"
-  >
-    DoughnutChart
+  <div class="relative h-full w-full">
+    <Doughnut
+      :data="chartData"
+      :options="options"
+    />
+
+    <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+      <span class="text-xs text-gray-500"> {{ month }}월 총 소비 </span>
+
+      <span class="text-lg font-bold text-gray-800"> {{ totalAmount }}원 </span>
+    </div>
   </div>
 </template>

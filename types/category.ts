@@ -35,7 +35,7 @@ export const ExpenseCategoryName: Record<ExpenseCategoryCode, string> = {
   ETC: '기타',
 };
 
-export const ExpenseCategoryColors = {
+export const ExpenseCategoryColors: Record<ExpenseCategoryCode, string> = {
   FOOD: '#FF8F84',
   CAFE: '#7DD3C7',
   SHOPPING: '#8B5CF6',

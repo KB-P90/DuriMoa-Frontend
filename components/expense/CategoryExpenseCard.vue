@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Info } from '@lucide/vue';
 import DoughnutChart from './DoughnutChart.vue';
+import { useExpenseStore } from '@/stores/expenseStore.js';
+
+const expenseStore = useExpenseStore();
+
+const props = defineProps<{
+  month: number;
+}>();
 </script>
 
 <template>
@@ -19,7 +26,11 @@ import DoughnutChart from './DoughnutChart.vue';
       <div class="flex w-full max-w-xl items-center justify-around">
         <!-- 차트 -->
         <div class="aspect-square w-[45%] max-w-56">
-          <DoughnutChart />
+          <DoughnutChart
+            :month="month"
+            :categories="expenseStore.monthlyExpense.expenseCategories"
+            :total-amount="expenseStore.monthlyExpense.totalAmount"
+          />
         </div>
 
         <!-- 카드 -->

@@ -72,7 +72,7 @@ function changeMonth({ year, month }: { year: number; month: number }) {
       />
     </header>
 
-    <CategoryExpenseCard />
+    <CategoryExpenseCard :month="selectedMonth.month" />
 
     <SavingMissionCard />
   </div>

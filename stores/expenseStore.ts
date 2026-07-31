@@ -5,6 +5,7 @@ import type { MonthlyExpenseResponse, MonthlySavingMissionResponse } from '@/typ
 const MOCK_MONTHLY_EXPENSE: MonthlyExpenseResponse = {
   year: 2026,
   month: 7,
+  totalAmount: 3200000,
   expenseCategories: [
     {
       categoryId: 1,
