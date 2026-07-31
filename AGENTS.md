@@ -61,7 +61,7 @@
 ```
 src/
 ├── api/                # Model - 서버 통신
-│   ├── axios.ts        #   인스턴스, 인터셉터(토큰)
+│   ├── axios.js        #   인스턴스, 인터셉터(토큰)
 │   ├── goalApi.ts
 │   └── notificationApi.ts
 ├── types/              # Model - 타입만
