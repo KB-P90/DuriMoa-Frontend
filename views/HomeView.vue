@@ -5,7 +5,7 @@ import { Bell, ChevronRight, Coffee, Menu } from '@lucide/vue';
 import MenuPanel from '@/components/common/MenuPanel.vue';
 import { useHomeStore } from '@/stores/homeStore';
 import { formatWon } from '@/utils/format';
-import NewUserHomeView from '@/views/NewUserHomeView.vue';
+import NewUserHome from '@/components/home/NewUserHome.vue';
 
 const homeStore = useHomeStore();
 const { dashboard, missions } = storeToRefs(homeStore);
@@ -39,7 +39,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NewUserHomeView v-if="isNewUser" />
+  <NewUserHome v-if="isNewUser" />
   <div v-else class="home-stage aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]">
     <div class="home-canvas absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-hidden bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--home-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible">
     <section class="home-hero relative h-[379px] overflow-hidden bg-gradient-to-b from-[#FDDFDD] to-white md:h-[440px]">
