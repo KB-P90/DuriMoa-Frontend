@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getMonthlyExpense } from '@/api/expense';
+import { getMonthlyExpense } from '@/apis/expenseApi';
 import CategoryExpenseCard from '@/components/expense/CategoryExpenseCard.vue';
 import MonthPicker from '@/components/expense/MonthPicker.vue';
 import SavingMissionCard from '@/components/expense/SavingMissionCard.vue';

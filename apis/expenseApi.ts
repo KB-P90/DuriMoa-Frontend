@@ -1,16 +1,13 @@
 import { api } from '@/apis/axios';
-import { MonthlyExpenseResponse, MonthlySavingMissionResponse } from '@/types/expense';
 import { ApiResponse } from '@/types/common';
+import { MonthlyExpenseResponse, MonthlySavingMissionResponse } from '@/types/expense';
 
 export const getMonthlyExpense = async (
   year: number,
   month: number
 ): Promise<MonthlyExpenseResponse> => {
   const { data } = await api.get<ApiResponse<MonthlyExpenseResponse>>('/expense/monthly', {
-    params: {
-      year,
-      month,
-    },
+    params: { year, month },
   });
 
   return data.data;
@@ -23,10 +20,7 @@ export const getMonthlySavingMissions = async (
   const { data } = await api.get<ApiResponse<MonthlySavingMissionResponse>>(
     '/expense/saving-missions',
     {
-      params: {
-        year,
-        month,
-      },
+      params: { year, month },
     }
   );
 
