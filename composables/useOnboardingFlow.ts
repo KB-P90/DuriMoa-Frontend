@@ -1,5 +1,11 @@
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import {
+  ONBOARDING_DEFAULT_VALUES,
+  ONBOARDING_PREVIOUS_SCREENS,
+  ONBOARDING_ROUTE_NAMES,
+  ONBOARDING_SCREENS,
+} from '@/constants/onboard';
 import type {
   CoupleRole,
   FinancialVisibility,
@@ -7,42 +13,13 @@ import type {
   PublishingAccount,
 } from '@/types/onboarding';
 
-// URL에서 사용할 수 있는 온보딩 화면 이름이다.
-const ONBOARDING_SCREENS = ['account', 'account-selection', 'couple', 'privacy', 'role'] as const;
+// fixture가 없어도 빌드할 수 있도록 계좌 테스트 데이터를 선택적으로 불러온다.
+const PUBLISHING_ACCOUNT_MODULES = import.meta.glob<{
+  default: readonly PublishingAccount[];
+}>('../mocks/onboardingAccount*.fixture.ts', { eager: true });
 
-// 문자열 경로 하드코딩을 피하기 위한 라우트 이름이다.
-const ONBOARDING_ROUTE_NAMES = {
-  HOME: 'home',
-  ONBOARDING: 'onboarding',
-  SIGNUP: 'signup',
-} as const;
-
-// 각 온보딩 화면에서 뒤로 이동할 이전 화면이다.
-const ONBOARDING_PREVIOUS_SCREENS = {
-  'account-selection': 'account',
-  couple: 'account-selection',
-  privacy: 'couple',
-  role: 'privacy',
-} as const satisfies Record<Exclude<OnboardingScreen, 'account'>, OnboardingScreen>;
-
-// 백엔드 연결 전 계좌 선택 화면에 표시할 예시 계좌다.
-const PUBLISHING_ACCOUNTS = [
-  {
-    accountId: 101,
-    accountName: 'KB종합통장',
-    accountNumber: '12345678901234',
-  },
-  {
-    accountId: 102,
-    accountName: 'KB내맘대로적금',
-    accountNumber: '23456789012345',
-  },
-  {
-    accountId: 103,
-    accountName: 'KB청년희망적금',
-    accountNumber: '34567890123456',
-  },
-] as const satisfies readonly PublishingAccount[];
+// fixture 파일을 제외한 환경에서는 빈 계좌 목록을 사용한다.
+const PUBLISHING_ACCOUNTS = Object.values(PUBLISHING_ACCOUNT_MODULES)[0]?.default ?? [];
 
 // 라우트 쿼리값이 문자열일 때만 값을 반환한다.
 function getQueryValue(value: unknown) {
@@ -58,7 +35,7 @@ function isOnboardingScreen(value: string): value is OnboardingScreen {
 function toOnboardingScreen(value: unknown): OnboardingScreen {
   // 배열 등 잘못된 쿼리 형식을 제거한 문자열 값이다.
   const queryValue = getQueryValue(value);
-  return isOnboardingScreen(queryValue) ? queryValue : 'account';
+  return isOnboardingScreen(queryValue) ? queryValue : ONBOARDING_DEFAULT_VALUES.screen;
 }
 
 // 온보딩 화면 상태와 단계 이동을 관리한다.
@@ -68,12 +45,14 @@ export function useOnboardingFlow() {
   const router = useRouter();
 
   // 계좌 연결과 이후 설정 화면에서 사용하는 입력 상태다.
-  const bank = ref('국민은행');
+  const bank = ref<string>(ONBOARDING_DEFAULT_VALUES.bank);
   const internetBankingId = ref('');
   const internetBankingPassword = ref('');
-  const selectedAccountIds = ref<number[]>([101, 103]);
-  const financialVisibility = ref<FinancialVisibility>('WEDDING');
-  const role = ref<CoupleRole>('G');
+  const selectedAccountIds = ref<number[]>([...ONBOARDING_DEFAULT_VALUES.selectedAccountIds]);
+  const financialVisibility = ref<FinancialVisibility>(
+    ONBOARDING_DEFAULT_VALUES.financialVisibility
+  );
+  const role = ref<CoupleRole>(ONBOARDING_DEFAULT_VALUES.role);
 
   // URL 쿼리를 검증해 현재 온보딩 화면을 계산한다.
   const screen = computed(() => toOnboardingScreen(route.query.screen));

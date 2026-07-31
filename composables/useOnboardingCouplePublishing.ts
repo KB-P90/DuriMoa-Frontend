@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+import { ONBOARDING_COUPLE_MESSAGES, ONBOARDING_INVITE_CODE_PATTERN } from '@/constants/onboard';
 import type { OnboardingCoupleRequest, PublishingPartner } from '@/types/onboarding';
 
 // fixture가 없어도 빌드할 수 있도록 테스트 데이터 모듈을 선택적으로 불러온다.
@@ -39,7 +40,7 @@ export function useOnboardingCouplePublishing() {
 
   // 초대 코드에 영문 대문자와 숫자 이외의 문자가 있는지 확인한다.
   const hasInviteCodeError = computed(
-    () => inviteCode.value.length > 0 && !/^[A-Z0-9]+$/.test(inviteCode.value)
+    () => inviteCode.value.length > 0 && !ONBOARDING_INVITE_CODE_PATTERN.test(inviteCode.value)
   );
 
   // 형식에 맞는 초대 코드가 입력되었는지 나타낸다.
@@ -63,13 +64,13 @@ export function useOnboardingCouplePublishing() {
 
     if (!partner) {
       feedbackMessage.value = '';
-      errorMessage.value = '유효하지 않거나 만료된 초대 코드예요';
+      errorMessage.value = ONBOARDING_COUPLE_MESSAGES.INVALID_CODE;
       return;
     }
 
     if (isConnected.value) {
       feedbackMessage.value = '';
-      errorMessage.value = '이미 다른 커플과 연결되어 있어요';
+      errorMessage.value = ONBOARDING_COUPLE_MESSAGES.ALREADY_CONNECTED;
       return;
     }
 
@@ -105,7 +106,7 @@ export function useOnboardingCouplePublishing() {
   function acceptRequest(userId: number) {
     if (isConnected.value) {
       feedbackMessage.value = '';
-      errorMessage.value = '이미 다른 커플과 연결되어 있어요';
+      errorMessage.value = ONBOARDING_COUPLE_MESSAGES.ALREADY_CONNECTED;
       return;
     }
 
@@ -115,14 +116,14 @@ export function useOnboardingCouplePublishing() {
     );
 
     if (!hasRequestedPartner) {
-      errorMessage.value = '대기 중인 연결 요청이 없어요';
+      errorMessage.value = ONBOARDING_COUPLE_MESSAGES.NO_PENDING_REQUEST;
       return;
     }
 
     requests.value = requests.value.map((request) =>
       request.userId === userId ? { ...request, status: 'CONNECTED' } : request
     );
-    feedbackMessage.value = '파트너 연결이 완료되었어요';
+    feedbackMessage.value = ONBOARDING_COUPLE_MESSAGES.CONNECTED;
     errorMessage.value = '';
   }
 
