@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { getMonthlyExpense } from '@/apis/expenseApi';
+import { ArrowLeft } from '@lucide/vue';
 import CategoryExpenseCard from '@/components/expense/CategoryExpenseCard.vue';
 import MonthPicker from '@/components/expense/MonthPicker.vue';
 import SavingMissionCard from '@/components/expense/SavingMissionCard.vue';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 interface Props {
@@ -41,25 +41,30 @@ function getCurrentYearMonth() {
 
 // MonthPicker에서 특정 달 선택 시 해당 기간 데이터 조회
 function changeMonth({ year, month }: { year: number; month: number }) {
-  router.push({
+  router.replace({
     name: 'expense',
     params: {
       yearMonth: `${year}-${String(month).padStart(2, '0')}`,
     },
   });
 }
-
-async function fetchExpense() {
-  await getMonthlyExpense(selectedMonth.value.year, selectedMonth.value.month);
-}
-
-watch(() => route.params.yearMonth, fetchExpense, { immediate: true });
 </script>
 
 <template>
   <div>
-    <header>
-      <h1>{{ selectedMonth.year }}년 {{ selectedMonth.month }}월 지출 관리</h1>
+    <header class="flex items-center justify-between px-6 py-5">
+      <button
+        type="button"
+        @click="router.back()"
+        class="text-2xl cursor-pointer"
+      >
+        <ArrowLeft class="h-6 w-6" />
+      </button>
+
+      <h1 class="flex-1 ml-2 text-xl font-bold">
+        {{ selectedMonth.year }}년 {{ selectedMonth.month }}월 지출 관리
+      </h1>
+
       <MonthPicker
         :year="selectedMonth.year"
         :month="selectedMonth.month"
