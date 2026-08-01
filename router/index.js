@@ -7,6 +7,7 @@ import AuthSessionView from '@/views/auth/AuthSessionView.vue';
 import LoginView from '@/views/auth/LoginView.vue';
 import SignupView from '@/views/auth/SignupView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
+import CardRecommendationView from '@/views/CardRecommendationView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
 import HomeView from '@/views/HomeView.vue';
 import OnboardingView from '@/views/onboarding/OnboardingView.vue';
@@ -22,7 +23,7 @@ const router = createRouter({
         { path: 'home', name: 'home', component: HomeView },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
-        { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
+        { path: 'card', name: 'card', component: CardRecommendationView },
       ],
     },
     { path: '/login', name: 'login', component: LoginView },
