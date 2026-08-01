@@ -12,18 +12,19 @@ function handleBack() {
   if (window.history.length > 1) {
     router.back();
   } else {
-    router.push({ name: 'home' });
+    router.push({ name: 'card' });
   }
 }
 
 function handleSubmit() {
   if (!cardStore.isValidAmount) return;
-  // 카드 추천 혜택 비교 페이지로 이동할 핸들러
+  // 금액 입력 후 추천 카드 화면(카드추천 화면2)으로 복귀하여 혜택 반영
+  router.push({ name: 'card' });
 }
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-xl px-5 pb-10 pt-4">
+  <div class="mx-auto min-h-dvh w-full max-w-[768px] bg-white px-5 pb-10 pt-4">
     <!-- Top Header -->
     <header class="mb-6 flex items-center gap-2">
       <button
