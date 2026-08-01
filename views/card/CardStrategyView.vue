@@ -5,8 +5,10 @@ import CardSmartBanner from '@/components/card/CardSmartBanner.vue';
 import CardBestRecommendBanner from '@/components/card/CardBestRecommendBanner.vue';
 import UserCardGroupSection from '@/components/card/UserCardGroupSection.vue';
 import CardDisclaimer from '@/components/card/CardDisclaimer.vue';
+import CardDetailModal from '@/components/card/CardDetailModal.vue';
 import { useCardStore } from '@/stores/cardStore';
 import { formatWon } from '@/utils/format';
+import type { RecommendedCard } from '@/types/card';
 
 const router = useRouter();
 const cardStore = useCardStore();
@@ -21,6 +23,14 @@ function handleBack() {
 
 function handleGoToAmountInput() {
   router.push({ name: 'card-amount' });
+}
+
+function handleSelectCard(card: RecommendedCard) {
+  cardStore.openCardDetail(card.name);
+}
+
+function handleSelectBestCard(cardName: string) {
+  cardStore.openCardDetail(cardName);
 }
 
 // 네비바 또는 다른 메뉴로 이동할 때는 카드추천 화면2 상태로 초기화
@@ -54,6 +64,7 @@ onBeforeRouteLeave((to) => {
         :amount="cardStore.amount"
         :best="cardStore.bestRecommendation"
         @click-change-amount="handleGoToAmountInput"
+        @click-card="handleSelectBestCard"
       />
 
       <!-- Screen 2 Banner: Default View -->
@@ -86,6 +97,7 @@ onBeforeRouteLeave((to) => {
         v-for="group in cardStore.userCardGroups"
         :key="group.userId"
         :group="group"
+        @select-card="handleSelectCard"
       />
     </section>
 
@@ -93,5 +105,12 @@ onBeforeRouteLeave((to) => {
     <section>
       <CardDisclaimer />
     </section>
+
+    <!-- Card Detail Modal (Screen 4 UI) -->
+    <CardDetailModal
+      v-if="cardStore.selectedCardDetail"
+      :detail="cardStore.selectedCardDetail"
+      @close="cardStore.closeCardDetail"
+    />
   </div>
 </template>

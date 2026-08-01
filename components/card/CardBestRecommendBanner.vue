@@ -10,6 +10,7 @@ defineProps<{
 
 defineEmits<{
   'click-change-amount': [];
+  'click-card': [cardName: string];
 }>();
 </script>
 
@@ -37,7 +38,10 @@ defineEmits<{
     </div>
 
     <!-- Best Recommend Card Box -->
-    <div class="relative overflow-hidden rounded-3xl border border-white/60 bg-gradient-to-br from-[#FFF0EF] via-[#FFF4F5] to-[#FFEFEF] p-5 shadow-sm">
+    <div
+      class="relative cursor-pointer overflow-hidden rounded-3xl border border-white/60 bg-gradient-to-br from-[#FFF0EF] via-[#FFF4F5] to-[#FFEFEF] p-5 shadow-sm transition-transform hover:scale-[1.01]"
+      @click="$emit('click-card', best.cardName)"
+    >
       <!-- BEST 1 Badge -->
       <span class="absolute right-5 top-5 rounded-full bg-[#FF7666] px-3 py-1 text-[10px] font-bold text-white shadow-2xs">
         BEST 1

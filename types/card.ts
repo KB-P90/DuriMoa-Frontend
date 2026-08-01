@@ -22,6 +22,25 @@ export interface BestCardRecommendation {
   cardBgColor: string;
 }
 
+export interface CardBenefitItem {
+  iconType: 'shopping' | 'transport' | 'coffee';
+  title: string;
+  description: string;
+}
+
+export interface CardDetail {
+  id: string;
+  cardCompany: string;
+  cardName: string;
+  annualFee: {
+    domestic: string;
+    foreign: string;
+  };
+  cardBgColor: string;
+  benefits: CardBenefitItem[];
+  terms: string[];
+}
+
 export interface CardAmountInput {
   amount: number;
 }

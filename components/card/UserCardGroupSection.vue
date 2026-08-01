@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { ChevronDown, ChevronUp } from '@lucide/vue';
-import type { UserCardGroup } from '@/types/card';
+import type { RecommendedCard, UserCardGroup } from '@/types/card';
 
 defineProps<{
   group: UserCardGroup;
+}>();
+
+defineEmits<{
+  'select-card': [card: RecommendedCard];
 }>();
 
 const isExpanded = ref(false);
@@ -31,7 +35,8 @@ function toggleExpand() {
       <div
         v-for="card in group.cards"
         :key="card.id"
-        class="flex items-center gap-4 rounded-2xl p-2 transition-colors hover:bg-gray-50/60"
+        class="flex cursor-pointer items-center gap-4 rounded-2xl p-2 transition-colors hover:bg-gray-50/80"
+        @click="$emit('select-card', card)"
       >
         <!-- Card Graphic Plate -->
         <div
