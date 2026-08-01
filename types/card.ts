@@ -14,6 +14,14 @@ export interface UserCardGroup {
   cards: RecommendedCard[];
 }
 
+export interface BestCardRecommendation {
+  cardName: string;
+  expectedBenefitAmount: number;
+  benefitRate: number;
+  ownerName: string;
+  cardBgColor: string;
+}
+
 export interface CardAmountInput {
   amount: number;
 }

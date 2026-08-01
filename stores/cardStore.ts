@@ -1,10 +1,24 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import type { UserCardGroup } from '@/types/card';
+import type { BestCardRecommendation, UserCardGroup } from '@/types/card';
 
 export const useCardStore = defineStore('card', () => {
-  const amount = ref<number>(100000);
+  const DEFAULT_AMOUNT = 100000;
+  const amount = ref<number>(DEFAULT_AMOUNT);
   const MIN_AMOUNT = 1000;
+  const isCustomAmountSet = ref<boolean>(false);
+
+  const bestRecommendation = computed<BestCardRecommendation>(() => {
+    const rate = 1.2;
+    const benefitAmount = Math.floor((amount.value * rate) / 100);
+    return {
+      cardName: '신한 Mr.Life',
+      expectedBenefitAmount: benefitAmount > 0 ? benefitAmount : 1200,
+      benefitRate: rate,
+      ownerName: '김민준',
+      cardBgColor: 'bg-[#FF4D88]',
+    };
+  });
 
   const userCardGroups = ref<UserCardGroup[]>([
     {
@@ -65,17 +79,27 @@ export const useCardStore = defineStore('card', () => {
     amount.value = (amount.value || 0) + val;
   }
 
-  function clearAmount() {
-    amount.value = 0;
+  function applyCustomAmount() {
+    if (isValidAmount.value) {
+      isCustomAmountSet.value = true;
+    }
+  }
+
+  function resetToDefaultView() {
+    isCustomAmountSet.value = false;
+    amount.value = DEFAULT_AMOUNT;
   }
 
   return {
     amount,
     isValidAmount,
     MIN_AMOUNT,
+    isCustomAmountSet,
+    bestRecommendation,
     userCardGroups,
     setAmount,
     addAmount,
-    clearAmount,
+    applyCustomAmount,
+    resetToDefaultView,
   };
 });

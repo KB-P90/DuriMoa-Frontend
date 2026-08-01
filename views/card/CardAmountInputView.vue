@@ -18,7 +18,7 @@ function handleBack() {
 
 function handleSubmit() {
   if (!cardStore.isValidAmount) return;
-  // 금액 입력 후 추천 카드 화면(카드추천 화면2)으로 복귀하여 혜택 반영
+  cardStore.applyCustomAmount();
   router.push({ name: 'card' });
 }
 </script>
