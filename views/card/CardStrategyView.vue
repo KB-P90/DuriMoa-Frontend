@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
-import { ChevronLeft } from '@lucide/vue';
 import CardSmartBanner from '@/components/card/CardSmartBanner.vue';
 import CardBestRecommendBanner from '@/components/card/CardBestRecommendBanner.vue';
 import UserCardGroupSection from '@/components/card/UserCardGroupSection.vue';
@@ -12,14 +11,6 @@ import type { RecommendedCard } from '@/types/card';
 
 const router = useRouter();
 const cardStore = useCardStore();
-
-function handleBack() {
-  if (window.history.length > 1) {
-    router.back();
-  } else {
-    router.push({ name: 'home' });
-  }
-}
 
 function handleGoToAmountInput() {
   router.push({ name: 'card-amount' });
@@ -44,16 +35,8 @@ onBeforeRouteLeave((to) => {
 <template>
   <div class="mx-auto w-full max-w-xl px-5 pb-10 pt-4">
     <!-- Header -->
-    <header class="mb-5 flex items-center gap-2">
-      <button
-        type="button"
-        aria-label="뒤로가기"
-        class="-ml-2 grid h-10 w-10 place-items-center rounded-full text-gray-800 transition-colors hover:bg-gray-100"
-        @click="handleBack"
-      >
-        <ChevronLeft class="h-6 w-6" :stroke-width="2" />
-      </button>
-      <h1 class="text-lg font-bold text-gray-900">카드 전략</h1>
+    <header class="mb-5 flex items-center">
+      <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">카드 추천</h1>
     </header>
 
     <!-- Top Banner Section (Screen 2 vs Screen 3 Condition) -->
