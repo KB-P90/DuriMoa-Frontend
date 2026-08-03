@@ -9,10 +9,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@lucide/vue": "^1.27.0",
+    "@lucide/vue": "^1.28.0",
+    "@vueuse/core": "^14.4.0",
     "axios": "^1.19.0",
+    "chart.js": "^4.5.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-vue-next": "^1.0.0",
     "pinia": "^4.0.2",
+    "reka-ui": "^2.10.1",
+    "tailwind-merge": "^3.6.0",
     "vue": "^3.5.40",
+    "vue-chartjs": "^5.3.4",
     "vue-router": "^5.2.0"
   },
   "devDependencies": {

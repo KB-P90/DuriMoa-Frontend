@@ -5,8 +5,8 @@ import {
   getDailyCalendar,
   getMonthlyCalendar,
   updateRecord,
-} from '@/apis/calendarApi';
-import type { CalendarApiType } from '@/apis/calendarApi';
+} from '@/server/calendarApi';
+import type { CalendarApiType } from '@/server/calendarApi';
 import { toCalendarMonthData, toRecordRequest, toTransaction } from '@/models/Calendar';
 import type {
   CalendarDay,
