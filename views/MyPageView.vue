@@ -79,6 +79,10 @@ function goAssetConnect(id: AssetSummary['id']) {
   }
 }
 
+function goCoupleConnect() {
+  router.push({ name: 'mypage-couple-connect' });
+}
+
 function handleLogout() {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   router.push({ name: 'login' });
@@ -138,7 +142,7 @@ onMounted(() => {
           </div>
           <span class="rounded-full bg-dm-mint-light px-2 py-1 text-[10px] font-extrabold leading-3 text-[#77A0A0]">{{ connectionStatusLabels[myPage.partner.status] }}</span>
         </article>
-        <button v-else type="button" class="flex h-[34px] items-center justify-between rounded-[10px] bg-btn-mt-dark px-3.5 text-[10.5px] font-extrabold leading-[13px] text-white shadow-[0_1px_2px_rgba(34,34,43,0.04)]">
+        <button v-else type="button" class="flex h-[34px] items-center justify-between rounded-[10px] bg-btn-mt-dark px-3.5 text-[10.5px] font-extrabold leading-[13px] text-white shadow-[0_1px_2px_rgba(34,34,43,0.04)]" @click="goCoupleConnect">
           <span>상대와 연결 하기</span>
           <ChevronRight class="h-[17px] w-[17px]" :stroke-width="2.2" />
         </button>

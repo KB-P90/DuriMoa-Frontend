@@ -9,6 +9,7 @@ import LoginView from '@/views/auth/LoginView.vue';
 import SignupView from '@/views/auth/SignupView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
 import CardConnectView from '@/views/CardConnectView.vue';
+import CoupleConnectView from '@/views/CoupleConnectView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
 import HomeView from '@/views/HomeView.vue';
 import MyPageView from '@/views/MyPageView.vue';
@@ -39,6 +40,7 @@ const router = createRouter({
     { path: '/mypage/profile', name: 'mypage-profile', component: ProfileEditView },
     { path: '/mypage/accounts', name: 'mypage-account-connect', component: AccountConnectView },
     { path: '/mypage/cards', name: 'mypage-card-connect', component: CardConnectView },
+    { path: '/mypage/couple', name: 'mypage-couple-connect', component: CoupleConnectView },
     { path: '/:pathMatch(.*)*', redirect: '/login' },
   ],
   scrollBehavior: () => ({ top: 0 }),
