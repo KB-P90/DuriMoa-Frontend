@@ -4,8 +4,6 @@ import AuthScreen from '@/components/auth/AuthScreen.vue';
 import AccountConnectionStep from '@/components/onboarding/AccountConnectionStep.vue';
 import AccountSelectionStep from '@/components/onboarding/AccountSelectionStep.vue';
 import CoupleConnectionStep from '@/components/onboarding/CoupleConnectionStep.vue';
-import PrivacyScopeStep from '@/components/onboarding/PrivacyScopeStep.vue';
-import RoleSelectionStep from '@/components/onboarding/RoleSelectionStep.vue';
 import { useOnboardingCouple } from '@/composables/useOnboardingCouple';
 import { useOnboardingFlow } from '@/composables/useOnboardingFlow';
 
@@ -18,18 +16,13 @@ const {
   canContinueAccount,
   canContinueAccountSelection,
   connectAccount,
-  financialVisibility,
+  continueFromCouple,
   goBack,
   goHome,
-  goToScreen,
   internetBankingId,
   internetBankingPassword,
   isConnectingAccount,
   isSelectingAccounts,
-  isUpdatingShareScope,
-  privacyErrorMessage,
-  role,
-  saveFinancialVisibility,
   screen,
   selectConnectedAccounts,
   selectedAccountIds,
@@ -64,8 +57,29 @@ const {
     <div
       class="mx-auto flex min-h-full w-full max-w-[480px] flex-1 flex-col overflow-hidden bg-dm-gray-light sm:border-x sm:border-dm-gray/20"
     >
+      <CoupleConnectionStep
+        v-if="screen === 'couple'"
+        v-model:invite-code="inviteCode"
+        :accepting-user-ids="acceptingUserIds"
+        :can-confirm="canConfirm"
+        :error-message="coupleErrorMessage"
+        :feedback-message="feedbackMessage"
+        :has-invite-code-error="hasInviteCodeError"
+        :is-connected="isConnected"
+        :is-inviting="isInviting"
+        :is-loading-status="isLoadingStatus"
+        :requests="requests"
+        :status-error-message="statusErrorMessage"
+        @accept="acceptRequest"
+        @back="goBack"
+        @confirm="confirmInviteCode"
+        @retry-status="loadCoupleStatus"
+        @skip="goHome"
+        @next="continueFromCouple"
+      />
+
       <AccountConnectionStep
-        v-if="screen === 'account'"
+        v-else-if="screen === 'account'"
         v-model:bank="bank"
         v-model:internet-banking-id="internetBankingId"
         v-model:internet-banking-password="internetBankingPassword"
@@ -89,45 +103,6 @@ const {
         @skip="goHome"
         @toggle="toggleAccount"
         @next="selectConnectedAccounts"
-      />
-
-      <CoupleConnectionStep
-        v-else-if="screen === 'couple'"
-        v-model:invite-code="inviteCode"
-        :accepting-user-ids="acceptingUserIds"
-        :can-confirm="canConfirm"
-        :error-message="coupleErrorMessage"
-        :feedback-message="feedbackMessage"
-        :has-invite-code-error="hasInviteCodeError"
-        :is-connected="isConnected"
-        :is-inviting="isInviting"
-        :is-loading-status="isLoadingStatus"
-        :requests="requests"
-        :status-error-message="statusErrorMessage"
-        @accept="acceptRequest"
-        @back="goBack"
-        @confirm="confirmInviteCode"
-        @retry-status="loadCoupleStatus"
-        @skip="goHome"
-        @next="goToScreen('privacy')"
-      />
-
-      <PrivacyScopeStep
-        v-else-if="screen === 'privacy'"
-        v-model="financialVisibility"
-        :error-message="privacyErrorMessage"
-        :is-loading="isUpdatingShareScope"
-        @back="goBack"
-        @next="saveFinancialVisibility"
-        @skip="goHome"
-      />
-
-      <RoleSelectionStep
-        v-else
-        v-model="role"
-        @back="goBack"
-        @complete="goHome"
-        @skip="goHome"
       />
     </div>
   </AuthScreen>

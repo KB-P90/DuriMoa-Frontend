@@ -1,23 +1,29 @@
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getAccounts, selectAccounts, updateShareScope } from '@/apis/onboardingApi';
 import {
   ONBOARDING_API_ERROR_MESSAGES,
   ONBOARDING_BANK_OPTIONS,
   ONBOARDING_DEFAULT_VALUES,
-  ONBOARDING_PREVIOUS_SCREENS,
   ONBOARDING_ROUTE_NAMES,
-  ONBOARDING_SCREENS,
-  ONBOARDING_SHARE_LEVELS,
 } from '@/constants/onboard';
 import { toOnboardingAccount } from '@/models/Onboarding';
-import type {
-  CoupleRole,
-  FinancialVisibility,
-  OnboardingAccount,
-  OnboardingScreen,
-} from '@/types/onboarding';
+import type { OnboardingAccount } from '@/types/onboarding';
 import { getOnboardingApiErrorMessage } from '@/utils/onboardingApiError';
+import { getAccounts, selectAccounts } from '@/server/onboardingApi';
+
+type ActiveOnboardingScreen = 'account' | 'account-selection' | 'couple';
+
+const ACTIVE_ONBOARDING_SCREENS = [
+  'account',
+  'account-selection',
+  'couple',
+] as const satisfies readonly ActiveOnboardingScreen[];
+const DEFAULT_ACTIVE_ONBOARDING_SCREEN: ActiveOnboardingScreen = 'couple';
+
+const ACTIVE_PREVIOUS_SCREENS = {
+  account: 'couple',
+  'account-selection': 'account',
+} as const satisfies Record<Exclude<ActiveOnboardingScreen, 'couple'>, ActiveOnboardingScreen>;
 
 // 라우트 쿼리값이 문자열일 때만 값을 반환한다.
 function getQueryValue(value: unknown) {
@@ -25,15 +31,15 @@ function getQueryValue(value: unknown) {
 }
 
 // 쿼리값이 지원하는 온보딩 화면인지 확인한다.
-function isOnboardingScreen(value: string): value is OnboardingScreen {
-  return ONBOARDING_SCREENS.some((screen) => screen === value);
+function isOnboardingScreen(value: string): value is ActiveOnboardingScreen {
+  return ACTIVE_ONBOARDING_SCREENS.some((screen) => screen === value);
 }
 
 // 잘못된 화면 쿼리값은 첫 단계로 변환한다.
-function toOnboardingScreen(value: unknown): OnboardingScreen {
+function toOnboardingScreen(value: unknown): ActiveOnboardingScreen {
   // 배열 등 잘못된 쿼리 형식을 제거한 문자열 값이다.
   const queryValue = getQueryValue(value);
-  return isOnboardingScreen(queryValue) ? queryValue : ONBOARDING_DEFAULT_VALUES.screen;
+  return isOnboardingScreen(queryValue) ? queryValue : DEFAULT_ACTIVE_ONBOARDING_SCREEN;
 }
 
 // 온보딩 화면 상태와 단계 이동을 관리한다.
@@ -52,14 +58,8 @@ export function useOnboardingFlow() {
   const isAccountConnected = ref(false);
   const isConnectingAccount = ref(false);
   const isSelectingAccounts = ref(false);
-  const isUpdatingShareScope = ref(false);
   const accountConnectionErrorMessage = ref('');
   const accountSelectionErrorMessage = ref('');
-  const privacyErrorMessage = ref('');
-  const financialVisibility = ref<FinancialVisibility>(
-    ONBOARDING_DEFAULT_VALUES.financialVisibility
-  );
-  const role = ref<CoupleRole>(ONBOARDING_DEFAULT_VALUES.role);
 
   // 선택한 은행명에 대응하는 API 요청용 은행 정보다.
   const selectedBankOption = computed(
@@ -101,7 +101,7 @@ export function useOnboardingFlow() {
   });
 
   // 지정한 온보딩 화면으로 이동한다.
-  function goToScreen(nextScreen: OnboardingScreen) {
+  function goToScreen(nextScreen: ActiveOnboardingScreen) {
     router.push({
       name: ONBOARDING_ROUTE_NAMES.ONBOARDING,
       query: { screen: nextScreen },
@@ -109,7 +109,7 @@ export function useOnboardingFlow() {
   }
 
   // 요청 시작 화면에 그대로 머물러 있는지 확인한다.
-  function isCurrentOnboardingScreen(expectedScreen: OnboardingScreen) {
+  function isCurrentOnboardingScreen(expectedScreen: ActiveOnboardingScreen) {
     return route.name === ONBOARDING_ROUTE_NAMES.ONBOARDING && screen.value === expectedScreen;
   }
 
@@ -167,7 +167,7 @@ export function useOnboardingFlow() {
       : [...selectedAccountIds.value, accountId];
   }
 
-  // 선택한 계좌를 서버에 저장한 뒤 커플 연결 단계로 이동한다.
+  // 선택한 계좌를 서버에 저장한 뒤 온보딩을 종료한다.
   async function selectConnectedAccounts() {
     if (!canContinueAccountSelection.value) {
       return;
@@ -183,7 +183,7 @@ export function useOnboardingFlow() {
       });
 
       if (isCurrentOnboardingScreen('account-selection')) {
-        goToScreen('couple');
+        goHome();
       }
     } catch (error: unknown) {
       accountSelectionErrorMessage.value = getOnboardingApiErrorMessage(
@@ -195,49 +195,27 @@ export function useOnboardingFlow() {
     }
   }
 
-  // 선택한 공개범위를 서버에 저장한 뒤 역할 선택 단계로 이동한다.
-  async function saveFinancialVisibility() {
-    if (isUpdatingShareScope.value) {
-      return;
-    }
-
-    isUpdatingShareScope.value = true;
-    privacyErrorMessage.value = '';
-
-    try {
-      await updateShareScope({
-        shareLevel: ONBOARDING_SHARE_LEVELS[financialVisibility.value],
-      });
-
-      if (isCurrentOnboardingScreen('privacy')) {
-        goToScreen('role');
-      }
-    } catch (error: unknown) {
-      privacyErrorMessage.value = getOnboardingApiErrorMessage(
-        error,
-        ONBOARDING_API_ERROR_MESSAGES.SHARE_SCOPE
-      );
-    } finally {
-      isUpdatingShareScope.value = false;
-    }
-  }
-
   // 현재 단계의 이전 온보딩 화면으로 이동한다.
   function goBack() {
     // 뒤로가기 기준이 되는 현재 온보딩 화면이다.
     const currentScreen = screen.value;
 
-    if (currentScreen === 'account') {
-      router.push({ name: ONBOARDING_ROUTE_NAMES.SIGNUP });
+    if (currentScreen === 'couple') {
+      router.push({ name: ONBOARDING_ROUTE_NAMES.HOME });
       return;
     }
 
-    goToScreen(ONBOARDING_PREVIOUS_SCREENS[currentScreen]);
+    goToScreen(ACTIVE_PREVIOUS_SCREENS[currentScreen]);
   }
 
   // 온보딩을 종료하고 홈 화면으로 이동한다.
   function goHome() {
     router.push({ name: ONBOARDING_ROUTE_NAMES.HOME });
+  }
+
+  // 커플 연결을 마치면 계좌 연결 단계로 이동한다.
+  function continueFromCouple() {
+    goToScreen('account');
   }
 
   // 화면에서 사용할 상태와 동작만 공개한다.
@@ -249,18 +227,13 @@ export function useOnboardingFlow() {
     canContinueAccount,
     canContinueAccountSelection,
     connectAccount,
-    financialVisibility,
+    continueFromCouple,
     goBack,
     goHome,
-    goToScreen,
     internetBankingId,
     internetBankingPassword,
     isConnectingAccount,
     isSelectingAccounts,
-    isUpdatingShareScope,
-    privacyErrorMessage,
-    role,
-    saveFinancialVisibility,
     screen,
     selectConnectedAccounts,
     selectedAccountIds,
