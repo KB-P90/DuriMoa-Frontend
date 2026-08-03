@@ -2,7 +2,7 @@
 import { Info } from '@lucide/vue';
 import DoughnutChart from './DoughnutChart.vue';
 import { useExpenseStore } from '@/stores/expenseStore.js';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { ExpenseCategoryName, ExpenseCategoryColors } from '@/types/category';
 
 const expenseStore = useExpenseStore();
@@ -20,6 +20,17 @@ const selectedCategory = computed(
     expenseStore.monthlyExpense.expenseCategories.find(
       (category) => category.categoryId === selectedCategoryId.value
     ) ?? null
+);
+
+// 월 변경으로 데이터 새로 로드 시, 디폴트 선택 카테고리 초기화 (가장 많이 사용한 카테고리)
+watch(
+  () => expenseStore.monthlyExpense.expenseCategories,
+  (categories) => {
+    selectedCategoryId.value = categories[0]?.categoryId ?? null;
+  },
+  {
+    immediate: true,
+  }
 );
 
 const handleCategorySelect = (categoryId: number) => {
@@ -56,10 +67,11 @@ const handleCategorySelect = (categoryId: number) => {
       <div class="flex w-full max-w-xl items-center justify-around">
         <!-- 차트 -->
         <div class="aspect-square w-[45%] max-w-56">
+          <!-- TODO totalAmount가 아직 api에 추가되지 않아서 임시로 데이터 처리: 추후 expenseStore.monthlyExpense.totalAmount로 변경 -->
           <DoughnutChart
             :month="month"
             :categories="expenseStore.monthlyExpense.expenseCategories"
-            :total-amount="expenseStore.monthlyExpense.totalAmount"
+            :total-amount="0"
             @select-category="handleCategorySelect"
           />
         </div>
@@ -127,7 +139,7 @@ const handleCategorySelect = (categoryId: number) => {
         v-else
         class="py-10"
       >
-        <p class="text-lg font-semibold text-dm-gray">이번 달 지출 내역이 없어요.</p>
+        <p class="text-lg font-semibold text-dm-gray">{{ month }}월 지출 내역이 없습니다.</p>
       </div>
     </div>
   </section>

@@ -3,7 +3,7 @@ import { ArrowLeft } from '@lucide/vue';
 import CategoryExpenseCard from '@/components/expense/CategoryExpenseCard.vue';
 import MonthPicker from '@/components/expense/MonthPicker.vue';
 import SavingMissionCard from '@/components/expense/SavingMissionCard.vue';
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useExpenseStore } from '@/stores/expenseStore';
 
@@ -50,10 +50,13 @@ const loadData = async (year: number, month: number) => {
   ]);
 };
 
-onMounted(() => {
-  const { year, month } = selectedMonth.value;
-  loadData(year, month);
-});
+watch(
+  selectedMonth,
+  (newMonth) => {
+    loadData(newMonth.year, newMonth.month);
+  },
+  { immediate: true }
+);
 
 // MonthPicker에서 특정 달 선택 시 해당 기간 데이터 조회
 function changeMonth({ year, month }: { year: number; month: number }) {
