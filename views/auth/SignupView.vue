@@ -2,7 +2,7 @@
 import AuthHeader from '@/components/auth/AuthHeader.vue';
 import AuthScreen from '@/components/auth/AuthScreen.vue';
 import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
-import { signup } from '@/apis/authApi';
+import { signup } from '@/server/authApi';
 import { useSignup } from '@/composables/useSignup';
 
 // 회원가입 API를 주입해 입력 검증 이후 서버 요청을 실행한다.

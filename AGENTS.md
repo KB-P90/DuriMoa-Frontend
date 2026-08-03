@@ -59,8 +59,7 @@
 ### 폴더 구조
 
 ```
-src/
-├── apis/               # Model - 서버 통신
+├── server/               # Model - 서버 통신
 │   ├── axios.js        #   인스턴스, 인터셉터(토큰)
 │   ├── goalApi.ts
 │   └── notificationApi.ts

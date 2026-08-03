@@ -1,7 +1,7 @@
 import { ref, watch } from 'vue';
 import { isAxiosError } from 'axios';
 import { useRouter } from 'vue-router';
-import { login } from '@/apis/authApi';
+import { login } from '@/server/authApi';
 import { formatPhoneNumber } from '@/utils/phone';
 
 const LOGIN_STORAGE_KEYS = {
