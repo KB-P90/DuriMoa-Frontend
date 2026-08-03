@@ -11,7 +11,7 @@ import type {
   CoupleStatusResponseDto,
   ShareScopeRequestDto,
   ShareScopeResponseDto,
-} from '@/types/dto/onboarding.dto';
+} from '@/types/dto/onboarding';
 
 // CODEF API 약관 동의 결과를 반환한다.
 export const agreeCodefTerms = async (request: CodefTermsRequestDto) => {

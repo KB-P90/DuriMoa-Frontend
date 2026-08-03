@@ -1,4 +1,4 @@
-import type { HomeDashboardResponseDto, SavingMissionDto } from '@/types/dto/home.dto';
+import type { HomeDashboardResponseDto, SavingMissionDto } from '@/types/dto/home';
 import type { HomeDashboard, SavingMission } from '@/types/home';
 
 export const toHomeDashboard = (dto: HomeDashboardResponseDto): HomeDashboard => ({

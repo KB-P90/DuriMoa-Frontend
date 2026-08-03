@@ -1,7 +1,7 @@
 import { computed, ref, watch } from 'vue';
 import { isAxiosError } from 'axios';
 import { useRouter } from 'vue-router';
-import type { SignupRequestDto, SignupResponseDto, SignupRoleDto } from '@/types/dto/auth.dto';
+import type { SignupRequestDto, SignupResponseDto, SignupRoleDto } from '@/types/dto/auth';
 
 export type SignupGateway = (request: SignupRequestDto) => Promise<SignupResponseDto>;
 
