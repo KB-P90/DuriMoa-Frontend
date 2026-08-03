@@ -3,7 +3,13 @@ import { computed, reactive } from 'vue';
 
 import { postGoal } from '@/server/goalApi';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
-import type { BudgetTypeCode, GoalCategoryCode, GoalDraft, GoalSubmission } from '@/types/goal';
+import type {
+  BudgetTypeCode,
+  GoalCategoryCode,
+  GoalDraft,
+  GoalSubmission,
+  RegionName,
+} from '@/types/goal';
 
 export const useGoalStore = defineStore('goal', () => {
   const draft = reactive<GoalDraft>({
@@ -20,7 +26,7 @@ export const useGoalStore = defineStore('goal', () => {
     Object.values(draft.items).reduce((sum: number, amount) => sum + (amount ?? 0), 0)
   );
 
-  function setSchedule(weddingDate: string, region: string) {
+  function setSchedule(weddingDate: string, region: RegionName) {
     draft.weddingDate = weddingDate;
     draft.region = region;
   }
