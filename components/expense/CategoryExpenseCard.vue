@@ -11,13 +11,15 @@ const props = defineProps<{
   month: number;
 }>();
 
-const selectedCategoryId = ref(expenseStore.monthlyExpense.expenseCategories[0].categoryId);
+const selectedCategoryId = ref<number | null>(
+  expenseStore.monthlyExpense.expenseCategories[0]?.categoryId ?? null
+);
 
 const selectedCategory = computed(
   () =>
     expenseStore.monthlyExpense.expenseCategories.find(
       (category) => category.categoryId === selectedCategoryId.value
-    ) ?? expenseStore.monthlyExpense.expenseCategories[0]
+    ) ?? null
 );
 
 const handleCategorySelect = (categoryId: number) => {
@@ -64,21 +66,41 @@ const handleCategorySelect = (categoryId: number) => {
 
         <!-- 카드 -->
         <div class="flex w-[40%] max-w-48 flex-col gap-4">
-          <div class="rounded-3xl border border-gray-100 bg-white p-4 sm:p-5 shadow-md">
-            <p class="text-m font-semibold">
-              {{ ExpenseCategoryName[selectedCategory.categoryCode] }}
-            </p>
-            <p class="mt-1 text-lg sm:text-xl font-bold text-right">
-              {{ selectedCategory?.amount.toLocaleString() }}원
-            </p>
+          <div class="rounded-3xl border border-dm-rose bg-white p-4 sm:p-5 shadow-md">
+            <div v-if="selectedCategory">
+              <p class="text-m font-semibold">
+                {{ ExpenseCategoryName[selectedCategory.categoryCode] }}
+              </p>
+              <p class="mt-1 text-lg sm:text-xl font-bold text-right">
+                {{ selectedCategory?.amount.toLocaleString() }}원
+              </p>
+            </div>
+
+            <div
+              v-else
+              class="opacity-50"
+            >
+              <p class="text-m font-semibold text-dm-gray">카테고리</p>
+              <p class="mt-1 text-lg sm:text-xl font-bold text-dm-gray text-right">0원</p>
+            </div>
           </div>
 
-          <div class="rounded-3xl border border-gray-100 bg-white p-4 sm:p-5 shadow-md">
-            <p class="text-m font-semibold">평균 대비</p>
-            <p class="mt-1 text-lg sm:text-xl font-bold text-btn-pk text-right">
-              {{ selectedCategory?.comparisonRate > 0 ? '+' : '' }}
-              {{ selectedCategory?.comparisonRate }}%
-            </p>
+          <div class="rounded-3xl border border-dm-rose bg-white p-4 sm:p-5 shadow-md">
+            <div v-if="selectedCategory">
+              <p class="text-m font-semibold">평균 대비</p>
+              <p class="mt-1 text-lg sm:text-xl font-bold text-btn-pk text-right">
+                {{ selectedCategory?.comparisonRate > 0 ? '+' : '' }}
+                {{ selectedCategory?.comparisonRate }}%
+              </p>
+            </div>
+
+            <div
+              v-else
+              class="opacity-50"
+            >
+              <p class="text-m font-semibold text-dm-gray">평균 대비</p>
+              <p class="mt-1 text-lg sm:text-xl font-bold text-btn-pk text-right">0%</p>
+            </div>
           </div>
         </div>
       </div>
@@ -86,6 +108,7 @@ const handleCategorySelect = (categoryId: number) => {
 
     <div class="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-3">
       <div
+        v-if="selectedCategory"
         v-for="category in expenseStore.monthlyExpense.expenseCategories"
         :key="category.categoryId"
         class="flex items-center gap-2"
@@ -95,9 +118,16 @@ const handleCategorySelect = (categoryId: number) => {
           :style="{ backgroundColor: ExpenseCategoryColors[category.categoryCode] }"
         />
 
-        <span class="text-sm text-gray-600">
+        <span class="text-sm text-dm-gray">
           {{ ExpenseCategoryName[category.categoryCode] }}
         </span>
+      </div>
+
+      <div
+        v-else
+        class="py-10"
+      >
+        <p class="text-lg font-semibold text-dm-gray">이번 달 지출 내역이 없어요.</p>
       </div>
     </div>
   </section>

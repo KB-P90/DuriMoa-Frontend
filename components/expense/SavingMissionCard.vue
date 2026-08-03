@@ -2,7 +2,7 @@
 import { useExpenseStore } from '@/stores/expenseStore';
 import { computed } from 'vue';
 import { ExpenseCategoryName, ExpenseCategoryIcon } from '@/types/category.js';
-import { startSavingMission } from '@/apis/expenseApi';
+import { startSavingMission } from '@/server/expenseApi';
 import { SavingMission } from '@/types/expense';
 
 const props = defineProps<{
@@ -113,11 +113,17 @@ const handleStartMission = async (mission: SavingMission & { isStarted?: boolean
     </div>
 
     <div class="bg-dm-mint-light px-6 py-6 text-m text-dm-mint-darker font-semibold">
-      <p>
-        🐰 추천대로 실천하면 월
-        {{ Math.round(savingMissions.totalExpectedSavingAmount / 10000).toLocaleString() }}만원을 더
-        저축할 수 있어요!
-      </p>
+      <div v-if="savingMissions.missions.length">
+        <p>
+          추천대로 실천하면 월
+          {{ Math.round(savingMissions.totalExpectedSavingAmount / 10000).toLocaleString() }}만원을
+          더 저축할 수 있어요!
+        </p>
+      </div>
+
+      <div v-else>
+        <p class="text-center text-dm-gray">이번 달 추천 절약 미션이 없습니다.</p>
+      </div>
     </div>
   </section>
 </template>
