@@ -2,10 +2,11 @@ import { computed, ref, watch } from 'vue';
 import { isAxiosError } from 'axios';
 import { useRouter } from 'vue-router';
 import type { SignupRequestDto, SignupResponseDto, SignupRoleDto } from '@/types/dto/auth.dto';
+import { formatPhoneNumber } from '@/utils/phone';
 
 export type SignupGateway = (request: SignupRequestDto) => Promise<SignupResponseDto>;
 
-const ONBOARDING_ROUTE_NAME = 'onboarding';
+const LOGIN_ROUTE_NAME = 'login';
 const PASSWORD_MISMATCH_MESSAGE = '비밀번호가 일치하지 않습니다.';
 const REQUIRED_TERMS_MESSAGE = '필수 약관에 모두 동의해주세요.';
 const SIGNUP_ERROR_MESSAGE = '회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
@@ -19,7 +20,7 @@ function hasMessage(value: unknown): value is { message: string } {
   );
 }
 
-// API 함수를 주입하지 않으면 입력값만 준비하고 온보딩으로 이동한다.
+// 주입된 회원가입 API로 요청하고 성공하면 로그인 화면으로 이동한다.
 export function useSignup(signupGateway?: SignupGateway) {
   const router = useRouter();
   const name = ref('');
@@ -37,6 +38,11 @@ export function useSignup(signupGateway?: SignupGateway) {
   const passwordsMatch = computed(
     () => passwordConfirm.value.length === 0 || password.value === passwordConfirm.value
   );
+
+  watch(phone, (value) => {
+    const formattedPhone = formatPhoneNumber(value);
+    if (value !== formattedPhone) phone.value = formattedPhone;
+  });
 
   watch(
     [
@@ -93,7 +99,7 @@ export function useSignup(signupGateway?: SignupGateway) {
         signupResponse.value = await signupGateway(request);
       }
 
-      await router.replace({ name: ONBOARDING_ROUTE_NAME });
+      await router.replace({ name: LOGIN_ROUTE_NAME });
     } catch (error: unknown) {
       signupError.value =
         isAxiosError(error) && hasMessage(error.response?.data)
