@@ -19,6 +19,10 @@ const props = defineProps<{
   totalAmount: number;
 }>();
 
+const emit = defineEmits<{
+  selectCategory: [categoryId: number];
+}>();
+
 ChartJS.register(ArcElement, Tooltip);
 
 const chartData = computed(() => ({
@@ -48,6 +52,16 @@ const options = {
       display: false,
     },
   },
+
+  onClick: (_event: any, elements: any[]) => {
+    if (!elements.length) return;
+
+    const index = elements[0].index;
+
+    const selected = props.categories[index];
+
+    emit('selectCategory', selected.categoryId);
+  },
 };
 </script>
 
@@ -61,7 +75,7 @@ const options = {
     <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
       <span class="text-xs text-gray-500"> {{ month }}월 총 소비 </span>
 
-      <span class="text-lg font-bold text-gray-800"> {{ totalAmount }}원 </span>
+      <span class="text-lg font-bold text-gray-800"> {{ totalAmount.toLocaleString() }}원 </span>
     </div>
   </div>
 </template>
