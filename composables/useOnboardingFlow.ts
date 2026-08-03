@@ -1,6 +1,5 @@
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getAccounts, selectAccounts } from '@/apis/onboardingApi';
 import {
   ONBOARDING_API_ERROR_MESSAGES,
   ONBOARDING_BANK_OPTIONS,
@@ -10,6 +9,7 @@ import {
 import { toOnboardingAccount } from '@/models/Onboarding';
 import type { OnboardingAccount } from '@/types/onboarding';
 import { getOnboardingApiErrorMessage } from '@/utils/onboardingApiError';
+import { getAccounts, selectAccounts } from '@/server/onboardingApi';
 
 type ActiveOnboardingScreen = 'account' | 'account-selection' | 'couple';
 
