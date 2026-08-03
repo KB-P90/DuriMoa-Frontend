@@ -2,21 +2,63 @@
 import { useExpenseStore } from '@/stores/expenseStore';
 import { computed } from 'vue';
 import { ExpenseCategoryName, ExpenseCategoryIcon } from '@/types/category.js';
+import { startSavingMission } from '@/apis/expenseApi';
+import { SavingMission } from '@/types/expense';
+
+const props = defineProps<{
+  year: number;
+  month: number;
+}>();
 
 const expenseStore = useExpenseStore();
 
 const savingMissions = computed(() => expenseStore.savingMissions);
 
-const buttonClass = (mission: any) => {
+// 절약 미션 style 관리
+const missionAmountStyles = {
+  available: 'text-btn-mt-dark',
+  started: 'text-dm-gray',
+  challenging: 'text-btn-pk',
+};
+const missionButtonStyles = {
+  available: 'bg-btn-mt text-btn-mt-dark hover:bg-btn-mt-dark hover:text-white cursor-pointer',
+  started: 'bg-dm-gray text-white',
+  challenging: 'bg-btn-pk text-white',
+};
+
+const getMissionButtonType = (mission: any) => {
+  if (mission.isStarted) {
+    return 'started';
+  }
+
   if (mission.status === '도전중') {
-    return 'bg-[#F59C84] text-white';
+    return 'challenging';
   }
 
-  if (mission.isSelectable) {
-    return 'bg-[#D8F2F1] text-[#5AAEB2] hover:bg-[#cceceb] cursor-pointer';
+  return 'available';
+};
+
+const getMissionButtonText = (mission: any) => {
+  if (mission.isStarted) {
+    return '도전!';
   }
 
-  return 'bg-btn-pk text-white cursor-not-allowed';
+  return mission.status;
+};
+
+const handleStartMission = async (mission: SavingMission & { isStarted?: boolean }) => {
+  if (mission.status !== '도전하기') return;
+
+  try {
+    await startSavingMission(
+      mission.missionId,
+      `${props.year}-${String(props.month).padStart(2, '0')}`
+    );
+
+    mission.isStarted = true;
+  } catch (error) {
+    console.error('미션 도전 실패', error);
+  }
 };
 </script>
 
@@ -53,7 +95,7 @@ const buttonClass = (mission: any) => {
 
       <div class="flex flex-col items-end gap-3">
         <span
-          :class="mission.status === '도전중' ? 'text-btn-pk' : 'text-btn-mt-dark'"
+          :class="missionAmountStyles[getMissionButtonType(mission)]"
           class="text-m font-bold"
         >
           +{{ mission.expectedSavingAmount.toLocaleString() }}원
@@ -61,9 +103,11 @@ const buttonClass = (mission: any) => {
 
         <button
           class="rounded-full px-3 py-2 text-sm font-semibold transition"
-          :class="buttonClass(mission)"
+          :class="missionButtonStyles[getMissionButtonType(mission)]"
+          :disabled="getMissionButtonType(mission) !== 'available'"
+          @click="handleStartMission(mission)"
         >
-          {{ mission.status }}
+          {{ getMissionButtonText(mission) }}
         </button>
       </div>
     </div>

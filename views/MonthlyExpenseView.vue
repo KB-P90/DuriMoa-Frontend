@@ -51,7 +51,7 @@ function changeMonth({ year, month }: { year: number; month: number }) {
 </script>
 
 <template>
-  <div class="px-10">
+  <div class="px-3 sm:px-20">
     <header class="flex items-center justify-between px-6 py-5">
       <button
         type="button"
@@ -72,8 +72,13 @@ function changeMonth({ year, month }: { year: number; month: number }) {
       />
     </header>
 
-    <CategoryExpenseCard :month="selectedMonth.month" />
+    <div class="px-2">
+      <CategoryExpenseCard :month="selectedMonth.month" />
 
-    <SavingMissionCard />
+      <SavingMissionCard
+        :year="selectedMonth.year"
+        :month="selectedMonth.month"
+      />
+    </div>
   </div>
 </template>
