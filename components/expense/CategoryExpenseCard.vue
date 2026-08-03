@@ -3,7 +3,7 @@ import { Info } from '@lucide/vue';
 import DoughnutChart from './DoughnutChart.vue';
 import { useExpenseStore } from '@/stores/expenseStore.js';
 import { computed, ref } from 'vue';
-import { ExpenseCategoryName } from '@/types/category.js';
+import { ExpenseCategoryName, ExpenseCategoryColors } from '@/types/category';
 
 const expenseStore = useExpenseStore();
 
@@ -29,12 +29,25 @@ const handleCategorySelect = (categoryId: number) => {
   <section class="rounded-3xl border border-dm-rose-light bg-white m-4 sm:m-6 p-4 sm:p-6 shadow-md">
     <div class="flex items-center gap-2">
       <h2 class="text-lg font-bold text-gray-800">카테고리별 지출</h2>
-      <button
-        type="button"
-        class="text-dm-gray-dark cursor-pointer"
-      >
-        <Info :size="18" />
-      </button>
+
+      <div class="relative group">
+        <button
+          type="button"
+          class="flex items-center justify-center text-dm-gray-dark cursor-pointer leading-none"
+        >
+          <Info
+            :size="20"
+            class="translate-y-px"
+          />
+        </button>
+
+        <div
+          class="pointer-events-none absolute left-28 top-2 z-10 w-52 -translate-x-1/2 rounded-xl bg-dm-gray px-3 py-2 text-xs text-white shadow-lg opacity-0 transition-opacity duration-200 group-hover:opacity-90"
+        >
+          각 카테고리를 선택하시면<br />
+          2030세대 평균 지출과 비교해드려요.
+        </div>
+      </div>
     </div>
 
     <div class="mt-8 flex justify-center">
@@ -71,8 +84,21 @@ const handleCategorySelect = (categoryId: number) => {
       </div>
     </div>
 
-    <div class="mt-8">
-      <!-- 나중에 Legend -->
+    <div class="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-3">
+      <div
+        v-for="category in expenseStore.monthlyExpense.expenseCategories"
+        :key="category.categoryId"
+        class="flex items-center gap-2"
+      >
+        <div
+          class="h-3 w-8 rounded-full"
+          :style="{ backgroundColor: ExpenseCategoryColors[category.categoryCode] }"
+        />
+
+        <span class="text-sm text-gray-600">
+          {{ ExpenseCategoryName[category.categoryCode] }}
+        </span>
+      </div>
     </div>
   </section>
 </template>

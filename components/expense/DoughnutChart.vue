@@ -1,17 +1,9 @@
 <script setup lang="ts">
 import { Doughnut } from 'vue-chartjs';
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
-import type { ExpenseCategoryCode } from '@/types/category';
+import type { ExpenseCategory } from '@/types/expense';
 import { ExpenseCategoryName, ExpenseCategoryColors } from '@/types/category';
 import { computed } from 'vue';
-
-interface ExpenseCategory {
-  categoryId: number;
-  categoryCode: ExpenseCategoryCode;
-  amount: number;
-  comparisonRate: number;
-  expenseRate: number;
-}
 
 const props = defineProps<{
   month: number;
