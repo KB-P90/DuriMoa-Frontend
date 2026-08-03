@@ -28,7 +28,7 @@ const handleCategorySelect = (categoryId: number) => {
 <template>
   <section class="rounded-3xl border border-dm-rose-light bg-white m-4 sm:m-6 p-4 sm:p-6 shadow-md">
     <div class="flex items-center gap-2">
-      <h2 class="text-m font-bold text-gray-800">카테고리별 지출</h2>
+      <h2 class="text-lg font-bold text-gray-800">카테고리별 지출</h2>
       <button
         type="button"
         class="text-dm-gray-dark cursor-pointer"

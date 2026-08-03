@@ -51,7 +51,7 @@ function changeMonth({ year, month }: { year: number; month: number }) {
 </script>
 
 <template>
-  <div>
+  <div class="px-10">
     <header class="flex items-center justify-between px-6 py-5">
       <button
         type="button"
