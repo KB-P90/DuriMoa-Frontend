@@ -9,6 +9,10 @@ import SignupView from '@/views/auth/SignupView.vue';
 import TermDetailView from '@/views/auth/TermDetailView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
 import HomeView from '@/views/HomeView.vue';
+import GoalBudgetTypeView from '@/views/goal/GoalBudgetTypeView.vue';
+import GoalCategoryBudgetView from '@/views/goal/GoalCategoryBudgetView.vue';
+import GoalScheduleView from '@/views/goal/GoalScheduleView.vue';
+import GoalSummaryView from '@/views/goal/GoalSummaryView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
 
 // 약관 내용은 백엔드 연결 전에도 각 전문 화면을 검토할 수 있도록 정적 데이터로 관리한다.
@@ -116,6 +120,16 @@ const router = createRouter({
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
         { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
+        { path: 'goal', redirect: { name: 'goal-schedule' } },
+        { path: 'goal/schedule', name: 'goal-schedule', component: GoalScheduleView },
+        { path: 'goal/budget-type', name: 'goal-budget-type', component: GoalBudgetTypeView },
+        {
+          path: 'goal/categories/:categoryCode',
+          name: 'goal-category-budget',
+          component: GoalCategoryBudgetView,
+          props: true,
+        },
+        { path: 'goal/summary', name: 'goal-summary', component: GoalSummaryView },
       ],
     },
     { path: '/login', name: 'login', component: LoginView },
