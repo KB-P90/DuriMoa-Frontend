@@ -1,0 +1,296 @@
+<script setup lang="ts">
+import { ChevronRight } from 'lucide-vue-next';
+import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { getGoalCategoryStat } from '@/server/goalApi';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
+import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
+import { useGoalStore } from '@/stores/goalStore';
+import type { BudgetTypeCode, GoalCategoryCode, GoalCategoryStat } from '@/types/goal';
+import { formatSignedAmount, formatWon } from '@/utils/format';
+
+const router = useRouter();
+const goalStore = useGoalStore();
+
+// GoalBudgetTypeView와 동일한 목업 표. GET /api/goal/stat이 전국 평균까지 함께
+// 내려주게 되면 그쪽 응답으로 교체한다.
+const NATIONAL_AVERAGE: Record<BudgetTypeCode, number> = {
+  saving: 5418,
+  balanced: 6120,
+  flex: 7450,
+};
+
+// 자산/저축 가능액은 마이페이지·홈 도메인 데이터가 필요해서 아직 목업.
+const CURRENT_ASSET = 3119;
+const AVAILABLE_MONTHLY = 180;
+
+const CO_TONES = ['#F8C9BE', '#FFBFA1', '#F2A390', '#FFA28C', '#D17C69'];
+
+const totalManwon = computed(() => Math.round(goalStore.totalBudget / 10_000));
+const nationalAverage = computed(() => NATIONAL_AVERAGE[goalStore.draft.budgetType ?? 'balanced']);
+
+const brideRatio = computed(() => 100 - goalStore.draft.groomRatio);
+const groomAmount = computed(() =>
+  Math.round((goalStore.totalBudget * goalStore.draft.groomRatio) / 100)
+);
+const brideAmount = computed(() => goalStore.totalBudget - groomAmount.value);
+
+function handleRatioChange(value: number[] | undefined) {
+  if (value?.[0] === undefined) return;
+  goalStore.setGroomRatio(value[0]);
+}
+const totalDiff = computed(() => nationalAverage.value - totalManwon.value);
+
+const remainingMonths = computed(() => {
+  if (!goalStore.draft.weddingDate) return null;
+
+  const today = new Date();
+  const target = new Date(goalStore.draft.weddingDate);
+  const months =
+    (target.getFullYear() - today.getFullYear()) * 12 + (target.getMonth() - today.getMonth());
+
+  return Math.max(months, 1);
+});
+const requiredMonthly = computed(() =>
+  remainingMonths.value
+    ? Math.max(Math.round((totalManwon.value - CURRENT_ASSET) / remainingMonths.value), 0)
+    : null
+);
+
+const categorySegments = computed(() =>
+  GOAL_CATEGORIES.map((category, index) => {
+    const amount = goalStore.draft.items[category.code] ?? 0;
+    const percent = goalStore.totalBudget > 0 ? (amount / goalStore.totalBudget) * 100 : 0;
+    return { code: category.code, percent, color: CO_TONES[index % CO_TONES.length] };
+  })
+);
+
+// 카테고리별 하위25/상위25 구간을 알아야 알뜰형/균형형/플렉스형 배지를 매길 수 있어서,
+// 화면 진입 시 6개 카테고리 시세를 한 번에 불러온다.
+const categoryStats = ref<Partial<Record<GoalCategoryCode, GoalCategoryStat>>>({});
+
+onMounted(async () => {
+  if (!goalStore.draft.region) return;
+
+  const results = await Promise.all(
+    GOAL_CATEGORIES.map(async (category) => {
+      try {
+        return [
+          category.code,
+          await getGoalCategoryStat(goalStore.draft.region!, category.label),
+        ] as const;
+      } catch {
+        return [category.code, null] as const;
+      }
+    })
+  );
+
+  for (const [code, stat] of results) {
+    if (stat) categoryStats.value[code] = stat;
+  }
+});
+
+function budgetTypeLabelFor(code: GoalCategoryCode) {
+  const stat = categoryStats.value[code];
+  const amount = goalStore.draft.items[code] ?? 0;
+
+  let type: BudgetTypeCode = 'balanced';
+  if (stat) {
+    if (amount <= stat.lower25) type = 'saving';
+    else if (amount >= stat.upper25) type = 'flex';
+  }
+
+  return BUDGET_TYPES.find((budgetType) => budgetType.code === type)?.label ?? '-';
+}
+
+function diffFor(code: GoalCategoryCode) {
+  const stat = categoryStats.value[code];
+  if (!stat) return 0;
+
+  const amount = goalStore.draft.items[code] ?? 0;
+  return Math.round((amount - stat.median) / 10_000);
+}
+
+function editCategory(code: GoalCategoryCode) {
+  router.push({
+    name: 'goal-category-budget',
+    params: { categoryCode: code },
+    query: { from: 'summary' },
+  });
+}
+
+const submitting = ref(false);
+const submitError = ref(false);
+
+async function handleShare() {
+  const categoryTypeLabels = Object.fromEntries(
+    GOAL_CATEGORIES.map((category) => [category.code, budgetTypeLabelFor(category.code)])
+  );
+
+  submitting.value = true;
+  submitError.value = false;
+  try {
+    await goalStore.submitGoal(categoryTypeLabels);
+    router.push({ name: 'home' });
+  } catch {
+    submitError.value = true;
+  } finally {
+    submitting.value = false;
+  }
+}
+</script>
+
+<template>
+  <div class="p-4">
+    <div class="mb-6 text-center">
+      <h1 class="text-lg font-extrabold text-[#232631]">예산 시안이 완성됐어요</h1>
+      <p class="mt-1 text-sm text-dm-gray-dark">두 사람이 확인하면 공동 목표로 확정돼요</p>
+    </div>
+
+    <div class="rounded-2xl bg-dm-cb-light p-5 text-center">
+      <p class="text-xs font-bold text-btn-pk-dark">우리의 결혼 예산</p>
+      <p class="mt-2 flex items-end justify-center gap-1">
+        <span class="text-4xl font-extrabold text-btn-pk-dark">{{
+          totalManwon.toLocaleString()
+        }}</span>
+        <span class="mb-1 text-sm font-bold text-btn-pk-dark">만원</span>
+      </p>
+      <p class="mt-2 text-xs text-dm-gray-dark">
+        전국 평균 {{ nationalAverage.toLocaleString() }}만원보다 {{ Math.abs(totalDiff) }}만원
+        {{ totalDiff >= 0 ? '낮아요' : '높아요' }}
+      </p>
+
+      <div class="mt-4 flex h-2 w-full overflow-hidden rounded-full">
+        <div
+          v-for="segment in categorySegments"
+          :key="segment.code"
+          class="h-full"
+          :style="{ width: `${segment.percent}%`, backgroundColor: segment.color }"
+        />
+      </div>
+    </div>
+
+    <div class="mt-4 divide-y divide-dm-gray/10 rounded-2xl border border-dm-gray/40 px-4">
+      <button
+        v-for="category in GOAL_CATEGORIES"
+        :key="category.code"
+        type="button"
+        class="flex w-full items-center justify-between py-3 text-left"
+        @click="editCategory(category.code)"
+      >
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">{{ category.icon }}</span>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-sm font-bold text-[#232631]">{{ category.label }}</span>
+              <span
+                class="rounded-full bg-dm-gray-light px-1.5 py-0.5 text-[10px] font-bold text-dm-gray-dark"
+              >
+                {{ budgetTypeLabelFor(category.code) }}
+              </span>
+            </div>
+            <p class="mt-0.5 text-[11px] text-dm-gray-dark">
+              평균 대비 {{ formatSignedAmount(diffFor(category.code)) }}만원
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1">
+          <span class="text-base font-extrabold text-[#232631]">
+            {{ formatWon(goalStore.draft.items[category.code] ?? 0) }}
+          </span>
+          <ChevronRight class="h-4 w-4 text-dm-gray" />
+        </div>
+      </button>
+
+      <div class="flex items-center justify-between py-3">
+        <span class="text-sm font-bold text-dm-gray-dark">합계</span>
+        <span class="text-base font-extrabold text-btn-pk-dark">{{
+          formatWon(goalStore.totalBudget)
+        }}</span>
+      </div>
+    </div>
+
+    <div class="mt-4 rounded-2xl border border-dm-gray/40 p-4">
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-bold text-[#232631]">부부간 분담 비율</span>
+        <span class="text-[11px] font-semibold text-dm-gray-dark">직접 설정 · 합계 100%</span>
+      </div>
+
+      <div class="mt-4 flex items-center justify-between text-xs font-bold">
+        <span class="text-dm-mint-darker">🤵 신랑 {{ goalStore.draft.groomRatio }}%</span>
+        <span class="text-btn-pk-dark">{{ brideRatio }}% 신부 👰</span>
+      </div>
+
+      <!--
+        shadcn Slider는 Track/Range/Thumb 색을 전부 --primary 토큰으로 고정해두고
+        하위 요소별 class prop은 안 열어놔서, Slider.vue 자체를 고치는 대신
+        여기서만 --primary를 덮어써서 브랜드 색(민트)이 나오게 한다.
+      -->
+      <div
+        class="mt-2"
+        style="--primary: #15aea9"
+      >
+        <Slider
+          :model-value="[goalStore.draft.groomRatio]"
+          :min="0"
+          :max="100"
+          :step="1"
+          @update:model-value="handleRatioChange"
+        />
+      </div>
+
+      <div class="mt-4 grid grid-cols-2 gap-2">
+        <div class="rounded-xl bg-dm-mint-light p-3 text-center">
+          <p class="text-[11px] text-dm-gray-dark">신랑 분담금</p>
+          <p class="mt-1 text-base font-extrabold text-dm-mint-darker">
+            {{ formatWon(groomAmount) }}
+          </p>
+        </div>
+        <div class="rounded-xl bg-dm-rose-light p-3 text-center">
+          <p class="text-[11px] text-dm-gray-dark">신부 분담금</p>
+          <p class="mt-1 text-base font-extrabold text-btn-pk-dark">{{ formatWon(brideAmount) }}</p>
+        </div>
+      </div>
+
+      <p class="mt-3 text-center text-[11px] text-dm-gray-dark">
+        슬라이더를 움직이면 두 사람의 분담금이 바로 계산돼요.
+      </p>
+    </div>
+
+    <div class="mt-4 flex gap-2 rounded-xl bg-dm-mint-light p-4">
+      <span aria-hidden="true">⚠️</span>
+      <p class="text-xs leading-5 text-[#232631]">
+        <template v-if="requiredMonthly !== null">
+          현재 자산 {{ CURRENT_ASSET.toLocaleString() }}만원 · 남은 {{ remainingMonths }}개월 기준
+          월 {{ requiredMonthly.toLocaleString() }}만원을 모아야 해요. 지금 저축 가능액(월
+          {{ AVAILABLE_MONTHLY.toLocaleString() }}만원)보다
+          {{ requiredMonthly > AVAILABLE_MONTHLY ? '많아요' : '적어요' }}.
+        </template>
+        <template v-else>결혼 예정일을 입력하면 필요 저축액을 계산해드려요.</template>
+      </p>
+    </div>
+
+    <p class="mt-3 text-[11px] text-dm-gray-dark">
+      지역 평균 출처 · 2025년 결혼 비용 통계 (기준연도 2025 · 갱신 2026.06.30)
+    </p>
+
+    <p
+      v-if="submitError"
+      class="mt-3 text-center text-xs font-semibold text-destructive"
+    >
+      저장에 실패했어요. 다시 시도해주세요.
+    </p>
+
+    <Button
+      type="button"
+      :disabled="submitting"
+      class="mt-6 h-[52px] w-full rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-btn-pk-dark"
+      @click="handleShare"
+    >
+      {{ submitting ? '저장 중이에요...' : '예산 시안 저장하고 파트너에게 공유' }}
+    </Button>
+  </div>
+</template>

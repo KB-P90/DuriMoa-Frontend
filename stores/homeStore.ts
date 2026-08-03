@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { getHomeDashboard, getMonthlySavingMissions } from '@/apis/homeApi';
+import { getHomeDashboard, getMonthlySavingMissions } from '@/server/homeApi';
 import { toHomeDashboard, toSavingMission } from '@/models/Home';
 import type { HomeDashboard, SavingMission } from '@/types/home';
 

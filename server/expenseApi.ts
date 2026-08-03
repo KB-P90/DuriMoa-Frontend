@@ -1,4 +1,4 @@
-import { api } from '@/apis/axios';
+import { api } from '@/server/axios';
 import { ApiResponse } from '@/types/common';
 import { MonthlyExpenseResponse, MonthlySavingMissionResponse } from '@/types/expense';
 
