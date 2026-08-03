@@ -5,7 +5,7 @@ import type {
   LoginResponseDto,
   SignupRequestDto,
   SignupResponseDto,
-} from '@/types/dto/auth';
+} from '@/types/dto/auth.dto';
 
 const AUTH_ENDPOINT_PREFIX =
   import.meta.env.DEV && !import.meta.env.VITE_API_BASE_URL ? '/api/auth' : '/auth';

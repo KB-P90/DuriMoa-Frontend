@@ -2,7 +2,7 @@ import type {
   CouplePartnerResponseDto,
   CoupleStatusResponseDto,
   OnboardingAccountDto,
-} from '@/types/dto/onboarding';
+} from '@/types/dto/onboarding.dto';
 import type { OnboardingAccount, OnboardingCoupleRequest } from '@/types/onboarding';
 
 // 계좌 조회 DTO를 온보딩 화면의 계좌 정보로 변환한다.
