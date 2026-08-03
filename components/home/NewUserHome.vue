@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Bell, ChevronRight, ClipboardList, Heart, Info, MapPin, Menu } from '@lucide/vue';
+import { RouterLink } from 'vue-router';
 import MenuPanel from '@/components/common/MenuPanel.vue';
+import { ONBOARDING_ROUTE_NAMES } from '@/constants/onboard';
 
 const isMenuOpen = ref(false);
+const ONBOARDING_START_ROUTE = {
+  name: ONBOARDING_ROUTE_NAMES.ONBOARDING,
+  query: { screen: 'couple' },
+} as const;
 
 const CHECKLIST_STEPS = [
   { label: '커플 연결', value: '✓', active: true },
@@ -61,7 +67,7 @@ const REGIONAL_BUDGETS = [
             <ClipboardList class="h-[25px] w-[25px] text-[#FF7C75]" :stroke-width="2" />
             <h2 class="text-xl font-bold tracking-[-0.65px]">두리모아 체크리스트</h2>
           </div>
-          <button type="button" class="h-[33px] rounded-[17px] border border-[#DEDDE2] px-3 text-[13px] font-bold text-[#60626D]">설정하기 ›</button>
+          <RouterLink :to="ONBOARDING_START_ROUTE" class="flex h-[33px] items-center rounded-[17px] border border-[#DEDDE2] px-3 text-[13px] font-bold text-[#60626D]">설정하기 ›</RouterLink>
         </div>
 
         <div class="relative mt-[14px] flex justify-between before:absolute before:left-8 before:right-[30px] before:top-[26px] before:h-[2px] before:bg-[#DEDFE3]">

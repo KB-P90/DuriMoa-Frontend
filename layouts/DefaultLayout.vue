@@ -15,6 +15,9 @@ const emit = defineEmits<{
     <main class="flex-1 overflow-y-auto pb-[calc(4rem+env(safe-area-inset-bottom))]">
       <slot />
     </main>
-    <BottomNav :active="active" @select="emit('select', $event)" />
+    <BottomNav
+      :active="active"
+      @select="emit('select', $event)"
+    />
   </div>
 </template>

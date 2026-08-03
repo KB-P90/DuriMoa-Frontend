@@ -7,6 +7,10 @@ import AuthSessionView from '@/views/auth/AuthSessionView.vue';
 import LoginView from '@/views/auth/LoginView.vue';
 import SignupView from '@/views/auth/SignupView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
+import GoalBudgetTypeView from '@/views/goal/GoalBudgetTypeView.vue';
+import GoalCategoryBudgetView from '@/views/goal/GoalCategoryBudgetView.vue';
+import GoalScheduleView from '@/views/goal/GoalScheduleView.vue';
+import GoalSummaryView from '@/views/goal/GoalSummaryView.vue';
 import CardStrategyView from '@/views/card/CardStrategyView.vue';
 import CardAmountInputView from '@/views/card/CardAmountInputView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
@@ -24,6 +28,17 @@ const router = createRouter({
         { path: 'home', name: 'home', component: HomeView },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
+        { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
+        { path: 'goal', redirect: { name: 'goal-schedule' } },
+        { path: 'goal/schedule', name: 'goal-schedule', component: GoalScheduleView },
+        { path: 'goal/budget-type', name: 'goal-budget-type', component: GoalBudgetTypeView },
+        {
+          path: 'goal/categories/:categoryCode',
+          name: 'goal-category-budget',
+          component: GoalCategoryBudgetView,
+          props: true,
+        },
+        { path: 'goal/summary', name: 'goal-summary', component: GoalSummaryView },
         { path: 'card', name: 'card', component: CardStrategyView },
       ],
     },
