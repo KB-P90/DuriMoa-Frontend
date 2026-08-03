@@ -23,10 +23,17 @@ const emit = defineEmits<{
 <template>
   <div class="mx-auto w-full max-w-xl overflow-hidden px-4 pb-5 pt-6 sm:px-5">
     <header class="mb-4 flex items-center justify-between gap-3">
-      <h1 class="whitespace-nowrap text-xl font-semibold tracking-tight text-gray-800 sm:text-2xl">2026년 7월</h1>
-      <div class="flex shrink-0 rounded-2xl bg-gray-100 p-1 text-xs font-medium text-dm-gray-dark sm:text-sm">
+      <h1 class="whitespace-nowrap text-xl font-semibold tracking-tight text-gray-800 sm:text-2xl">
+        2026년 7월
+      </h1>
+      <div
+        class="flex shrink-0 rounded-2xl bg-gray-100 p-1 text-xs font-medium text-dm-gray-dark sm:text-sm"
+      >
         <button
-          v-for="item in ([['wedding', '결혼비용'], ['personal', '개인소비']] as const)"
+          v-for="item in [
+            ['wedding', '결혼비용'],
+            ['personal', '개인소비'],
+          ] as const"
           :key="item[0]"
           type="button"
           class="rounded-xl px-2.5 py-2.5 sm:px-4"
@@ -40,7 +47,11 @@ const emit = defineEmits<{
 
     <CalendarSummary :items="summary" />
     <div class="mt-5">
-      <MonthCalendar :days="days" :selected-date="selectedDate" @select="emit('select-date', $event)" />
+      <MonthCalendar
+        :days="days"
+        :selected-date="selectedDate"
+        @select="emit('select-date', $event)"
+      />
     </div>
 
     <section class="mt-5">
@@ -50,7 +61,10 @@ const emit = defineEmits<{
           {{ transactions.length }}건
         </span>
       </div>
-      <TransactionList :transactions="transactions" @select="emit('select-transaction', $event)" />
+      <TransactionList
+        :transactions="transactions"
+        @select="emit('select-transaction', $event)"
+      />
     </section>
 
     <button

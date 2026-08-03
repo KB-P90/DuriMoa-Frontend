@@ -1,5 +1,4 @@
 import { computed, ref, watch, type Ref } from 'vue';
-import { acceptPartner, getCoupleStatus, invitePartner } from '@/apis/onboardingApi';
 import {
   ONBOARDING_API_ERROR_MESSAGES,
   ONBOARDING_COUPLE_MESSAGES,
@@ -8,6 +7,7 @@ import {
 import { isOnboardingCoupleRequest, toOnboardingCoupleRequest } from '@/models/Onboarding';
 import type { OnboardingCoupleRequest } from '@/types/onboarding';
 import { getOnboardingApiErrorMessage } from '@/utils/onboardingApiError';
+import { acceptPartner, getCoupleStatus, invitePartner } from '@/server/onboardingApi';
 
 // 커플 연결 단계의 API 상태와 사용자 동작을 관리한다.
 export function useOnboardingCouple(isActive: Readonly<Ref<boolean>>) {

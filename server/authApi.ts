@@ -1,4 +1,4 @@
-import { api } from '@/apis/axios.js';
+import { api } from './axios';
 import type { ApiResponse } from '@/types/common';
 import type {
   LoginRequestDto,
