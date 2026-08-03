@@ -2,9 +2,10 @@
 import AuthHeader from '@/components/auth/AuthHeader.vue';
 import AuthScreen from '@/components/auth/AuthScreen.vue';
 import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
+import { signup } from '@/apis/authApi';
 import { useSignup } from '@/composables/useSignup';
 
-// 백엔드 연동 시 useSignup(signup)으로 API 함수를 주입한다.
+// 회원가입 API를 주입해 입력 검증 이후 서버 요청을 실행한다.
 const {
   isSubmitting,
   marketingTermsAgreed,
@@ -18,7 +19,7 @@ const {
   serviceTermsAgreed,
   signupError,
   submitSignup,
-} = useSignup();
+} = useSignup(signup);
 </script>
 
 <template>
