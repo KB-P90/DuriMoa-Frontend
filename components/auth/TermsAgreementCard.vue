@@ -1,26 +1,28 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-// 회원가입 화면에서만 사용하는 약관 선택 상태다.
-const serviceAgreed = ref(false);
-const privacyAgreed = ref(false);
+// 백엔드 회원가입 요청에 전달할 약관 동의 상태다.
+const serviceAgreed = defineModel<boolean>('serviceTermsAgreed', { default: false });
+const privacyAgreed = defineModel<boolean>('privacyTermsAgreed', { default: false });
+const marketingAgreed = defineModel<boolean>('marketingTermsAgreed', { default: false });
+
+// 금융정보 연동 동의는 회원가입 DTO와 별개의 화면 상태다.
 const financeAgreed = ref(false);
 
 // 전체 동의 선택 시 모든 약관을 같은 값으로 변경하고, 개별 상태도 전체 동의에 반영한다.
 const allAgreed = computed<boolean>({
-  get: () => serviceAgreed.value && privacyAgreed.value && financeAgreed.value,
+  get: () =>
+    serviceAgreed.value && privacyAgreed.value && marketingAgreed.value && financeAgreed.value,
   set: (checked) => {
     serviceAgreed.value = checked;
     privacyAgreed.value = checked;
+    marketingAgreed.value = checked;
     financeAgreed.value = checked;
   },
 });
 </script>
 
 <template>
-  <!--
-    퍼블리싱 단계의 화면 전용 상태이며, 가입 API 연결 시 부모 폼 상태로 이동한다.
-  -->
   <fieldset
     class="m-0 min-w-0 rounded-2xl border border-dm-gray/40 bg-dm-gray-light p-3.5 shadow-lg shadow-dm-gray/20"
   >
@@ -52,7 +54,8 @@ const allAgreed = computed<boolean>({
           v-model="serviceAgreed"
           class="peer sr-only"
           type="checkbox"
-          name="agreeService"
+          name="serviceTermsAgreed"
+          required
         />
         <span
           class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
@@ -88,7 +91,8 @@ const allAgreed = computed<boolean>({
           v-model="privacyAgreed"
           class="peer sr-only"
           type="checkbox"
-          name="agreePrivacy"
+          name="privacyTermsAgreed"
+          required
         />
         <span
           class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
@@ -117,6 +121,30 @@ const allAgreed = computed<boolean>({
       </RouterLink>
     </div>
 
+    <!-- 선택: 마케팅 정보 수신 동의 -->
+    <div class="flex min-h-9 items-center justify-between gap-2">
+      <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
+        <input
+          v-model="marketingAgreed"
+          class="peer sr-only"
+          type="checkbox"
+          name="marketingTermsAgreed"
+        />
+        <span
+          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
+          aria-hidden="true"
+        >
+          ✓
+        </span>
+        <span>마케팅 정보 수신</span>
+        <em
+          class="rounded-full bg-dm-gray/20 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-dm-gray-dark"
+        >
+          선택
+        </em>
+      </label>
+    </div>
+
     <!-- 선택: 금융정보 연동 약관 -->
     <div class="flex min-h-9 items-center justify-between gap-2">
       <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
@@ -124,7 +152,7 @@ const allAgreed = computed<boolean>({
           v-model="financeAgreed"
           class="peer sr-only"
           type="checkbox"
-          name="agreeFinance"
+          name="financeTermsAgreed"
         />
         <span
           class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"

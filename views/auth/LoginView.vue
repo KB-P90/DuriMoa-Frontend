@@ -1,6 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import AuthScreen from '@/components/auth/AuthScreen.vue';
 import BrandMark from '@/components/auth/BrandMark.vue';
+import { useLogin } from '@/composables/useLogin';
+
+const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
 </script>
 
 <template>
@@ -9,16 +12,12 @@ import BrandMark from '@/components/auth/BrandMark.vue';
       <!-- 서비스 로고와 소개 문구 -->
       <BrandMark class="mb-8" />
 
-      <!--
-        퍼블리싱용 로그인 입력 영역
-        연동 시 POST /api/auth/login에 phone, password를 전달한다.
-      -->
       <!-- TODO: #232631 진한 입력 글자 색상 토큰 등록 검토 -->
       <form
         class="flex w-full flex-col gap-4"
         aria-label="로그인"
         data-endpoint="/api/auth/login"
-        @submit.prevent
+        @submit.prevent="submitLogin"
       >
         <div>
           <label
@@ -27,9 +26,10 @@ import BrandMark from '@/components/auth/BrandMark.vue';
           >
             휴대폰 번호
           </label>
-          <!-- 연동 시 하이픈을 제거한 뒤 phone 값으로 전송한다. -->
+          <!-- 하이픈 정규화와 인증 판단은 백엔드에서 처리한다. -->
           <input
             id="login-phone"
+            v-model="phone"
             class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
             type="tel"
             name="phone"
@@ -37,6 +37,8 @@ import BrandMark from '@/components/auth/BrandMark.vue';
             autocomplete="username"
             placeholder="010-1234-5678"
             pattern="01[016789]-?[0-9]{3,4}-?[0-9]{4}"
+            :aria-invalid="Boolean(loginError)"
+            :aria-describedby="loginError ? 'login-error' : undefined"
             required
           />
           <p class="mt-1.5 text-[11px] leading-4 text-dm-gray-dark">
@@ -53,6 +55,7 @@ import BrandMark from '@/components/auth/BrandMark.vue';
           </label>
           <input
             id="login-password"
+            v-model="password"
             class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
             type="password"
             name="password"
@@ -60,6 +63,8 @@ import BrandMark from '@/components/auth/BrandMark.vue';
             placeholder="비밀번호를 입력해주세요"
             minlength="8"
             maxlength="72"
+            :aria-invalid="Boolean(loginError)"
+            :aria-describedby="loginError ? 'login-error' : undefined"
             required
           />
           <p class="mt-1.5 text-[11px] leading-4 text-dm-gray-dark">
@@ -67,14 +72,23 @@ import BrandMark from '@/components/auth/BrandMark.vue';
           </p>
         </div>
 
-        <!-- 실패 응답의 ApiResponse.message는 입력 영역 아래 오류 문구로 표시한다. -->
-        <!-- 연동 시 성공 응답의 data.accessToken과 data.user를 인증 상태에 저장한다. -->
-        <RouterLink
-          class="mt-0.5 grid min-h-[50px] w-full place-items-center rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light no-underline transition hover:bg-btn-pk-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
-          to="/auth/session"
+        <p
+          v-if="loginError"
+          id="login-error"
+          class="-mt-1 text-xs font-semibold text-btn-pk-dark"
+          role="alert"
+          aria-live="polite"
         >
-          로그인
-        </RouterLink>
+          {{ loginError }}
+        </p>
+
+        <button
+          class="mt-0.5 grid min-h-[50px] w-full place-items-center rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light transition hover:bg-btn-pk-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30 disabled:cursor-not-allowed disabled:opacity-60"
+          type="submit"
+          :disabled="isSubmitting"
+        >
+          {{ isSubmitting ? '로그인 중...' : '로그인' }}
+        </button>
       </form>
 
       <!-- 일반 로그인과 소셜 로그인을 구분하는 영역 -->
