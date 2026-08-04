@@ -4,8 +4,11 @@ import AuthScreen from '@/components/auth/AuthScreen.vue';
 import AccountConnectionStep from '@/components/onboarding/AccountConnectionStep.vue';
 import AccountSelectionStep from '@/components/onboarding/AccountSelectionStep.vue';
 import CoupleConnectionStep from '@/components/onboarding/CoupleConnectionStep.vue';
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useOnboardingCouple } from '@/composables/useOnboardingCouple';
 import { useOnboardingFlow } from '@/composables/useOnboardingFlow';
+
+useAuthCheck();
 
 // 온보딩 전체 단계에서 공유하는 상태와 화면 이동 동작이다.
 const {

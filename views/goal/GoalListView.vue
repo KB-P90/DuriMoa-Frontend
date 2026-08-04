@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router';
 import BudgetProposalCard from '@/components/goal/BudgetProposalCard.vue';
 import MainProposalDialog from '@/components/goal/MainProposalDialog.vue';
 import { Separator } from '@/components/ui/separator';
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import {
   cancelMainProposalRequest,
   decideMainProposalRequest,
@@ -21,6 +22,8 @@ import type {
   ProposalCardItem,
 } from '@/types/goal';
 import { formatDateDot } from '@/utils/format';
+
+useAuthCheck();
 
 const router = useRouter();
 const goalStore = useGoalStore();

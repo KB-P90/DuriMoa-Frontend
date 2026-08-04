@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useCalendar } from '@/composables/useCalendar';
 import CalendarView from '@/views/CalendarView.vue';
 import TransactionEditView from '@/views/TransactionEditView.vue';
+
+useAuthCheck();
 
 const {
   mode,

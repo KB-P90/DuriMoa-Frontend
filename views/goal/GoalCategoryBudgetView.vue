@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useGoalStore } from '@/stores/goalStore';
 import type { BudgetTypeCode, GoalCategoryCode, GoalCategoryStat } from '@/types/goal';
 import { formatAmount } from '@/utils/format';
@@ -15,6 +16,8 @@ import { formatAmount } from '@/utils/format';
 const props = defineProps<{
   categoryCode: GoalCategoryCode;
 }>();
+
+useAuthCheck();
 
 const router = useRouter();
 const route = useRoute();
