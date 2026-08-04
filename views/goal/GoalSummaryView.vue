@@ -3,7 +3,7 @@ import { ChevronRight } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { getGoalCategoryStat } from '@/server/goalApi';
+import { getGoalCategoryStat, getGoalProposals } from '@/server/goalApi';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
@@ -11,8 +11,12 @@ import { useGoalStore } from '@/stores/goalStore';
 import type { BudgetTypeCode, GoalCategoryCode, GoalCategoryStat } from '@/types/goal';
 import { formatSignedAmount, formatWon } from '@/utils/format';
 
+const props = defineProps<{ goalId?: string }>();
+
 const router = useRouter();
 const goalStore = useGoalStore();
+
+const isEditing = computed(() => goalStore.editingGoalId !== null);
 
 // GoalBudgetTypeView와 동일한 목업 표. GET /api/goal/stat이 전국 평균까지 함께
 // 내려주게 되면 그쪽 응답으로 교체한다.
@@ -71,7 +75,22 @@ const categorySegments = computed(() =>
 // 화면 진입 시 6개 카테고리 시세를 한 번에 불러온다.
 const categoryStats = ref<Partial<Record<GoalCategoryCode, GoalCategoryStat>>>({});
 
+// 목록 카드를 눌러 들어오면 goalStore.draft가 이미 채워져 있지만, URL로 바로 들어오거나
+// 새로고침한 경우엔 draft가 비어있으므로 목록을 다시 불러와 채운다.
+async function ensureDraftForEditing() {
+  if (!props.goalId || goalStore.editingGoalId === Number(props.goalId)) return;
+
+  try {
+    const proposals = await getGoalProposals();
+    const goal = proposals.find((item) => item.goalId === Number(props.goalId));
+    if (goal) goalStore.loadFromProposal(goal);
+  } catch {
+    // 무시: 실패해도 화면은 빈 draft로 렌더링될 뿐 깨지지 않는다.
+  }
+}
+
 onMounted(async () => {
+  await ensureDraftForEditing();
   if (!goalStore.draft.region) return;
 
   const results = await Promise.all(
@@ -124,6 +143,11 @@ function editCategory(code: GoalCategoryCode) {
 const submitting = ref(false);
 const submitError = ref(false);
 
+const submitLabel = computed(() => {
+  if (submitting.value) return '저장 중이에요...';
+  return isEditing.value ? '수정 내용 저장하기' : '예산 시안 저장하고 파트너에게 공유';
+});
+
 async function handleShare() {
   const categoryTypeLabels = Object.fromEntries(
     GOAL_CATEGORIES.map((category) => [category.code, budgetTypeLabelFor(category.code)])
@@ -133,7 +157,7 @@ async function handleShare() {
   submitError.value = false;
   try {
     await goalStore.submitGoal(categoryTypeLabels);
-    router.push({ name: 'home' });
+    router.push({ name: isEditing.value ? 'goal-list' : 'home' });
   } catch {
     submitError.value = true;
   } finally {
@@ -145,8 +169,16 @@ async function handleShare() {
 <template>
   <div class="p-4">
     <div class="mb-6 text-center">
-      <h1 class="text-lg font-extrabold text-[#232631]">예산 시안이 완성됐어요</h1>
-      <p class="mt-1 text-sm text-dm-gray-dark">두 사람이 확인하면 공동 목표로 확정돼요</p>
+      <h1 class="text-lg font-extrabold text-[#232631]">
+        {{ isEditing ? '예산 시안을 수정하고 있어요' : '예산 시안이 완성됐어요' }}
+      </h1>
+      <p class="mt-1 text-sm text-dm-gray-dark">
+        {{
+          isEditing
+            ? '저장하면 이 시안의 내용이 바뀌어요'
+            : '두 사람이 확인하면 공동 목표로 확정돼요'
+        }}
+      </p>
     </div>
 
     <div class="rounded-2xl bg-dm-cb-light p-5 text-center">
@@ -290,7 +322,7 @@ async function handleShare() {
       class="mt-6 h-[52px] w-full rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-btn-pk-dark"
       @click="handleShare"
     >
-      {{ submitting ? '저장 중이에요...' : '예산 시안 저장하고 파트너에게 공유' }}
+      {{ submitLabel }}
     </Button>
   </div>
 </template>

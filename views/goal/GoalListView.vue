@@ -1,0 +1,244 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue';
+import { ArrowLeft } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
+
+import BudgetProposalCard from '@/components/goal/BudgetProposalCard.vue';
+import MainProposalDialog from '@/components/goal/MainProposalDialog.vue';
+import { Separator } from '@/components/ui/separator';
+import {
+  cancelMainProposalRequest,
+  decideMainProposalRequest,
+  getGoalProposals,
+  requestMainProposal,
+} from '@/server/goalApi';
+import { useGoalStore } from '@/stores/goalStore';
+import type {
+  BudgetProposalStatus,
+  GoalProposal,
+  MainProposalRequest,
+  ProposalCardItem,
+} from '@/types/goal';
+import { formatDateDot } from '@/utils/format';
+
+const router = useRouter();
+const goalStore = useGoalStore();
+
+const proposals = ref<GoalProposal[]>([]);
+
+// 자산 데이터는 마이페이지 도메인이 필요해서 GoalSummaryView와 동일한 값으로 목업.
+const CURRENT_ASSET = 3119;
+
+function remainingMonthsUntil(weddingDate: string) {
+  const today = new Date();
+  const target = new Date(weddingDate);
+  const months =
+    (target.getFullYear() - today.getFullYear()) * 12 + (target.getMonth() - today.getMonth());
+  return Math.max(months, 1);
+}
+
+function requiredMonthly(totalBudgetWon: number, weddingDate: string) {
+  const totalManwon = Math.round(totalBudgetWon / 10_000);
+  return Math.max(Math.round((totalManwon - CURRENT_ASSET) / remainingMonthsUntil(weddingDate)), 0);
+}
+
+function resolveStatus(goal: GoalProposal): BudgetProposalStatus {
+  if (goal.isMain) return 'main';
+  if (goal.status !== 'NORMAL') return goal.requestedByMe ? 'pending' : 'incoming';
+  return 'general';
+}
+
+// 메인 시안을 맨 위에 고정하고, 나머지는 최신순(생성일 내림차순)으로 정렬한다.
+function compareProposals(a: GoalProposal, b: GoalProposal) {
+  if (a.isMain !== b.isMain) return a.isMain ? -1 : 1;
+  return a.createdAt < b.createdAt ? 1 : -1;
+}
+
+const cardItems = computed<ProposalCardItem[]>(() =>
+  [...proposals.value].sort(compareProposals).map((goal) => ({
+    id: goal.goalId,
+    title: goal.name,
+    createdAt: formatDateDot(goal.createdAt),
+    amount: Math.round(goal.totalBudget / 10_000),
+    status: resolveStatus(goal),
+  }))
+);
+
+const mainProposal = computed(() => proposals.value.find((goal) => goal.isMain) ?? null);
+
+async function loadProposals() {
+  try {
+    proposals.value = await getGoalProposals();
+  } catch {
+    proposals.value = [];
+  }
+}
+
+onMounted(loadProposals);
+
+const dialogOpen = ref(false);
+const dialogMode = ref<'request' | 'accept'>('request');
+const dialogSubmitting = ref(false);
+const activeGoalId = ref<number | null>(null);
+const activeRequest = ref<MainProposalRequest | null>(null);
+const actionError = ref<string | null>(null);
+
+function openRequestDialog(goalId: number) {
+  activeGoalId.value = goalId;
+  dialogMode.value = 'request';
+  activeRequest.value = null;
+  actionError.value = null;
+  dialogOpen.value = true;
+}
+
+function openAcceptDialog(goalId: number) {
+  const goal = proposals.value.find((item) => item.goalId === goalId);
+  if (!goal || !mainProposal.value) return;
+
+  activeGoalId.value = goalId;
+  dialogMode.value = 'accept';
+  actionError.value = null;
+  activeRequest.value = {
+    proposerName: '상대방',
+    proposal: { title: goal.name, amount: Math.round(goal.totalBudget / 10_000) },
+    diffFromCurrentMain: Math.round((goal.totalBudget - mainProposal.value.totalBudget) / 10_000),
+    monthlySaving: {
+      before: requiredMonthly(mainProposal.value.totalBudget, mainProposal.value.weddingDate),
+      after: requiredMonthly(goal.totalBudget, goal.weddingDate),
+    },
+  };
+  dialogOpen.value = true;
+}
+
+// 신청 취소는 별도 확인 모달 없이 바로 처리한다 (디자인에 확인 모달 없음).
+async function cancelRequest(goalId: number) {
+  actionError.value = null;
+  try {
+    await cancelMainProposalRequest(goalId);
+    await loadProposals();
+  } catch {
+    actionError.value = '요청 취소에 실패했어요. 다시 시도해주세요.';
+  }
+}
+
+async function handleDialogConfirm() {
+  if (activeGoalId.value === null) {
+    dialogOpen.value = false;
+    return;
+  }
+
+  dialogSubmitting.value = true;
+  actionError.value = null;
+  try {
+    if (dialogMode.value === 'request') {
+      await requestMainProposal(activeGoalId.value);
+    } else {
+      await decideMainProposalRequest(activeGoalId.value, 'APPROVE');
+    }
+    await loadProposals();
+    dialogOpen.value = false;
+  } catch {
+    actionError.value = '요청 처리에 실패했어요. 다시 시도해주세요.';
+  } finally {
+    dialogSubmitting.value = false;
+  }
+}
+
+async function handleDialogCancel() {
+  // 신청 확인 모달의 '취소'는 아직 아무것도 보내지 않은 상태라 그냥 닫으면 된다.
+  if (dialogMode.value !== 'accept' || activeGoalId.value === null) {
+    dialogOpen.value = false;
+    return;
+  }
+
+  dialogSubmitting.value = true;
+  actionError.value = null;
+  try {
+    await decideMainProposalRequest(activeGoalId.value, 'REJECT');
+    await loadProposals();
+    dialogOpen.value = false;
+  } catch {
+    actionError.value = '요청 처리에 실패했어요. 다시 시도해주세요.';
+  } finally {
+    dialogSubmitting.value = false;
+  }
+}
+
+function openProposalDetail(goalId: number) {
+  const goal = proposals.value.find((item) => item.goalId === goalId);
+  if (!goal) return;
+
+  goalStore.loadFromProposal(goal);
+  router.push({ name: 'goal-summary', params: { goalId: String(goalId) } });
+}
+
+function handleBack() {
+  router.back();
+}
+
+function handleNewProposal() {
+  goalStore.reset();
+  router.push({ name: 'goal-schedule' });
+}
+</script>
+
+<template>
+  <div>
+    <header class="flex items-center justify-between px-4 py-3">
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          aria-label="뒤로 가기"
+          class="cursor-pointer"
+          @click="handleBack"
+        >
+          <ArrowLeft class="h-5 w-5 text-[#232631]" />
+        </button>
+        <h1 class="text-lg font-bold text-[#232631]">예산 시안</h1>
+      </div>
+      <button
+        type="button"
+        class="cursor-pointer text-sm font-semibold text-dm-co-darker transition-colors hover:text-btn-pk-dark"
+        @click="handleNewProposal"
+      >
+        + 새 시안
+      </button>
+    </header>
+    <Separator />
+
+    <div class="px-4 py-5">
+      <h2 class="text-2xl font-extrabold text-[#232631]">우리의 예산 시안</h2>
+      <p class="mt-2 text-sm leading-5 text-dm-gray-dark">
+        신청 버튼을 누르면 메인 시안 요청이 상대에게 전송돼요.<br />
+        상대가 승인하면 메인 시안으로 최종 확정돼요.
+      </p>
+      <p
+        v-if="actionError"
+        class="mt-2 text-sm font-semibold text-destructive"
+      >
+        {{ actionError }}
+      </p>
+
+      <div class="mt-5 flex flex-col gap-4">
+        <BudgetProposalCard
+          v-for="proposal in cardItems"
+          :key="proposal.id"
+          :proposal="proposal"
+          @open="openProposalDetail"
+          @apply="openRequestDialog"
+          @cancel="cancelRequest"
+          @review="openAcceptDialog"
+        />
+      </div>
+    </div>
+
+    <MainProposalDialog
+      v-model:open="dialogOpen"
+      :mode="dialogMode"
+      :request="activeRequest"
+      :loading="dialogSubmitting"
+      @confirm="handleDialogConfirm"
+      @cancel="handleDialogCancel"
+    />
+  </div>
+</template>
