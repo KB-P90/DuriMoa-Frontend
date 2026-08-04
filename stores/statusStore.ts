@@ -27,7 +27,7 @@ const EMPTY_MONTHLY_PROGRESS: MonthlyProgress = {
   months: [],
 };
 
-export const useStateStore = defineStore('state', () => {
+export const useStatusStore = defineStore('status', () => {
   const progressStatus = ref<ProgressStatusResponse | null>(null);
   const loading = ref(false);
   const error = ref<unknown>(null);

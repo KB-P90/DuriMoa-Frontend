@@ -3,9 +3,9 @@ import { onMounted, ref } from 'vue';
 import OverallStatus from './status/OverallStatus.vue';
 import PersonalStatus from './status/PersonalStatus.vue';
 import MonthlyProgress from './status/MonthlyProgress.vue';
-import { useStateStore } from '@/stores/stateStore.js';
+import { useStatusStore } from '@/stores/statusStore.js';
 
-const statusStore = useStateStore();
+const statusStore = useStatusStore();
 
 // 페이지 진입 시 현황 데이터 로드
 onMounted(() => {
@@ -34,7 +34,7 @@ const activeTab = ref('overall');
     </header>
 
     <nav
-      class="flex justify-center gap-10 mt-3 border-b border-dm-gray"
+      class="flex justify-center gap-5 mt-3 mx-2 border-b border-dm-gray"
       role="tablist"
     >
       <button
@@ -46,7 +46,7 @@ const activeTab = ref('overall');
         class="relative text-lg font-semibold pb-5 px-11 cursor-pointer text-nowrap"
         :class="[
           activeTab === tab.key
-            ? `text-btn-pk after:content-[''] after:absolute after:w-50 after:left-1/2 after:-translate-x-1/2 after:-bottom-px after:h-[4px] after:bg-btn-pk`
+            ? `text-btn-pk after:content-[''] after:absolute after:w-45 after:left-1/2 after:-translate-x-1/2 after:-bottom-px after:h-[4px] after:bg-btn-pk`
             : 'text-dm-gray-dark',
         ]"
       >
