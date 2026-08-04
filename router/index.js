@@ -16,6 +16,7 @@ import CardAmountInputView from '@/views/card/CardAmountInputView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
 import HomeView from '@/views/HomeView.vue';
 import OnboardingView from '@/views/onboarding/OnboardingView.vue';
+import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +30,15 @@ const router = createRouter({
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
         { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
+        {
+          path: 'expense/:yearMonth(\\d{4}-\\d{2})?',
+          name: 'expense',
+          component: MonthlyExpenseView,
+          props: (route) => ({
+            title: '월별 지출 관리',
+            yearMonth: route.params.yearMonth,
+          }),
+        },
         { path: 'goal', redirect: { name: 'goal-schedule' } },
         { path: 'goal/schedule', name: 'goal-schedule', component: GoalScheduleView },
         { path: 'goal/budget-type', name: 'goal-budget-type', component: GoalBudgetTypeView },
