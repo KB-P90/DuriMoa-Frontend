@@ -29,6 +29,13 @@ export const updateGoal = async (goalId: number, payload: GoalSubmission) => {
   return data.data;
 };
 
+// 시안 삭제. 메인 시안(isMain)은 다른 시안으로 교체한 뒤에만 삭제할 수 있어 호출 전에 막아야 한다.
+// 정확한 엔드포인트는 백엔드에서 아직 확정되지 않아 REST 관례(DELETE /goal/{goalId})로 우선 연동한다.
+export const deleteGoal = async (goalId: number) => {
+  const { data } = await api.delete<ApiResponse<unknown>>(`/goal/${goalId}`);
+  return data.data;
+};
+
 // 메인 시안 승인 요청
 export const requestMainProposal = async (goalId: number) => {
   const { data } = await api.patch<ApiResponse<unknown>>(`/goal/${goalId}/request`);
