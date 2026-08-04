@@ -41,3 +41,18 @@ export interface MyPageLogoutResponseDto {
 export interface MyPageProfileImageResponseDto {
   profileImage: string;
 }
+
+export interface MyPageCoupleInviteRequestDto {
+  inviteCode: string;
+}
+
+export interface MyPageCoupleAcceptRequestDto {
+  partnerUserId: number;
+}
+
+export interface MyPageCouplePartnerResponseDto {
+  userId: number;
+  name: string;
+  role: 'B' | 'G';
+  status: 'WAIT' | 'REQUESTED' | 'CONNECTED' | 'DISCONNECTED';
+}

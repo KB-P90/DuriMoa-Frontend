@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { ArrowLeft } from '@lucide/vue';
 import CoupleConnectionForm from '@/components/common/CoupleConnectionForm.vue';
-import { useOnboardingCouple } from '@/composables/useOnboardingCouple';
+import { useMyInfoCouple } from '@/composables/useMyInfoCouple';
 
 const router = useRouter();
 const isActive = ref(true);
@@ -23,7 +23,7 @@ const {
   loadCoupleStatus,
   requests,
   statusErrorMessage,
-} = useOnboardingCouple(isActive);
+} = useMyInfoCouple(isActive);
 </script>
 
 <template>

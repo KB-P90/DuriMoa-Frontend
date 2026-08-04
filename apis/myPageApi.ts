@@ -2,6 +2,9 @@ import { api } from '@/apis/axios.js';
 import type { ApiResponse } from '@/types/common';
 import type {
   MyPageAssetSummaryResponseDto,
+  MyPageCoupleAcceptRequestDto,
+  MyPageCoupleInviteRequestDto,
+  MyPageCouplePartnerResponseDto,
   MyPageLogoutResponseDto,
   MyPageProfileImageResponseDto,
   MyPageProfileResponseDto,
@@ -43,5 +46,28 @@ export const uploadMyPageProfileImage = async (formData: FormData) => {
 
 export const logoutMyPage = async () => {
   const { data } = await api.post<ApiResponse<MyPageLogoutResponseDto>>('/users/logout');
+  return data.data;
+};
+
+export const getMyPageCoupleStatus = async () => {
+  const { data } = await api.get<ApiResponse<MyPageCouplePartnerResponseDto[]>>('/couples/status');
+  return data.data;
+};
+
+export const inviteMyPageCouple = async (inviteCode: string) => {
+  const request: MyPageCoupleInviteRequestDto = { inviteCode };
+  const { data } = await api.post<ApiResponse<MyPageCouplePartnerResponseDto>>(
+    '/couples/invite',
+    request
+  );
+  return data.data;
+};
+
+export const acceptMyPageCouple = async (partnerUserId: number) => {
+  const request: MyPageCoupleAcceptRequestDto = { partnerUserId };
+  const { data } = await api.post<ApiResponse<MyPageCouplePartnerResponseDto>>(
+    '/couples/accept',
+    request
+  );
   return data.data;
 };
