@@ -26,7 +26,7 @@ const activeTab = ref('overall');
     </header>
 
     <nav
-      class="flex justify-center gap-10 mx-4 sm:mx-6 mt-3 border-b border-dm-gray"
+      class="flex justify-center gap-10 mt-3 border-b border-dm-gray"
       role="tablist"
     >
       <button
@@ -38,7 +38,7 @@ const activeTab = ref('overall');
         class="relative text-lg font-semibold pb-5 px-11 cursor-pointer text-nowrap"
         :class="[
           activeTab === tab.key
-            ? `text-btn-pk after:content-[''] after:absolute after:left-0 after:right-0 after:-bottom-px after:h-[4px] after:bg-btn-pk`
+            ? `text-btn-pk after:content-[''] after:absolute after:w-50 after:left-1/2 after:-translate-x-1/2 after:-bottom-px after:h-[4px] after:bg-btn-pk`
             : 'text-dm-gray-dark',
         ]"
       >
