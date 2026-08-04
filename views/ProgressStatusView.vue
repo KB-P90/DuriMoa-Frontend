@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import OverallStatus from './status/OverallStatus.vue';
 import PersonalStatus from './status/PersonalStatus.vue';
 import MonthlyProgress from './status/MonthlyProgress.vue';
+import { useStateStore } from '@/stores/stateStore.js';
+
+const statusStore = useStateStore();
+
+// 페이지 진입 시 현황 데이터 로드
+onMounted(() => {
+  statusStore.fetchProgressStatus();
+});
 
 const STATUS_TABS = [
   { key: 'overall', label: '전체 현황' },

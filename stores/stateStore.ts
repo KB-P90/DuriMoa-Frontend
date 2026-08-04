@@ -44,6 +44,8 @@ export const useStateStore = defineStore('state', () => {
     () => progressStatus.value?.monthlyProgress ?? EMPTY_MONTHLY_PROGRESS
   );
 
+  const isLoaded = computed(() => progressStatus.value !== null);
+
   async function fetchProgressStatus() {
     loading.value = true;
 
@@ -69,6 +71,7 @@ export const useStateStore = defineStore('state', () => {
     overallStatus,
     personalStatus,
     monthlyProgress,
+    isLoaded,
     fetchProgressStatus,
     reset,
   };
