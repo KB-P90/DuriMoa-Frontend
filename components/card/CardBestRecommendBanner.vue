@@ -1,0 +1,106 @@
+<script setup lang="ts">
+import { ref } from 'vue';
+import { ChevronRight } from '@lucide/vue';
+import type { BestCardRecommendation } from '@/types/card';
+import { formatAmount, formatWon } from '@/utils/format';
+
+defineProps<{
+  amount: number;
+  best: BestCardRecommendation;
+}>();
+
+defineEmits<{
+  'click-change-amount': [];
+  'click-card': [cardId: string];
+}>();
+
+const imageError = ref(false);
+</script>
+
+<template>
+  <div>
+    <!-- Top Header & Change Amount Button -->
+    <div class="mb-4 flex items-start justify-between">
+      <div>
+        <h2 class="text-xl font-extrabold text-gray-900 sm:text-2xl">
+          {{ formatWon(amount) }} 결제라면
+        </h2>
+        <p class="mt-1 text-xs text-dm-gray-dark">
+          예상 혜택이 가장 큰 카드를 찾았어요!
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="inline-flex cursor-pointer items-center gap-0.5 rounded-full bg-[#FFF0EF] px-3.5 py-1.5 text-xs font-bold text-btn-pk transition-colors hover:bg-dm-cb-light"
+        @click="$emit('click-change-amount')"
+      >
+        <span>금액 변경</span>
+        <ChevronRight class="h-3.5 w-3.5" />
+      </button>
+    </div>
+
+    <!-- Best Recommend Card Box -->
+    <div
+      class="relative cursor-pointer overflow-hidden rounded-3xl border border-white/60 bg-gradient-to-br from-[#FFF0EF] via-[#FFF4F5] to-[#FFEFEF] p-5 shadow-sm transition-transform hover:scale-[1.01]"
+      @click="$emit('click-card', best.cardId)"
+    >
+      <!-- BEST 1 Badge -->
+      <span class="absolute right-5 top-5 rounded-full bg-[#FF7666] px-3 py-1 text-[10px] font-bold text-white shadow-2xs">
+        BEST {{ best.rank || 1 }}
+      </span>
+
+      <div class="flex items-center gap-5">
+        <!-- Vertical Card Visual Plate -->
+        <div
+          class="relative flex h-36 w-24 shrink-0 flex-col justify-between overflow-hidden rounded-2xl p-3 shadow-md"
+          :class="best.cardBgColor || 'bg-[#FF4983]'"
+        >
+          <template v-if="best.cardImage && !imageError">
+            <img
+              :src="best.cardImage"
+              :alt="best.cardName"
+              class="h-full w-full object-contain"
+              @error="imageError = true"
+            />
+          </template>
+          <template v-else>
+            <div class="h-3.5 w-5 rounded-sm bg-white/70" />
+            <div class="flex flex-col items-center gap-0.5">
+              <span class="text-xs font-bold tracking-widest text-white/80">{{ best.cardCompany }}</span>
+              <span class="text-[11px] font-extrabold tracking-wider text-white line-clamp-1">{{ best.cardName }}</span>
+            </div>
+          </template>
+        </div>
+
+        <!-- Card Detail Info -->
+        <div class="flex flex-1 flex-col pt-1">
+          <span class="text-[11px] font-bold text-btn-pk">
+            이번 결제 추천
+          </span>
+          <strong class="mt-0.5 text-lg font-extrabold text-gray-900 sm:text-xl">
+            {{ best.cardName }}
+          </strong>
+
+          <hr class="my-2.5 border-t border-rose-100" />
+
+          <span class="text-[10px] font-medium text-gray-400">
+            예상 혜택
+          </span>
+          <div class="mt-0.5 flex items-baseline">
+            <strong class="text-xl font-extrabold text-gray-900">
+              {{ formatAmount(best.expectedBenefitAmount) }}원
+            </strong>
+            <span v-if="best.benefitRate > 0" class="ml-1.5 text-xs font-bold text-btn-pk">
+              {{ best.benefitRate }}%
+            </span>
+          </div>
+
+          <div class="mt-2.5 self-start rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-[#5A5B69] shadow-2xs">
+            <span class="mr-1 text-btn-pk">●</span> {{ best.ownerName || best.userName }} 님의 카드
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
