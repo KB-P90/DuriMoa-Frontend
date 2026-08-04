@@ -11,7 +11,7 @@ defineProps<{
 
 defineEmits<{
   'click-change-amount': [];
-  'click-card': [userCardKey: string];
+  'click-card': [cardId: string];
 }>();
 
 const imageError = ref(false);
@@ -43,7 +43,7 @@ const imageError = ref(false);
     <!-- Best Recommend Card Box -->
     <div
       class="relative cursor-pointer overflow-hidden rounded-3xl border border-white/60 bg-gradient-to-br from-[#FFF0EF] via-[#FFF4F5] to-[#FFEFEF] p-5 shadow-sm transition-transform hover:scale-[1.01]"
-      @click="$emit('click-card', best.userCardKey)"
+      @click="$emit('click-card', best.cardId)"
     >
       <!-- BEST 1 Badge -->
       <span class="absolute right-5 top-5 rounded-full bg-[#FF7666] px-3 py-1 text-[10px] font-bold text-white shadow-2xs">

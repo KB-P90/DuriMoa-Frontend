@@ -1,6 +1,6 @@
 export interface RecommendedCard {
   id: string;
-  userCardKey: string;
+  cardId: string;
   cardProductKey: string;
   cardCompany: string;
   name: string;
@@ -21,7 +21,7 @@ export interface UserCardGroup {
 
 export interface BestCardRecommendation {
   rank: number;
-  userCardKey: string;
+  cardId: string;
   userId: number;
   userName: string;
   cardProductKey: string;
@@ -49,7 +49,7 @@ export interface CardBenefitItem {
 
 export interface CardDetail {
   id: string;
-  userCardKey: string;
+  cardId: string;
   cardProductKey: string;
   cardCompany: string;
   cardName: string;

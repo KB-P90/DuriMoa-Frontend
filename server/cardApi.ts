@@ -11,9 +11,9 @@ export const getCardStrategyApi = async (amount?: number): Promise<CardStrategyD
   return data.data;
 };
 
-export const getCardDetailApi = async (userCardKey: string): Promise<CardDetailResponseDto> => {
-  console.log('카드상세 api 요청', { userCardKey });
-  const { data } = await api.get<ApiResponse<CardDetailResponseDto>>(`/strategy/card/${userCardKey}`);
+export const getCardDetailApi = async (cardId: string): Promise<CardDetailResponseDto> => {
+  console.log('카드상세 api 요청', { cardId });
+  const { data } = await api.get<ApiResponse<CardDetailResponseDto>>(`/strategy/card/${cardId}`);
   console.log('카드상세 api 응답', data);
   return data.data;
 };

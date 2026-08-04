@@ -59,12 +59,12 @@ export const useCardStore = defineStore('card', () => {
 
         domainData.userCardGroups.forEach((group) => {
           group.cards.forEach((card) => {
-            if (card.userCardKey && !card.benefits) {
-              const promise = getCardDetailApi(card.userCardKey)
+            if (card.cardId && !card.benefits) {
+              const promise = getCardDetailApi(card.cardId)
                 .then((detailDto) => {
                   const cardDetailObj = toCardDetail(detailDto);
                   // 캐시에 저장하여 클릭 시 또 요청하지 않고 즉시 재사용
-                  cardDetailCache.set(card.userCardKey, cardDetailObj);
+                  cardDetailCache.set(card.cardId, cardDetailObj);
 
                   if (cardDetailObj?.benefits && cardDetailObj.benefits.length > 0) {
                     const topBenefits = cardDetailObj.benefits
@@ -112,24 +112,24 @@ export const useCardStore = defineStore('card', () => {
     await fetchCardStrategy(DEFAULT_AMOUNT);
   }
 
-  async function openCardDetail(userCardKey?: string) {
-    if (!userCardKey) return;
+  async function openCardDetail(cardId?: string) {
+    if (!cardId) return;
 
     // 이미 저장(캐싱)된 카드 상세 데이터가 있는 경우 굳이 또 API 요청하지 않고 즉시 가져옴
-    if (cardDetailCache.has(userCardKey)) {
-      console.log(`[CARD STORE] ⚡ 캐시된 카드 상세 데이터를 재사용합니다. (userCardKey: ${userCardKey})`);
-      selectedCardDetail.value = cardDetailCache.get(userCardKey)!;
+    if (cardDetailCache.has(cardId)) {
+      console.log(`[CARD STORE] ⚡ 캐시된 카드 상세 데이터를 재사용합니다. (cardId: ${cardId})`);
+      selectedCardDetail.value = cardDetailCache.get(cardId)!;
       return;
     }
 
     isDetailLoading.value = true;
     try {
-      const dto = await getCardDetailApi(userCardKey);
+      const dto = await getCardDetailApi(cardId);
       const detailObj = toCardDetail(dto);
-      cardDetailCache.set(userCardKey, detailObj);
+      cardDetailCache.set(cardId, detailObj);
       selectedCardDetail.value = detailObj;
     } catch (e: unknown) {
-      console.error(`Failed to fetch card detail for key (${userCardKey}):`, e);
+      console.error(`Failed to fetch card detail for key (${cardId}):`, e);
     } finally {
       isDetailLoading.value = false;
     }

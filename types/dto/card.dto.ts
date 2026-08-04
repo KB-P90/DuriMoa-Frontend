@@ -1,5 +1,5 @@
 export interface BestCardDto {
-  user_card_key: number;
+  card_id: number;
   owner_type: string;
   owner_name: string;
   company: string;
@@ -12,7 +12,7 @@ export interface BestCardDto {
 
 export interface OwnerCardDto {
   rank: number;
-  user_card_key: number;
+  card_id: number;
   card_product_id: number;
   company: string;
   card_name: string;
@@ -62,7 +62,7 @@ export interface CardBenefitItemDto {
 }
 
 export interface CardDetailResponseDto {
-  user_card_key: number;
+  card_id: number;
   card_product_id: number;
   company: string;
   card_name: string;

@@ -24,15 +24,15 @@ function handleGoToAmountInput() {
 }
 
 function handleSelectCard(card: RecommendedCard) {
-  const key = card.userCardKey || card.id;
+  const key = card.cardId || card.id;
   if (key) {
     cardStore.openCardDetail(key);
   }
 }
 
-function handleSelectBestCard(userCardKey: string) {
-  if (userCardKey) {
-    cardStore.openCardDetail(userCardKey);
+function handleSelectBestCard(cardId: string) {
+  if (cardId) {
+    cardStore.openCardDetail(cardId);
   }
 }
 

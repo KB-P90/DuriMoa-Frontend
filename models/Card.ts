@@ -42,8 +42,8 @@ export function toRecommendedCard(dto: OwnerCardDto, index: number): Recommended
   const formattedBenefits = benefitTitles.slice(0, 3).join(', ');
 
   return {
-    id: String(dto?.user_card_key ?? ''),
-    userCardKey: String(dto?.user_card_key ?? ''),
+    id: String(dto?.card_id ?? ''),
+    cardId: String(dto?.card_id ?? ''),
     cardProductKey: String(dto?.card_product_id ?? ''),
     cardCompany: dto?.company ?? '',
     name: dto?.card_name ?? '',
@@ -81,7 +81,7 @@ export function toBestCard(
 
   return {
     rank: 1,
-    userCardKey: String(dto.user_card_key ?? ''),
+    cardId: String(dto.card_id ?? ''),
     userId: 0,
     userName: dto.owner_name ?? '',
     cardProductKey: '',
@@ -148,8 +148,8 @@ export function toCardDetail(dto: CardDetailResponseDto): CardDetail {
   });
 
   return {
-    id: String(dto?.user_card_key ?? ''),
-    userCardKey: String(dto?.user_card_key ?? ''),
+    id: String(dto?.card_id ?? ''),
+    cardId: String(dto?.card_id ?? ''),
     cardProductKey: String(dto?.card_product_id ?? ''),
     cardCompany: dto?.company ?? '',
     cardName: dto?.card_name ?? '',
