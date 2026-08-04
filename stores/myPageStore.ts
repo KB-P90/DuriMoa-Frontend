@@ -6,8 +6,8 @@ import {
   updateMyPageProfile,
   updateMyPageShare,
   uploadMyPageProfileImage,
-} from '@/apis/myPageApi';
-import { ACCESS_TOKEN_KEY } from '@/apis/axios.js';
+} from '@/server/myPageApi';
+import { ACCESS_TOKEN_KEY } from '@/server/axios.js';
 import { toCoupleRole, toMyPage } from '@/models/MyPage';
 import type { MyPage, MyPageAssetSummary, MyPageProfileForm } from '@/types/myPage';
 

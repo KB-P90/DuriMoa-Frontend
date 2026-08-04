@@ -3,7 +3,7 @@ import {
   acceptMyPageCouple,
   getMyPageCoupleStatus,
   inviteMyPageCouple,
-} from '@/apis/myPageApi';
+} from '@/server/myPageApi';
 import type { MyPageCouplePartnerResponseDto } from '@/types/dto/myPage.dto';
 import type { OnboardingCoupleRequest } from '@/types/onboarding';
 
