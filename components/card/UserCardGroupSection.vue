@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue';
 import { ChevronDown, ChevronUp } from '@lucide/vue';
 import type { RecommendedCard, UserCardGroup } from '@/types/card';
-import { formatAmount } from '@/utils/format';
 
 const props = defineProps<{
   group: UserCardGroup;
@@ -67,12 +66,10 @@ function toggleExpand() {
               </span>
             </div>
           </div>
+          <!-- 주요 혜택 최대 3개 (콤마 연결, 전월실적 스타일) -->
           <p class="mt-1 text-xs text-dm-gray-dark">
             {{ card.benefits }}
           </p>
-          <div v-if="card.expectedBenefitAmount !== undefined && card.expectedBenefitAmount > 0" class="mt-1 text-xs font-semibold text-btn-pk">
-            예상 혜택: {{ formatAmount(card.expectedBenefitAmount) }}원
-          </div>
         </div>
       </div>
     </div>

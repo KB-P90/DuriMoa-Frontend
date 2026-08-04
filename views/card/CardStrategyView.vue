@@ -72,7 +72,7 @@ onBeforeRouteLeave((to) => {
     <template v-else>
       <!-- Top Banner Section (Screen 2 vs Screen 3 Condition) -->
       <section class="mb-7">
-        <!-- Screen 3 Banner: When Custom Amount is set or best recommendation exists -->
+        <!-- Screen 3 Banner: When Custom Amount is set -->
         <CardBestRecommendBanner
           v-if="cardStore.isCustomAmountSet && cardStore.bestRecommendation"
           :amount="cardStore.amount"
@@ -81,7 +81,7 @@ onBeforeRouteLeave((to) => {
           @click-card="handleSelectBestCard"
         />
 
-        <!-- Screen 2 Banner: Default View -->
+        <!-- Screen 2 Banner: Default View ("다음 결제, 어떤 카드가 좋을까요?") -->
         <CardSmartBanner
           v-else
           @click-input-amount="handleGoToAmountInput"

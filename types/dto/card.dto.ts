@@ -1,30 +1,45 @@
 export interface BestCardDto {
-  rank: number;
-  user_card_key: string;
-  user_id: number;
-  user_name: string;
-  card_product_key: string;
-  card_company: string;
+  user_card_key: number;
+  owner_type: string;
+  owner_name: string;
+  company: string;
   card_name: string;
-  card_image: string;
-  annual_fee: number;
+  image: string;
   expected_benefit_amount: number;
+  benefit_rate: number;
+  recommendable_status: string;
 }
 
 export interface OwnerCardDto {
   rank: number;
-  user_card_key: string;
-  card_product_key: string;
-  card_company: string;
+  user_card_key: number;
+  card_product_id: number;
+  company: string;
   card_name: string;
-  card_image: string;
-  benefit_summary: string;
+  image: string;
+  annual_fee: number;
   expected_benefit_amount: number;
+  current_performance_amount: number;
+  performance_after_payment: number;
+  next_benefit_threshold: number | null;
+  shortage_amount: number;
+  monthly_benefit_limit: number | null;
+  benefit_rate: number;
+  condition_summary?: string;
+  benefit_summary?: string;
+  benefits?: CardBenefitItemDto[] | string[];
+  benefit_list?: CardBenefitItemDto[] | string[];
+  recommendable: boolean;
+  recommendable_status: string;
+  recommendation_notice: string;
+  condition_checked_at: string;
 }
 
 export interface OwnerCardGroupDto {
+  owner_type: string;
   user_id: number;
-  user_name: string;
+  owner_name: string;
+  owner_role: string;
   card_count: number;
   cards: OwnerCardDto[];
 }
@@ -33,6 +48,7 @@ export interface CardStrategyDataDto {
   payment_amount: number;
   best_card: BestCardDto | null;
   owners: OwnerCardGroupDto[];
+  benefit_notice: string;
 }
 
 export interface CardBenefitItemDto {

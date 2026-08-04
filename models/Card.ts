@@ -23,17 +23,35 @@ const BG_COLORS = [
 ];
 
 export function toRecommendedCard(dto: OwnerCardDto, index: number): RecommendedCard {
+  let benefitTitles: string[] = [];
+
+  const rawList = dto?.benefits || dto?.benefit_list;
+  if (Array.isArray(rawList) && rawList.length > 0) {
+    benefitTitles = rawList
+      .map((b: any) => (typeof b === 'string' ? b : b?.title || b?.description || ''))
+      .filter(Boolean);
+  } else if (dto?.benefit_summary) {
+    const raw = dto.benefit_summary;
+    if (raw.includes(',')) {
+      benefitTitles = raw.split(',').map((s) => s.trim()).filter(Boolean);
+    } else {
+      benefitTitles = [raw];
+    }
+  }
+
+  const formattedBenefits = benefitTitles.slice(0, 3).join(', ');
+
   return {
-    id: dto?.user_card_key ?? '',
-    userCardKey: dto?.user_card_key ?? '',
-    cardProductKey: dto?.card_product_key ?? '',
-    cardCompany: dto?.card_company ?? '',
+    id: String(dto?.user_card_key ?? ''),
+    userCardKey: String(dto?.user_card_key ?? ''),
+    cardProductKey: String(dto?.card_product_id ?? ''),
+    cardCompany: dto?.company ?? '',
     name: dto?.card_name ?? '',
     rank: dto?.rank ?? index + 1,
     rankLabel: `${dto?.rank ?? index + 1}순위`,
-    benefits: dto?.benefit_summary ?? '',
+    benefits: formattedBenefits,
     expectedBenefitAmount: dto?.expected_benefit_amount ?? 0,
-    cardImage: dto?.card_image ?? '',
+    cardImage: dto?.image ?? '',
     bgColor: BG_COLORS[index % BG_COLORS.length],
   };
 }
@@ -41,7 +59,7 @@ export function toRecommendedCard(dto: OwnerCardDto, index: number): Recommended
 export function toUserCardGroup(dto: OwnerCardGroupDto): UserCardGroup {
   return {
     userId: dto?.user_id ?? '',
-    userName: dto?.user_name ?? '',
+    userName: dto?.owner_name ?? '',
     ownedCardCount: dto?.card_count ?? 0,
     cards: (dto?.cards || []).map((card, idx) => toRecommendedCard(card, idx)),
   };
@@ -54,24 +72,26 @@ export function toBestCard(
   if (!dto) return null;
 
   const expectedBenefitAmount = dto.expected_benefit_amount ?? 0;
-  const rate =
-    paymentAmount > 0
-      ? Number(((expectedBenefitAmount / paymentAmount) * 100).toFixed(1))
-      : 0;
+  let rate = 0;
+  if (dto.benefit_rate !== undefined && dto.benefit_rate !== null) {
+    rate = Number((dto.benefit_rate * 100).toFixed(1));
+  } else if (paymentAmount > 0) {
+    rate = Number(((expectedBenefitAmount / paymentAmount) * 100).toFixed(1));
+  }
 
   return {
-    rank: dto.rank ?? 1,
-    userCardKey: dto.user_card_key ?? '',
-    userId: dto.user_id ?? 0,
-    userName: dto.user_name ?? '',
-    cardProductKey: dto.card_product_key ?? '',
-    cardCompany: dto.card_company ?? '',
+    rank: 1,
+    userCardKey: String(dto.user_card_key ?? ''),
+    userId: 0,
+    userName: dto.owner_name ?? '',
+    cardProductKey: '',
+    cardCompany: dto.company ?? '',
     cardName: dto.card_name ?? '',
-    cardImage: dto.card_image ?? '',
-    annualFee: dto.annual_fee ?? 0,
+    cardImage: dto.image ?? '',
+    annualFee: 0,
     expectedBenefitAmount,
     benefitRate: rate,
-    ownerName: dto.user_name ?? '',
+    ownerName: dto.owner_name ?? '',
     cardBgColor: 'bg-[#FF4983]',
   };
 }

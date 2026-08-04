@@ -97,7 +97,7 @@ const imageError = ref(false);
           </div>
 
           <div class="mt-2.5 self-start rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-[#5A5B69] shadow-2xs">
-            <span class="mr-1 text-btn-pk">●</span> {{ best.ownerName }} 님의 카드
+            <span class="mr-1 text-btn-pk">●</span> {{ best.ownerName || best.userName }} 님의 카드
           </div>
         </div>
       </div>

@@ -49,6 +49,37 @@ export const useCardStore = defineStore('card', () => {
       const domainData = toCardStrategy(dto);
       cardStrategyData.value = domainData;
       amount.value = domainData.paymentAmount;
+
+      // 추천 카드 목록 아이템에 대해 카드 상세 API를 병렬 조회하여 주요 혜택 최대 3개를 콤마(,) 연결로 채움
+      if (domainData?.userCardGroups) {
+        const fetchPromises: Promise<void>[] = [];
+
+        domainData.userCardGroups.forEach((group) => {
+          group.cards.forEach((card) => {
+            if (card.userCardKey && !card.benefits) {
+              const promise = getCardDetailApi(card.userCardKey)
+                .then((detailDto) => {
+                  if (detailDto?.benefits && detailDto.benefits.length > 0) {
+                    const topBenefits = detailDto.benefits
+                      .slice(0, 3)
+                      .map((b) => b.title || b.description)
+                      .filter(Boolean)
+                      .join(', ');
+                    if (topBenefits) {
+                      card.benefits = topBenefits;
+                    }
+                  }
+                })
+                .catch(() => {
+                  // Ignore errors for individual card detail fallback
+                });
+              fetchPromises.push(promise);
+            }
+          });
+        });
+
+        await Promise.allSettled(fetchPromises);
+      }
     } catch (e: unknown) {
       if (e instanceof Error) {
         error.value = e.message;
