@@ -17,9 +17,8 @@ withDefaults(
     open: boolean;
     mode: 'request' | 'accept';
     request?: MainProposalRequest | null;
-    loading?: boolean;
   }>(),
-  { request: null, loading: false }
+  { request: null }
 );
 
 defineEmits<{
@@ -46,17 +45,15 @@ defineEmits<{
         <AlertDialogFooter class="flex-row gap-2">
           <AlertDialogCancel
             class="h-12 flex-1 rounded-xl"
-            :disabled="loading"
             @click="$emit('cancel')"
           >
             취소
           </AlertDialogCancel>
           <AlertDialogAction
             class="h-12 flex-1 rounded-xl hover:bg-btn-pk"
-            :disabled="loading"
             @click="$emit('confirm')"
           >
-            {{ loading ? '처리 중이에요...' : '신청하기' }}
+            신청하기
           </AlertDialogAction>
         </AlertDialogFooter>
       </template>
@@ -84,17 +81,15 @@ defineEmits<{
         <AlertDialogFooter class="flex-row gap-2">
           <AlertDialogCancel
             class="h-12 flex-1 rounded-xl"
-            :disabled="loading"
             @click="$emit('cancel')"
           >
             거절
           </AlertDialogCancel>
           <AlertDialogAction
             class="h-12 flex-[1.6] rounded-xl hover:bg-btn-pk"
-            :disabled="loading"
             @click="$emit('confirm')"
           >
-            {{ loading ? '처리 중이에요...' : '수락하기' }}
+            수락하기
           </AlertDialogAction>
         </AlertDialogFooter>
       </template>

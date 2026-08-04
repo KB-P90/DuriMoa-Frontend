@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { ArrowLeft } from 'lucide-vue-next';
+import { toast } from 'vue-sonner';
 import { useRouter } from 'vue-router';
 
 import BudgetProposalCard from '@/components/goal/BudgetProposalCard.vue';
@@ -78,16 +79,13 @@ onMounted(loadProposals);
 
 const dialogOpen = ref(false);
 const dialogMode = ref<'request' | 'accept'>('request');
-const dialogSubmitting = ref(false);
 const activeGoalId = ref<number | null>(null);
 const activeRequest = ref<MainProposalRequest | null>(null);
-const actionError = ref<string | null>(null);
 
 function openRequestDialog(goalId: number) {
   activeGoalId.value = goalId;
   dialogMode.value = 'request';
   activeRequest.value = null;
-  actionError.value = null;
   dialogOpen.value = true;
 }
 
@@ -97,7 +95,6 @@ function openAcceptDialog(goalId: number) {
 
   activeGoalId.value = goalId;
   dialogMode.value = 'accept';
-  actionError.value = null;
   activeRequest.value = {
     proposerName: '상대방',
     proposal: { title: goal.name, amount: Math.round(goal.totalBudget / 10_000) },
@@ -112,55 +109,44 @@ function openAcceptDialog(goalId: number) {
 
 // 신청 취소는 별도 확인 모달 없이 바로 처리한다 (디자인에 확인 모달 없음).
 async function cancelRequest(goalId: number) {
-  actionError.value = null;
   try {
     await cancelMainProposalRequest(goalId);
     await loadProposals();
+    toast.success('신청을 취소했어요.');
   } catch {
-    actionError.value = '요청 취소에 실패했어요. 다시 시도해주세요.';
+    toast.error('요청 취소에 실패했어요. 다시 시도해주세요.');
   }
 }
 
+// AlertDialogAction/Cancel은 클릭하면 API 응답을 기다리지 않고 모달을 바로 닫기 때문에,
+// 성공/실패 결과는 (이미 닫힌) 모달 안이 아니라 토스트로 알려준다.
 async function handleDialogConfirm() {
-  if (activeGoalId.value === null) {
-    dialogOpen.value = false;
-    return;
-  }
+  if (activeGoalId.value === null) return;
 
-  dialogSubmitting.value = true;
-  actionError.value = null;
   try {
     if (dialogMode.value === 'request') {
       await requestMainProposal(activeGoalId.value);
+      toast.success('메인 시안 신청을 보냈어요.');
     } else {
       await decideMainProposalRequest(activeGoalId.value, 'APPROVE');
+      toast.success('메인 시안으로 확정했어요.');
     }
     await loadProposals();
-    dialogOpen.value = false;
   } catch {
-    actionError.value = '요청 처리에 실패했어요. 다시 시도해주세요.';
-  } finally {
-    dialogSubmitting.value = false;
+    toast.error('요청 처리에 실패했어요. 다시 시도해주세요.');
   }
 }
 
 async function handleDialogCancel() {
-  // 신청 확인 모달의 '취소'는 아직 아무것도 보내지 않은 상태라 그냥 닫으면 된다.
-  if (dialogMode.value !== 'accept' || activeGoalId.value === null) {
-    dialogOpen.value = false;
-    return;
-  }
+  // 신청 확인 모달의 '취소'는 아직 아무것도 보내지 않은 상태라 별도 처리가 필요 없다.
+  if (dialogMode.value !== 'accept' || activeGoalId.value === null) return;
 
-  dialogSubmitting.value = true;
-  actionError.value = null;
   try {
     await decideMainProposalRequest(activeGoalId.value, 'REJECT');
     await loadProposals();
-    dialogOpen.value = false;
+    toast.success('요청을 거절했어요.');
   } catch {
-    actionError.value = '요청 처리에 실패했어요. 다시 시도해주세요.';
-  } finally {
-    dialogSubmitting.value = false;
+    toast.error('요청 처리에 실패했어요. 다시 시도해주세요.');
   }
 }
 
@@ -212,12 +198,6 @@ function handleNewProposal() {
         신청 버튼을 누르면 메인 시안 요청이 상대에게 전송돼요.<br />
         상대가 승인하면 메인 시안으로 최종 확정돼요.
       </p>
-      <p
-        v-if="actionError"
-        class="mt-2 text-sm font-semibold text-destructive"
-      >
-        {{ actionError }}
-      </p>
 
       <div class="mt-5 flex flex-col gap-4">
         <BudgetProposalCard
@@ -236,7 +216,6 @@ function handleNewProposal() {
       v-model:open="dialogOpen"
       :mode="dialogMode"
       :request="activeRequest"
-      :loading="dialogSubmitting"
       @confirm="handleDialogConfirm"
       @cancel="handleDialogCancel"
     />
