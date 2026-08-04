@@ -11,8 +11,8 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="mx-auto flex min-h-dvh w-full max-w-[768px] flex-col bg-white">
-    <main class="flex-1 overflow-y-auto pb-[calc(4rem+env(safe-area-inset-bottom))]">
+  <div class="fixed inset-0 z-0 mx-auto flex h-dvh w-full max-w-[768px] flex-col bg-white">
+    <main class="min-h-0 flex-1 overflow-y-auto pb-[calc(4rem+env(safe-area-inset-bottom))]">
       <slot />
     </main>
     <BottomNav
