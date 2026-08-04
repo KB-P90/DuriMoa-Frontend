@@ -42,22 +42,29 @@ export interface CardStrategy {
 }
 
 export interface CardBenefitItem {
-  iconType: 'shopping' | 'transport' | 'coffee';
+  iconType: 'shopping' | 'transport' | 'coffee' | 'default';
   title: string;
   description: string;
 }
 
 export interface CardDetail {
   id: string;
+  userCardKey: string;
+  cardProductKey: string;
   cardCompany: string;
   cardName: string;
-  annualFee: {
+  cardImage: string;
+  annualFee: number;
+  annualFeeFormatted: string;
+  annualFeeObj?: {
     domestic: string;
     foreign: string;
   };
   cardBgColor: string;
   benefits: CardBenefitItem[];
+  usageCondition: string;
   terms: string[];
+  conditionCheckedAt?: string;
 }
 
 export interface CardAmountInput {

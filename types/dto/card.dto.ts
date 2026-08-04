@@ -34,3 +34,29 @@ export interface CardStrategyDataDto {
   best_card: BestCardDto | null;
   owners: OwnerCardGroupDto[];
 }
+
+export interface CardBenefitItemDto {
+  title: string;
+  description: string;
+  benefit_rate: number | null;
+  fixed_benefit_amount: number | null;
+  monthly_limit_amount: number | null;
+  minimum_performance_amount: number | null;
+  excluded_keywords: string[];
+}
+
+export interface CardDetailResponseDto {
+  user_card_key: number;
+  card_product_id: number;
+  company: string;
+  card_name: string;
+  image: string;
+  annual_fee: number;
+  benefits: CardBenefitItemDto[];
+  condition: string;
+  condition_checked_at: string;
+  official_url: string | null;
+  sale_status: string;
+  recommendable_status: string;
+  benefit_notice: string;
+}

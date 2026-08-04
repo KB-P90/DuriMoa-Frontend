@@ -24,11 +24,16 @@ function handleGoToAmountInput() {
 }
 
 function handleSelectCard(card: RecommendedCard) {
-  cardStore.openCardDetail(card.name);
+  const key = card.userCardKey || card.id;
+  if (key) {
+    cardStore.openCardDetail(key);
+  }
 }
 
-function handleSelectBestCard(cardName: string) {
-  cardStore.openCardDetail(cardName);
+function handleSelectBestCard(userCardKey: string) {
+  if (userCardKey) {
+    cardStore.openCardDetail(userCardKey);
+  }
 }
 
 onBeforeRouteLeave((to) => {

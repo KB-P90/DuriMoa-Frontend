@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { X, ShoppingBag, Bus, Coffee } from '@lucide/vue';
+import { ref } from 'vue';
+import { X, ShoppingBag, Bus, Coffee, CreditCard } from '@lucide/vue';
 import type { CardDetail } from '@/types/card';
 
 defineProps<{
@@ -9,6 +10,8 @@ defineProps<{
 const emit = defineEmits<{
   close: [];
 }>();
+
+const imageError = ref(false);
 </script>
 
 <template>
@@ -34,19 +37,28 @@ const emit = defineEmits<{
 
       <!-- Top Card Visual & Basic Info -->
       <div class="mt-2 flex items-start gap-4">
-        <!-- Vertical Pink Card Visual Plate -->
+        <!-- Card Visual Plate or Image -->
         <div
-          class="relative flex h-36 w-24 shrink-0 flex-col justify-between rounded-2xl p-3 shadow-md"
-          :class="detail.cardBgColor"
+          class="relative flex h-36 w-24 shrink-0 flex-col justify-between overflow-hidden rounded-2xl p-3 shadow-md"
+          :class="detail.cardBgColor || 'bg-[#FF4983]'"
         >
-          <div class="flex items-center justify-between">
-            <div class="h-3.5 w-5 rounded-sm bg-white/70" />
-            <span class="text-[10px] font-bold text-white/80">(</span>
-          </div>
-          <div class="flex flex-col items-center gap-0.5">
-            <span class="text-sm font-bold tracking-widest text-white/80">...</span>
-            <span class="text-[11px] font-extrabold tracking-wider text-white">ZERO</span>
-          </div>
+          <template v-if="detail.cardImage && !imageError">
+            <img
+              :src="detail.cardImage"
+              :alt="detail.cardName"
+              class="h-full w-full object-contain"
+              @error="imageError = true"
+            />
+          </template>
+          <template v-else>
+            <div class="flex items-center justify-between">
+              <div class="h-3.5 w-5 rounded-sm bg-white/70" />
+            </div>
+            <div class="flex flex-col items-center gap-0.5">
+              <span class="text-xs font-bold tracking-widest text-white/80">{{ detail.cardCompany }}</span>
+              <span class="text-[11px] font-extrabold tracking-wider text-white line-clamp-1">{{ detail.cardName }}</span>
+            </div>
+          </template>
         </div>
 
         <!-- Card Company, Name, Annual Fee -->
@@ -61,8 +73,13 @@ const emit = defineEmits<{
           <div class="mt-3 flex gap-3 text-xs leading-relaxed text-gray-500">
             <span class="font-bold text-gray-700 shrink-0">연회비</span>
             <div>
-              <p>국내전용 {{ detail.annualFee.domestic }}</p>
-              <p>해외겸용 {{ detail.annualFee.foreign }}</p>
+              <template v-if="detail.annualFeeObj">
+                <p>국내전용 {{ detail.annualFeeObj.domestic }}</p>
+                <p>해외겸용 {{ detail.annualFeeObj.foreign }}</p>
+              </template>
+              <template v-else>
+                <p>{{ detail.annualFeeFormatted || (detail.annualFee ? `${detail.annualFee.toLocaleString()}원` : '없음') }}</p>
+              </template>
             </div>
           </div>
         </div>
@@ -72,7 +89,7 @@ const emit = defineEmits<{
       <section class="mt-7">
         <h3 class="text-base font-bold text-gray-900">주요 혜택</h3>
 
-        <div class="mt-3 flex flex-col gap-2.5">
+        <div v-if="detail.benefits && detail.benefits.length > 0" class="mt-3 flex flex-col gap-2.5">
           <div
             v-for="(benefit, index) in detail.benefits"
             :key="index"
@@ -81,23 +98,31 @@ const emit = defineEmits<{
             <div class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#FFF0EF] text-btn-pk">
               <ShoppingBag v-if="benefit.iconType === 'shopping'" class="h-5 w-5" :stroke-width="1.8" />
               <Bus v-else-if="benefit.iconType === 'transport'" class="h-5 w-5" :stroke-width="1.8" />
-              <Coffee v-else class="h-5 w-5" :stroke-width="1.8" />
+              <Coffee v-else-if="benefit.iconType === 'coffee'" class="h-5 w-5" :stroke-width="1.8" />
+              <CreditCard v-else class="h-5 w-5" :stroke-width="1.8" />
             </div>
 
             <div class="flex flex-col">
               <strong class="text-xs font-bold text-gray-900 sm:text-sm">
                 {{ benefit.title }}
               </strong>
-              <p class="mt-0.5 text-[11px] text-dm-gray-dark sm:text-xs">
+              <p
+                v-if="benefit.description && benefit.description !== benefit.title"
+                class="mt-0.5 text-[11px] text-dm-gray-dark sm:text-xs"
+              >
                 {{ benefit.description }}
               </p>
             </div>
           </div>
         </div>
+
+        <p v-else class="mt-2 text-xs text-gray-400">
+          등록된 주요 혜택 정보가 없습니다.
+        </p>
       </section>
 
       <!-- Terms and Conditions Section -->
-      <section class="mt-6">
+      <section v-if="detail.terms && detail.terms.length > 0" class="mt-6">
         <h3 class="text-base font-bold text-gray-900">이용 조건</h3>
 
         <ul class="mt-2.5 space-y-1.5 text-xs text-[#606170]">
