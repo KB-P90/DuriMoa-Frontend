@@ -24,7 +24,7 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="mx-auto min-h-dvh w-full max-w-[768px] bg-white px-5 pb-10 pt-4">
+  <div class="mx-auto min-h-dvh w-full max-w-4xl bg-white px-5 pb-10 pt-4 sm:px-6 md:px-8">
     <!-- Top Header -->
     <header class="mb-6 flex items-center gap-2">
       <button

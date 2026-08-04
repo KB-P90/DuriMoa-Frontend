@@ -44,7 +44,7 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-xl px-5 pb-10 pt-4">
+  <div class="mx-auto w-full max-w-4xl px-5 pb-10 pt-4 sm:px-6 md:px-8">
     <!-- Header -->
     <header class="mb-5 flex items-center justify-between">
       <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">카드 추천</h1>
