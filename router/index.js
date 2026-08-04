@@ -15,6 +15,7 @@ import PlaceholderView from '@/views/PlaceholderView.vue';
 import HomeView from '@/views/HomeView.vue';
 import OnboardingView from '@/views/onboarding/OnboardingView.vue';
 import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
+import ProgressStatusView from '@/views/ProgressStatusView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,7 +27,7 @@ const router = createRouter({
         { path: '', redirect: { name: 'home' } },
         { path: 'home', name: 'home', component: HomeView },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
-        { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
+        { path: 'status', name: 'status', component: ProgressStatusView, props: { title: '현황' } },
         { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
         {
           path: 'expense/:yearMonth(\\d{4}-\\d{2})?',
