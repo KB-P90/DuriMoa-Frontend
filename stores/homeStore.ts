@@ -62,7 +62,8 @@ export const useHomeStore = defineStore('home', {
 
         this.dashboard = toHomeDashboard(dashboardDto);
         this.missions = missionsDto.missions.map(toSavingMission);
-      } catch {
+      } catch (error) {
+        console.error('Failed to fetch home data', error);
         this.dashboard = MOCK_DASHBOARD;
         this.missions = MOCK_MISSIONS;
       } finally {
