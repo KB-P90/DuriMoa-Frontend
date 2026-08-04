@@ -1,4 +1,5 @@
 import { computed, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   createRecord,
   deleteRecord,
@@ -90,6 +91,7 @@ function createCalendarDays(
 }
 
 export function useCalendar() {
+  const router = useRouter();
   const today = new Date();
   const mode = ref<CalendarMode>('personal');
   const visibleMonth = ref(new Date(today.getFullYear(), today.getMonth(), 1));
@@ -105,6 +107,9 @@ export function useCalendar() {
   const monthKey = computed(() => toMonthKey(visibleMonth.value));
   const monthLabel = computed(
     () => `${visibleMonth.value.getFullYear()}년 ${visibleMonth.value.getMonth() + 1}월`
+  );
+  const expenseAnalysisLabel = computed(
+    () => `${visibleMonth.value.getMonth() + 1}월 지출 분석 보기`
   );
   const selectedDateLabel = computed(() => {
     const [, month, date] = selectedDate.value.split('-');
@@ -159,6 +164,10 @@ export function useCalendar() {
   function openCreateTransaction() {
     selectedTransaction.value = null;
     isEditorOpen.value = true;
+  }
+
+  function openExpenseAnalysis() {
+    return router.push({ name: 'expense', params: { yearMonth: monthKey.value } });
   }
 
   function selectTransaction(transaction: Transaction) {
@@ -225,6 +234,7 @@ export function useCalendar() {
     isEditorOpen,
     calendarDays,
     monthLabel,
+    expenseAnalysisLabel,
     summary,
     transactions,
     isLoading,
@@ -232,6 +242,7 @@ export function useCalendar() {
     selectDate,
     changeMonth,
     openCreateTransaction,
+    openExpenseAnalysis,
     selectTransaction,
     closeEditor,
     saveTransaction,

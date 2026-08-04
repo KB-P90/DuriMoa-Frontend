@@ -11,6 +11,7 @@ const {
   isEditorOpen,
   calendarDays,
   monthLabel,
+  expenseAnalysisLabel,
   summary,
   transactions,
   isLoading,
@@ -18,6 +19,7 @@ const {
   selectDate,
   changeMonth,
   openCreateTransaction,
+  openExpenseAnalysis,
   selectTransaction,
   closeEditor,
   saveTransaction,
@@ -42,6 +44,7 @@ const {
     :selected-date="selectedDate"
     :selected-date-label="selectedDateLabel"
     :month-label="monthLabel"
+    :expense-analysis-label="expenseAnalysisLabel"
     :days="calendarDays"
     :summary="summary"
     :transactions="transactions"
@@ -51,5 +54,6 @@ const {
     @change-month="changeMonth"
     @select-transaction="selectTransaction"
     @create-transaction="openCreateTransaction"
+    @view-expense-analysis="openExpenseAnalysis"
   />
 </template>

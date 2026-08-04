@@ -21,7 +21,7 @@ const MARKER_COLORS = {
 
 <template>
   <section
-    class="min-w-0 rounded-3xl border border-dm-gray/30 bg-dm-gray-light px-2 pb-4 pt-4 shadow-sm sm:px-5"
+    class="min-w-0 rounded-3xl border border-dm-gray/30 bg-background px-2 pb-4 pt-4 shadow-sm sm:px-5"
   >
     <div class="mb-3 flex items-center justify-between px-1 text-dm-gray-dark">
       <button

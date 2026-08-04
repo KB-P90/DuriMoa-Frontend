@@ -10,6 +10,7 @@ defineProps<{
   selectedDate: string;
   selectedDateLabel: string;
   monthLabel: string;
+  expenseAnalysisLabel: string;
   days: InstanceType<typeof MonthCalendar>['$props']['days'];
   summary: InstanceType<typeof CalendarSummary>['$props']['items'];
   transactions: readonly Transaction[];
@@ -22,6 +23,7 @@ const emit = defineEmits<{
   'change-month': [offset: number];
   'select-transaction': [transaction: Transaction];
   'create-transaction': [];
+  'view-expense-analysis': [];
 }>();
 </script>
 
@@ -92,8 +94,9 @@ const emit = defineEmits<{
     <button
       type="button"
       class="mt-4 w-full rounded-2xl bg-btn-pk py-3.5 text-base font-semibold text-white shadow-sm"
+      @click="emit('view-expense-analysis')"
     >
-      7월 지출 분석 보기
+      {{ expenseAnalysisLabel }}
     </button>
   </div>
 </template>
