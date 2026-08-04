@@ -74,7 +74,7 @@ const notifications = ref([
               v-for="(link, index) in quickLinks"
               :key="link.label"
               type="button"
-              class="flex h-[48px] w-full items-center justify-between px-[14px] text-left"
+              class="flex h-[48px] w-full items-center justify-between px-[14px] text-left cursor-pointer hover:bg-dm-cb-light"
               :class="index > 0 ? 'border-t border-[#F9F3F2]' : ''"
               @click="goTo(link.path)"
             >
