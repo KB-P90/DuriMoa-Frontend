@@ -14,6 +14,8 @@ import GoalBudgetTypeView from '@/views/goal/GoalBudgetTypeView.vue';
 import GoalCategoryBudgetView from '@/views/goal/GoalCategoryBudgetView.vue';
 import GoalScheduleView from '@/views/goal/GoalScheduleView.vue';
 import GoalSummaryView from '@/views/goal/GoalSummaryView.vue';
+import CardStrategyView from '@/views/card/CardStrategyView.vue';
+import CardAmountInputView from '@/views/card/CardAmountInputView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
 import HomeView from '@/views/HomeView.vue';
 import MyPageView from '@/views/MyPageView.vue';
@@ -53,8 +55,10 @@ const router = createRouter({
           props: true,
         },
         { path: 'goal/summary', name: 'goal-summary', component: GoalSummaryView },
+        { path: 'card', name: 'card', component: CardStrategyView },
       ],
     },
+    { path: '/card/amount', name: 'card-amount', component: CardAmountInputView },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/signup', name: 'signup', component: SignupView },
     ...authTermRoutes,
