@@ -47,8 +47,8 @@ const emit = defineEmits<{
           :class="
             mode === item[0]
               ? item[0] === 'wedding'
-                ? 'bg-dm-gray-light text-btn-pk shadow-sm'
-                : 'bg-dm-gray-light text-btn-mt-dark shadow-sm'
+                ? 'bg-background text-btn-pk shadow-sm'
+                : 'bg-background text-btn-mt-dark shadow-sm'
               : ''
           "
           @click="emit('update:mode', item[0])"
