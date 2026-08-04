@@ -36,7 +36,7 @@ const router = createRouter({
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
         { path: 'myinfo', name: 'myinfo', component: MyPageView },
-        { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
+        { path: 'card', name: 'card', component: CardStrategyView, props: { title: '카드추천' } },
         {
           path: 'expense/:yearMonth(\\d{4}-\\d{2})?',
           name: 'expense',
