@@ -26,6 +26,9 @@ const STATUS_META: Record<
     cardBorderClass: string;
     cardHoverClass: string;
     amountClass: string;
+    // 카드 hover 시 제목/날짜/금액 텍스트가 흰색으로 반전될지 여부. general은 hover 배경이
+    // 옅은 색이라 반전시키면 안 보이므로 텍스트 색을 그대로 둔다.
+    textHoverClass: string;
   }
 > = {
   main: {
@@ -36,6 +39,7 @@ const STATUS_META: Record<
     cardBorderClass: 'border-dm-co/50',
     cardHoverClass: 'hover:border-dm-co hover:bg-dm-co',
     amountClass: 'text-dm-co',
+    textHoverClass: 'group-hover:text-white',
   },
   pending: {
     label: '수락 대기',
@@ -45,15 +49,17 @@ const STATUS_META: Record<
     cardBorderClass: 'border-dm-mint-dark/70',
     cardHoverClass: 'hover:border-dm-mint-dark hover:bg-dm-mint-dark',
     amountClass: 'text-[#232631]',
+    textHoverClass: 'group-hover:text-white',
   },
   general: {
     label: '일반',
     icon: null,
-    badgeClass: 'bg-dm-gray-light text-[#A29297]',
-    badgeHoverClass: 'group-hover:bg-white group-hover:text-dm-gray-dark',
+    badgeClass: 'bg-dm-gray-dark text-white',
+    badgeHoverClass: '',
     cardBorderClass: 'border-dm-gray/25',
-    cardHoverClass: 'hover:border-dm-gray-dark hover:bg-dm-gray-dark',
+    cardHoverClass: 'hover:border-dm-gray-light hover:bg-dm-gray-light',
     amountClass: 'text-[#232631]',
+    textHoverClass: '',
   },
   incoming: {
     label: '수락 요청',
@@ -63,6 +69,7 @@ const STATUS_META: Record<
     cardBorderClass: 'border-btn-pk/50',
     cardHoverClass: 'hover:border-btn-pk-dark hover:bg-btn-pk-dark',
     amountClass: 'text-[#232631]',
+    textHoverClass: 'group-hover:text-white',
   },
 };
 </script>
@@ -93,7 +100,10 @@ const STATUS_META: Record<
     </Badge>
 
     <div class="mt-3 flex items-center justify-between gap-3">
-      <h3 class="text-lg font-bold text-[#232631] transition-colors group-hover:text-white">
+      <h3
+        class="text-lg font-bold text-[#232631] transition-colors"
+        :class="STATUS_META[proposal.status].textHoverClass"
+      >
         {{ proposal.title }}
       </h3>
 
@@ -126,18 +136,25 @@ const STATUS_META: Record<
     </div>
 
     <div class="mt-2 flex items-center justify-between">
-      <p class="text-sm text-dm-gray-dark transition-colors group-hover:text-white">
+      <p
+        class="text-sm text-dm-gray-dark transition-colors"
+        :class="STATUS_META[proposal.status].textHoverClass"
+      >
         생성일 · {{ proposal.createdAt }}
       </p>
       <p class="whitespace-nowrap">
         <span
-          class="text-xl font-extrabold transition-colors group-hover:text-white"
-          :class="STATUS_META[proposal.status].amountClass"
+          class="text-xl font-extrabold transition-colors"
+          :class="[
+            STATUS_META[proposal.status].amountClass,
+            STATUS_META[proposal.status].textHoverClass,
+          ]"
         >
           {{ formatAmount(proposal.amount) }}
         </span>
         <span
-          class="ml-0.5 text-xs font-medium text-dm-gray-dark transition-colors group-hover:text-white"
+          class="ml-0.5 text-xs font-medium text-dm-gray-dark transition-colors"
+          :class="STATUS_META[proposal.status].textHoverClass"
         >
           만원
         </span>
