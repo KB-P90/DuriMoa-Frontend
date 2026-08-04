@@ -14,6 +14,7 @@ import GoalSummaryView from '@/views/goal/GoalSummaryView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
 import HomeView from '@/views/HomeView.vue';
 import OnboardingView from '@/views/onboarding/OnboardingView.vue';
+import GoalListView from '@/views/goal/GoalListView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,7 +28,7 @@ const router = createRouter({
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
         { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
-        { path: 'goal', redirect: { name: 'goal-schedule' } },
+        { path: 'goal', name: 'goal-list', component: GoalListView, props: { title: '시안 목록' } },
         { path: 'goal/schedule', name: 'goal-schedule', component: GoalScheduleView },
         { path: 'goal/budget-type', name: 'goal-budget-type', component: GoalBudgetTypeView },
         {
@@ -36,7 +37,12 @@ const router = createRouter({
           component: GoalCategoryBudgetView,
           props: true,
         },
-        { path: 'goal/summary', name: 'goal-summary', component: GoalSummaryView },
+        {
+          path: 'goal/summary/:goalId?',
+          name: 'goal-summary',
+          component: GoalSummaryView,
+          props: true,
+        },
       ],
     },
     { path: '/login', name: 'login', component: LoginView },
