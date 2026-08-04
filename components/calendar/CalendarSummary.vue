@@ -24,13 +24,16 @@ const LABEL_COLORS = {
     <article
       v-for="item in items"
       :key="item.label"
-      class="min-w-0 rounded-2xl border border-dm-gray/30 bg-dm-gray-light px-3 py-3 shadow-sm sm:px-4"
+      class="min-w-0 rounded-2xl border border-dm-gray/30 bg-background px-3 py-3 shadow-sm sm:px-4"
     >
       <div
         class="flex items-center gap-1.5 text-xs font-medium"
         :class="LABEL_COLORS[item.type]"
       >
-        <span class="h-2.5 w-2.5 rounded-full" :class="DOT_COLORS[item.type]" />
+        <span
+          class="h-2.5 w-2.5 rounded-full"
+          :class="DOT_COLORS[item.type]"
+        />
         {{ item.label }}
       </div>
       <strong class="mt-1 block text-sm font-semibold tracking-tight text-gray-800 sm:text-base">

@@ -32,7 +32,8 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
 <template>
   <section class="relative flex min-h-0 flex-1 flex-col overflow-hidden">
     <OnboardingProgress
-      :current-step="3"
+      :current-step="1"
+      :total-steps="2"
       @back="$emit('back')"
     />
 

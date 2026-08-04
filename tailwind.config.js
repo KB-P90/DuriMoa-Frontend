@@ -39,7 +39,7 @@ export default {
           dark: '#2CAEAA',
         },
         'dm-gray': {
-          light: '#FFFFFF',
+          light: '#F7F7FA',
           DEFAULT: '#B9B9C4',
           dark: '#9293A2',
         },

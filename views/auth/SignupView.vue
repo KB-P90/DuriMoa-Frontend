@@ -1,7 +1,25 @@
-<script setup>
+<script setup lang="ts">
 import AuthHeader from '@/components/auth/AuthHeader.vue';
 import AuthScreen from '@/components/auth/AuthScreen.vue';
 import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
+import { signup } from '@/server/authApi';
+import { useSignup } from '@/composables/useSignup';
+
+// 회원가입 API를 주입해 입력 검증 이후 서버 요청을 실행한다.
+const {
+  isSubmitting,
+  marketingTermsAgreed,
+  name,
+  password,
+  passwordConfirm,
+  passwordsMatch,
+  phone,
+  privacyTermsAgreed,
+  role,
+  serviceTermsAgreed,
+  signupError,
+  submitSignup,
+} = useSignup(signup);
 </script>
 
 <template>
@@ -15,12 +33,8 @@ import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
       class="flex flex-1 flex-col gap-4 px-5 pt-3 sm:px-10 lg:px-16"
       aria-label="회원가입"
       data-endpoint="/api/auth/signup"
-      @submit.prevent
+      @submit.prevent="submitSignup"
     >
-      <!--
-        회원 정보 입력 영역
-        연동 시 POST /api/auth/signup에 name, phone, role, password, passwordConfirm을 전달한다.
-      -->
       <!-- TODO: #232631 진한 입력 글자 색상 토큰 등록 검토 -->
       <div class="flex flex-col gap-3">
         <div>
@@ -32,6 +46,7 @@ import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
           </label>
           <input
             id="signup-name"
+            v-model="name"
             class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
             type="text"
             name="name"
@@ -54,9 +69,10 @@ import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
               로그인 아이디
             </span>
           </label>
-          <!-- 연동 시 하이픈을 제거한 뒤 phone 값으로 전송한다. -->
+          <!-- 하이픈 정규화와 중복 검사는 백엔드 연동 시 서버에서 처리한다. -->
           <input
             id="signup-phone"
+            v-model="phone"
             class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
             type="tel"
             name="phone"
@@ -77,6 +93,7 @@ import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
           <div class="grid grid-cols-2 gap-2">
             <label class="cursor-pointer">
               <input
+                v-model="role"
                 class="peer sr-only"
                 type="radio"
                 name="role"
@@ -91,6 +108,7 @@ import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
             </label>
             <label class="cursor-pointer">
               <input
+                v-model="role"
                 class="peer sr-only"
                 type="radio"
                 name="role"
@@ -117,6 +135,7 @@ import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
           </label>
           <input
             id="signup-password"
+            v-model="password"
             class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
             type="password"
             name="password"
@@ -140,6 +159,7 @@ import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
           </label>
           <input
             id="signup-password-confirmation"
+            v-model="passwordConfirm"
             class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
             type="password"
             name="passwordConfirm"
@@ -147,29 +167,57 @@ import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
             placeholder="비밀번호를 한 번 더 입력해주세요"
             minlength="8"
             maxlength="72"
+            :aria-invalid="passwordConfirm.length > 0 && !passwordsMatch"
+            :aria-describedby="
+              passwordConfirm.length > 0 ? 'signup-password-confirmation-status' : undefined
+            "
             required
           />
-          <p class="mt-1.5 text-[11px] leading-4 text-dm-gray-dark">
-            비밀번호와 동일하게 입력해주세요.
+          <p
+            id="signup-password-confirmation-status"
+            class="mt-1.5 text-[11px] leading-4"
+            :class="
+              passwordConfirm.length > 0 && !passwordsMatch
+                ? 'text-btn-pk-dark'
+                : 'text-dm-gray-dark'
+            "
+          >
+            {{
+              passwordConfirm.length > 0 && !passwordsMatch
+                ? '비밀번호가 일치하지 않아요.'
+                : '비밀번호와 동일하게 입력해주세요.'
+            }}
           </p>
         </div>
       </div>
 
       <!-- 약관 카드와 전문 화면 이동 -->
-      <TermsAgreementCard />
+      <TermsAgreementCard
+        v-model:marketing-terms-agreed="marketingTermsAgreed"
+        v-model:privacy-terms-agreed="privacyTermsAgreed"
+        v-model:service-terms-agreed="serviceTermsAgreed"
+      />
 
       <!-- 모바일에서 항상 접근하기 쉬운 하단 가입 버튼 -->
       <div
         class="sticky bottom-0 -mx-5 mt-auto bg-gradient-to-b from-dm-gray-light/30 via-dm-gray-light to-dm-gray-light px-5 pb-[max(18px,env(safe-area-inset-bottom))] pt-3 sm:-mx-10 sm:px-10 lg:-mx-16 lg:px-16"
       >
-        <!-- 실패 응답의 ApiResponse.message를 유지한 입력값 아래에 표시한다. -->
-        <!-- 연동 시 201 성공 응답을 받은 뒤 온보딩 화면으로 이동한다. -->
-        <RouterLink
-          class="grid min-h-[50px] w-full place-items-center rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light no-underline transition hover:bg-btn-pk-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
-          to="/onboarding"
+        <p
+          v-if="signupError"
+          class="mb-2 text-xs font-semibold text-btn-pk-dark"
+          role="alert"
+          aria-live="polite"
         >
-          가입하고 시작하기
-        </RouterLink>
+          {{ signupError }}
+        </p>
+
+        <button
+          class="grid min-h-[50px] w-full place-items-center rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light transition hover:bg-btn-pk-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30 disabled:cursor-not-allowed disabled:opacity-60"
+          type="submit"
+          :disabled="isSubmitting"
+        >
+          {{ isSubmitting ? '가입 정보 확인 중...' : '가입하고 시작하기' }}
+        </button>
       </div>
     </form>
   </AuthScreen>

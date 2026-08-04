@@ -1,21 +1,53 @@
 <script setup lang="ts">
-import { ArrowLeft, Banknote, CalendarDays, ChevronDown, Landmark, Utensils } from '@lucide/vue';
-import { ref } from 'vue';
+import { ArrowLeft, Banknote, Landmark, Utensils } from '@lucide/vue';
+import { computed, ref, watch } from 'vue';
 import type { Component } from 'vue';
-import type { Transaction, TransactionType } from '@/types/calendar';
-import { formatAmount, formatSignedAmount, parseFormattedAmount } from '@/utils/format';
+import CategorySelect from '@/components/calendar/CategorySelect.vue';
+import DeleteConfirmDialog from '@/components/calendar/DeleteConfirmDialog.vue';
+import { CALENDAR_CATEGORIES, TRANSACTION_TYPES } from '@/constants/calendar';
+import type { CalendarMode, Transaction, TransactionForm, TransactionType } from '@/types/calendar';
+import { formatAmount, parseFormattedAmount } from '@/utils/format';
 
-const props = defineProps<{ transaction: Transaction }>();
-const emit = defineEmits<{ close: []; delete: []; save: [transaction: Transaction] }>();
+const props = defineProps<{
+  transaction: Transaction | null;
+  defaultDate: string;
+  mode: CalendarMode;
+  isSubmitting: boolean;
+}>();
+const emit = defineEmits<{
+  close: [];
+  delete: [];
+  save: [form: TransactionForm];
+}>();
 
-const selectedType = ref<TransactionType>(props.transaction.type);
-const amount = ref(formatAmount(props.transaction.amount));
-const memo = ref(props.transaction.memo);
-const TYPES = [
-  { key: 'income', label: '수입' },
-  { key: 'expense', label: '지출' },
-  { key: 'saving', label: '저축' },
-] as const;
+const selectedType = ref<TransactionType>(props.transaction?.type ?? 'expense');
+const category = ref(props.transaction?.title ?? '');
+const amount = ref(props.transaction ? formatAmount(props.transaction.amount) : '');
+const recordDate = ref(props.transaction?.date ?? props.defaultDate);
+const memo = ref(props.transaction?.memo ?? '');
+const deleteConfirmationVisible = ref(false);
+const isEditMode = computed(() => props.transaction !== null);
+const categoryGroups = computed(() => {
+  const otherMode: CalendarMode = props.mode === 'personal' ? 'wedding' : 'personal';
+  const modeLabels: Record<CalendarMode, string> = {
+    personal: '개인 카테고리',
+    wedding: '결혼 카테고리',
+  };
+
+  return [
+    {
+      mode: props.mode,
+      label: modeLabels[props.mode],
+      options: CALENDAR_CATEGORIES[props.mode][selectedType.value],
+    },
+    {
+      mode: otherMode,
+      label: modeLabels[otherMode],
+      options: CALENDAR_CATEGORIES[otherMode][selectedType.value],
+    },
+  ];
+});
+const categoryOptions = computed(() => categoryGroups.value.flatMap((group) => group.options));
 
 const TRANSACTION_ICONS: Record<TransactionType, Component> = {
   income: Banknote,
@@ -29,13 +61,21 @@ const TYPE_COLORS: Record<TransactionType, string> = {
   saving: 'text-[#3B86F7]',
 };
 
+watch(
+  categoryOptions,
+  (options) => {
+    if (!options.some((option) => option === category.value)) category.value = options[0];
+  },
+  { immediate: true }
+);
+
 function save() {
-  const numericAmount = parseFormattedAmount(amount.value);
   emit('save', {
-    ...props.transaction,
     type: selectedType.value,
-    amount: selectedType.value === 'income' ? numericAmount : -numericAmount,
-    memo: memo.value,
+    category: category.value,
+    amount: parseFormattedAmount(amount.value),
+    recordDate: recordDate.value,
+    memo: memo.value.trim(),
   });
 }
 </script>
@@ -43,38 +83,37 @@ function save() {
 <template>
   <div class="mx-auto w-full max-w-xl px-4 pb-6 pt-5 sm:px-5">
     <header class="mb-5 grid grid-cols-3 items-center">
-      <button type="button" class="justify-self-start" aria-label="뒤로 가기" @click="emit('close')">
+      <button
+        type="button"
+        class="justify-self-start"
+        aria-label="뒤로 가기"
+        @click="emit('close')"
+      >
         <ArrowLeft class="h-6 w-6" />
       </button>
-      <h1 class="whitespace-nowrap text-center text-xl font-semibold text-gray-800">내역 수정</h1>
-      <button type="button" class="justify-self-end text-sm font-semibold text-dm-co-darker" @click="emit('delete')">삭제</button>
+      <h1 class="whitespace-nowrap text-center text-xl font-semibold text-gray-800">
+        {{ isEditMode ? '내역 수정' : '내역 생성' }}
+      </h1>
+      <button
+        v-if="isEditMode"
+        type="button"
+        class="justify-self-end text-sm font-semibold text-dm-co-darker"
+        :disabled="isSubmitting"
+        @click="deleteConfirmationVisible = true"
+      >
+        삭제
+      </button>
     </header>
 
-    <section
-      class="flex items-center gap-3 rounded-2xl border border-dm-gray/30 p-4 shadow-sm"
+    <form
+      class="space-y-3.5"
+      @submit.prevent="save"
     >
-      <span
-        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-dm-gray/15"
-        :class="TYPE_COLORS[transaction.type]"
-      >
-        <component :is="TRANSACTION_ICONS[transaction.type]" class="h-6 w-6" :stroke-width="1.8" />
-      </span>
-      <div class="min-w-0 flex-1">
-        <strong class="block text-base font-semibold">{{ transaction.title }}</strong>
-        <span class="block text-xs text-dm-gray-dark">{{ transaction.category }} · {{ transaction.owner }}</span>
-        <span class="block text-xs text-dm-gray-dark">{{ transaction.date }}</span>
-      </div>
-      <strong class="whitespace-nowrap text-sm font-semibold tracking-tight" :class="TYPE_COLORS[transaction.type]">
-        {{ formatSignedAmount(transaction.amount, '원') }}
-      </strong>
-    </section>
-
-    <form class="mt-4 space-y-3.5" @submit.prevent="save">
-      <fieldset>
+      <fieldset :disabled="isSubmitting">
         <legend class="mb-2 text-sm font-semibold">구분</legend>
         <div class="grid grid-cols-3 gap-2">
           <button
-            v-for="type in TYPES"
+            v-for="type in TRANSACTION_TYPES"
             :key="type.key"
             type="button"
             class="relative rounded-2xl border py-3.5 text-sm font-semibold"
@@ -89,36 +128,57 @@ function save() {
             <span
               v-if="selectedType === type.key"
               class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-dm-mint-dark text-sm text-white"
-            >✓</span>
+              >✓</span
+            >
           </button>
         </div>
       </fieldset>
 
-      <label class="block">
+      <div class="block">
         <span class="mb-2 block text-sm font-semibold">카테고리</span>
         <span class="flex items-center rounded-2xl border border-dm-gray/30 px-4 py-3">
-          <span class="mr-3 rounded-lg bg-dm-gray/15 p-2" :class="TYPE_COLORS[transaction.type]">
-            <component :is="TRANSACTION_ICONS[transaction.type]" class="h-4 w-4" :stroke-width="1.8" />
+          <span
+            class="mr-3 rounded-lg bg-dm-gray/15 p-2"
+            :class="TYPE_COLORS[selectedType]"
+          >
+            <component
+              :is="TRANSACTION_ICONS[selectedType]"
+              class="h-4 w-4"
+              :stroke-width="1.8"
+            />
           </span>
-          <strong class="flex-1 text-sm font-semibold">{{ transaction.title }}</strong>
-          <ChevronDown class="h-4 w-4 text-dm-gray-dark" />
+          <CategorySelect
+            v-model="category"
+            :groups="categoryGroups"
+            :disabled="isSubmitting"
+          />
         </span>
-      </label>
+      </div>
 
       <label class="block">
         <span class="mb-2 block text-sm font-semibold">금액</span>
         <span class="flex items-center rounded-2xl border border-dm-gray/30 px-4 py-3.5">
-          <input v-model="amount" inputmode="numeric" class="min-w-0 flex-1 text-right text-base font-semibold outline-none" />
+          <input
+            v-model="amount"
+            inputmode="numeric"
+            pattern="[0-9,]+"
+            class="min-w-0 flex-1 text-right text-base font-semibold outline-none"
+            :disabled="isSubmitting"
+            required
+          />
           <span class="ml-3 text-sm font-medium text-dm-gray-dark">원</span>
         </span>
       </label>
 
       <label class="block">
         <span class="mb-2 block text-sm font-semibold">날짜</span>
-        <span class="flex items-center rounded-2xl border border-dm-gray/30 px-4 py-3.5">
-          <strong class="flex-1 text-sm font-semibold">2026.07.15 (수)</strong>
-          <CalendarDays class="h-5 w-5 text-dm-gray-dark" />
-        </span>
+        <input
+          v-model="recordDate"
+          type="date"
+          class="w-full rounded-2xl border border-dm-gray/30 px-4 py-3.5 text-sm font-semibold outline-none"
+          :disabled="isSubmitting"
+          required
+        />
       </label>
 
       <label class="block">
@@ -126,13 +186,32 @@ function save() {
         <textarea
           v-model="memo"
           class="h-20 w-full resize-none rounded-2xl border border-dm-gray/30 p-3 text-sm outline-none"
+          :disabled="isSubmitting"
         />
       </label>
 
-      <button type="submit" class="w-full rounded-2xl bg-btn-pk py-3.5 text-base font-semibold text-white">저장하기</button>
-      <button type="button" class="w-full rounded-2xl border border-dm-gray/30 bg-dm-gray-light py-3.5 text-base font-semibold text-gray-600 shadow-sm" @click="emit('close')">
+      <button
+        type="submit"
+        class="w-full rounded-2xl bg-btn-pk py-3.5 text-base font-semibold text-white disabled:opacity-60"
+        :disabled="isSubmitting"
+      >
+        {{ isSubmitting ? '처리 중...' : isEditMode ? '수정하기' : '등록하기' }}
+      </button>
+      <button
+        type="button"
+        class="w-full rounded-2xl border border-dm-gray/30 bg-dm-gray-light py-3.5 text-base font-semibold text-gray-600 shadow-sm"
+        :disabled="isSubmitting"
+        @click="emit('close')"
+      >
         취소
       </button>
     </form>
+
+    <DeleteConfirmDialog
+      v-if="deleteConfirmationVisible"
+      :is-submitting="isSubmitting"
+      @cancel="deleteConfirmationVisible = false"
+      @confirm="emit('delete')"
+    />
   </div>
 </template>
