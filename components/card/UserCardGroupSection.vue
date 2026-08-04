@@ -78,7 +78,7 @@ function toggleExpand() {
     <button
       v-if="group.cards.length > 2"
       type="button"
-      class="mt-3 flex w-full items-center justify-center gap-1 py-1.5 text-xs font-medium text-dm-gray-dark transition-colors hover:text-gray-700"
+      class="mt-3 flex w-full cursor-pointer items-center justify-center gap-1 py-1.5 text-xs font-medium text-dm-gray-dark transition-colors hover:text-gray-700"
       @click="toggleExpand"
     >
       <span>{{ group.userName }}님 카드 {{ isExpanded ? '접기' : '더보기' }}</span>

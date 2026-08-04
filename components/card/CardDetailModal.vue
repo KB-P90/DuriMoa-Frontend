@@ -16,11 +16,11 @@ const imageError = ref(false);
 
 <template>
   <div
-    class="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-300"
+    class="fixed inset-0 z-[60] flex cursor-pointer items-end justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-300"
     @click.self="emit('close')"
   >
     <div
-      class="relative max-h-[85vh] w-full max-w-[768px] overflow-y-auto rounded-t-[32px] bg-white px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-3 shadow-2xl animate-in slide-in-from-bottom duration-300 ease-out"
+      class="relative max-h-[85vh] w-full max-w-[768px] cursor-default overflow-y-auto rounded-t-[32px] bg-white px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-3 shadow-2xl animate-in slide-in-from-bottom duration-300 ease-out"
     >
       <!-- Bottom Sheet Drag Handle Bar -->
       <div class="mx-auto mb-4 h-1.5 w-12 rounded-full bg-gray-200" />
@@ -29,7 +29,7 @@ const imageError = ref(false);
       <button
         type="button"
         aria-label="닫기"
-        class="absolute right-5 top-5 grid h-8 w-8 place-items-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+        class="absolute right-5 top-5 grid h-8 w-8 cursor-pointer place-items-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700"
         @click="emit('close')"
       >
         <X class="h-5 w-5" :stroke-width="2.2" />

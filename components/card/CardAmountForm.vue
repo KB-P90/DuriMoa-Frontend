@@ -72,7 +72,7 @@ function handleQuickAdd(value: number) {
         v-for="option in quickOptions"
         :key="option.value"
         type="button"
-        class="flex-1 rounded-xl border py-2.5 text-xs font-semibold transition-all"
+        class="flex-1 cursor-pointer rounded-xl border py-2.5 text-xs font-semibold transition-all"
         :class="
           selectedQuickValue === option.value
             ? 'border-btn-pk bg-[#FFF0EF] text-btn-pk font-bold shadow-xs'
@@ -91,7 +91,7 @@ function handleQuickAdd(value: number) {
     <button
       type="button"
       :disabled="!isValid"
-      class="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-btn-pk py-4 text-base font-bold text-white shadow-sm transition-all hover:bg-btn-pk-dark disabled:cursor-not-allowed disabled:opacity-50"
+      class="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-btn-pk py-4 text-base font-bold text-white shadow-sm transition-all hover:bg-btn-pk-dark disabled:cursor-not-allowed disabled:opacity-50"
       @click="emit('submit')"
     >
       <span>이 금액으로 추천받기</span>

@@ -32,7 +32,7 @@ const imageError = ref(false);
 
       <button
         type="button"
-        class="inline-flex items-center gap-0.5 rounded-full bg-[#FFF0EF] px-3.5 py-1.5 text-xs font-bold text-btn-pk transition-colors hover:bg-dm-cb-light"
+        class="inline-flex cursor-pointer items-center gap-0.5 rounded-full bg-[#FFF0EF] px-3.5 py-1.5 text-xs font-bold text-btn-pk transition-colors hover:bg-dm-cb-light"
         @click="$emit('click-change-amount')"
       >
         <span>금액 변경</span>

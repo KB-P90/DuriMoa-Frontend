@@ -30,7 +30,7 @@ async function handleSubmit() {
       <button
         type="button"
         aria-label="뒤로가기"
-        class="-ml-2 grid h-10 w-10 place-items-center rounded-full text-gray-800 transition-colors hover:bg-gray-100"
+        class="-ml-2 grid h-10 w-10 cursor-pointer place-items-center rounded-full text-gray-800 transition-colors hover:bg-gray-100"
         @click="handleBack"
       >
         <ChevronLeft class="h-6 w-6" :stroke-width="2" />
