@@ -2,6 +2,7 @@ import { ref, watch } from 'vue';
 import { isAxiosError } from 'axios';
 import { useRouter } from 'vue-router';
 import { login } from '@/server/authApi';
+import { formatPhoneNumber } from '@/utils/phone';
 
 const LOGIN_STORAGE_KEYS = {
   ACCESS_TOKEN: 'accessToken',
@@ -30,6 +31,11 @@ export function useLogin() {
   const password = ref('');
   const loginError = ref('');
   const isSubmitting = ref(false);
+
+  watch(phone, (value) => {
+    const formattedPhone = formatPhoneNumber(value);
+    if (value !== formattedPhone) phone.value = formattedPhone;
+  });
 
   watch([phone, password], () => {
     loginError.value = '';

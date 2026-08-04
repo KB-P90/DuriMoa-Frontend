@@ -7,8 +7,7 @@ import type {
   SignupResponseDto,
 } from '@/types/dto/auth.dto';
 
-const AUTH_ENDPOINT_PREFIX =
-  import.meta.env.DEV && !import.meta.env.VITE_API_BASE_URL ? '/api/auth' : '/auth';
+const AUTH_ENDPOINT_PREFIX = '/auth';
 
 export async function login(request: LoginRequestDto): Promise<LoginResponseDto> {
   const { data } = await api.post<ApiResponse<LoginResponseDto>>(
