@@ -4,7 +4,10 @@ import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { ArrowLeft } from '@lucide/vue';
 import AccountConnectionForm from '@/components/common/AccountConnectionForm.vue';
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useAssetConnectionStore } from '@/stores/assetConnectionStore';
+
+useAuthCheck();
 
 const router = useRouter();
 const assetConnectionStore = useAssetConnectionStore();
@@ -46,10 +49,20 @@ onMounted(() => {
 
 <template>
   <div class="account-stage aspect-[390/520] w-full md:aspect-auto md:min-h-[520px]">
-    <section class="absolute inset-0 origin-top-left h-[520px] w-[390px] overflow-hidden rounded-[30px] bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] shadow-[0_20px_50px_-18px_rgba(34,34,43,0.28),0_0_0_1px_rgba(34,34,43,0.06)] scale-[var(--account-scale)] md:relative md:h-auto md:min-h-[520px] md:w-full md:scale-100 md:overflow-visible md:rounded-none md:shadow-none">
+    <section
+      class="absolute inset-0 origin-top-left h-[520px] w-[390px] overflow-hidden rounded-[30px] bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] shadow-[0_20px_50px_-18px_rgba(34,34,43,0.28),0_0_0_1px_rgba(34,34,43,0.06)] scale-[var(--account-scale)] md:relative md:h-auto md:min-h-[520px] md:w-full md:scale-100 md:overflow-visible md:rounded-none md:shadow-none"
+    >
       <header class="flex h-[50px] items-center gap-3 border-b border-[#F5F5F9] px-5">
-        <button type="button" aria-label="뒤로가기" class="grid h-6 w-6 place-items-center" @click="router.back()">
-          <ArrowLeft class="h-[17px] w-[17px]" :stroke-width="2" />
+        <button
+          type="button"
+          aria-label="뒤로가기"
+          class="grid h-6 w-6 place-items-center"
+          @click="router.back()"
+        >
+          <ArrowLeft
+            class="h-[17px] w-[17px]"
+            :stroke-width="2"
+          />
         </button>
         <h1 class="text-[15px] font-extrabold leading-[18px]">은행연결</h1>
       </header>

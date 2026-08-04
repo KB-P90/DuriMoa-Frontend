@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { useAuthCheck } from '@/composables/useAuthCheck';
+
+useAuthCheck();
+
 defineProps<{
   title: string;
 }>();

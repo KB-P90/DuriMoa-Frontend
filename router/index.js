@@ -20,6 +20,7 @@ import PlaceholderView from '@/views/PlaceholderView.vue';
 import HomeView from '@/views/HomeView.vue';
 import MyPageView from '@/views/MyPageView.vue';
 import OnboardingView from '@/views/onboarding/OnboardingView.vue';
+import GoalListView from '@/views/goal/GoalListView.vue';
 import ProfileEditView from '@/views/ProfileEditView.vue';
 import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
 
@@ -35,7 +36,7 @@ const router = createRouter({
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
         { path: 'myinfo', name: 'myinfo', component: MyPageView },
-        { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
+        { path: 'card', name: 'card', component: CardStrategyView, props: { title: '카드추천' } },
         {
           path: 'expense/:yearMonth(\\d{4}-\\d{2})?',
           name: 'expense',
@@ -45,7 +46,7 @@ const router = createRouter({
             yearMonth: route.params.yearMonth,
           }),
         },
-        { path: 'goal', redirect: { name: 'goal-schedule' } },
+        { path: 'goal', name: 'goal-list', component: GoalListView },
         { path: 'goal/schedule', name: 'goal-schedule', component: GoalScheduleView },
         { path: 'goal/budget-type', name: 'goal-budget-type', component: GoalBudgetTypeView },
         {
@@ -54,8 +55,12 @@ const router = createRouter({
           component: GoalCategoryBudgetView,
           props: true,
         },
-        { path: 'goal/summary', name: 'goal-summary', component: GoalSummaryView },
-        { path: 'card', name: 'card', component: CardStrategyView },
+        {
+          path: 'goal/summary/:goalId?',
+          name: 'goal-summary',
+          component: GoalSummaryView,
+          props: true,
+        },
       ],
     },
     { path: '/card/amount', name: 'card-amount', component: CardAmountInputView },
