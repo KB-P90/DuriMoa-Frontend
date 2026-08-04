@@ -93,7 +93,7 @@ function createCalendarDays(
 export function useCalendar() {
   const router = useRouter();
   const today = new Date();
-  const mode = ref<CalendarMode>('personal');
+  const mode = ref<CalendarMode>('wedding');
   const visibleMonth = ref(new Date(today.getFullYear(), today.getMonth(), 1));
   const selectedDate = ref(getInitialDate(visibleMonth.value));
   const selectedTransaction = ref<Transaction | null>(null);
