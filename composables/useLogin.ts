@@ -12,10 +12,6 @@ const HOME_ROUTE_NAME = 'home';
 const INVALID_CREDENTIALS_MESSAGE = '잘못된 아이디 또는 비밀번호입니다.';
 const LOGIN_ERROR_MESSAGE = '로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
 
-function getAccessToken(value: string) {
-  return value.replace(/^Bearer\s+/i, '').trim();
-}
-
 function hasMessage(value: unknown): value is { message: string } {
   return (
     typeof value === 'object' &&
@@ -52,7 +48,7 @@ export function useLogin() {
         phone: phone.value,
         password: password.value,
       });
-      const accessToken = getAccessToken(response.accessToken);
+      const accessToken = response.accessToken.trim();
 
       if (!accessToken) {
         loginError.value = LOGIN_ERROR_MESSAGE;
