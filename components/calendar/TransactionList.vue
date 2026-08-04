@@ -18,11 +18,10 @@ const TYPE_COLORS: Record<TransactionType, string> = {
   expense: 'text-[#F09488]',
   saving: 'text-[#3B86F7]',
 };
-
 </script>
 
 <template>
-  <div class="overflow-hidden rounded-2xl border border-dm-gray/30 bg-dm-gray-light">
+  <div class="overflow-hidden rounded-2xl border border-dm-gray/30 bg-background">
     <button
       v-for="transaction in transactions"
       :key="transaction.id"
@@ -34,7 +33,11 @@ const TYPE_COLORS: Record<TransactionType, string> = {
         class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-dm-gray/15"
         :class="TYPE_COLORS[transaction.type]"
       >
-        <component :is="TRANSACTION_ICONS[transaction.type]" class="h-5 w-5" :stroke-width="1.8" />
+        <component
+          :is="TRANSACTION_ICONS[transaction.type]"
+          class="h-5 w-5"
+          :stroke-width="1.8"
+        />
       </span>
       <span class="min-w-0 flex-1">
         <strong class="block text-sm font-semibold text-gray-800">{{ transaction.title }}</strong>
@@ -42,7 +45,10 @@ const TYPE_COLORS: Record<TransactionType, string> = {
           {{ transaction.category }} · {{ transaction.owner }}
         </small>
       </span>
-      <strong class="shrink-0 text-sm font-semibold tracking-tight" :class="TYPE_COLORS[transaction.type]">
+      <strong
+        class="shrink-0 text-sm font-semibold tracking-tight"
+        :class="TYPE_COLORS[transaction.type]"
+      >
         {{ formatSignedAmount(transaction.amount) }}
       </strong>
     </button>
