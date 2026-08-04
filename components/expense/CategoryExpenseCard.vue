@@ -137,7 +137,7 @@ const handleCategorySelect = (categoryId: number) => {
 
       <div
         v-else
-        class="py-10"
+        class="py-7"
       >
         <p class="text-lg font-semibold text-dm-gray">{{ month }}월 지출 내역이 없습니다.</p>
       </div>
