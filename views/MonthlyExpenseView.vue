@@ -70,7 +70,7 @@ function changeMonth({ year, month }: { year: number; month: number }) {
 </script>
 
 <template>
-  <div class="px-3 sm:px-20">
+  <div class="px-3 sm:px-20 pt-2">
     <header class="flex items-center justify-between px-6 py-5">
       <button
         type="button"

@@ -14,7 +14,7 @@ const activeTab = ref('overall');
 </script>
 
 <template>
-  <div class="px-3 sm:px-20">
+  <div class="px-3 sm:px-20 pt-2">
     <header class="flex items-center justify-between px-3 py-5">
       <h1 class="flex-1 ml-2 text-xl font-bold">우리들의 진행 상황</h1>
 
