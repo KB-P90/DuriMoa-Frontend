@@ -6,32 +6,54 @@ import TransactionEditView from '@/views/TransactionEditView.vue';
 const {
   mode,
   selectedDate,
+  selectedDateLabel,
   selectedTransaction,
+  isEditorOpen,
   calendarDays,
+  monthLabel,
+  expenseAnalysisLabel,
   summary,
   transactions,
+  isLoading,
+  isSubmitting,
+  selectDate,
+  changeMonth,
+  openCreateTransaction,
+  openExpenseAnalysis,
   selectTransaction,
-  closeTransaction,
+  closeEditor,
+  saveTransaction,
+  removeTransaction,
 } = useCalendar();
 </script>
 
 <template>
   <TransactionEditView
-    v-if="selectedTransaction"
+    v-if="isEditorOpen"
     :transaction="selectedTransaction"
-    @close="closeTransaction"
-    @delete="closeTransaction"
-    @save="closeTransaction"
+    :default-date="selectedDate"
+    :mode="mode"
+    :is-submitting="isSubmitting"
+    @close="closeEditor"
+    @delete="removeTransaction"
+    @save="saveTransaction"
   />
   <CalendarView
     v-else
     :mode="mode"
     :selected-date="selectedDate"
+    :selected-date-label="selectedDateLabel"
+    :month-label="monthLabel"
+    :expense-analysis-label="expenseAnalysisLabel"
     :days="calendarDays"
     :summary="summary"
     :transactions="transactions"
+    :is-loading="isLoading"
     @update:mode="mode = $event"
-    @select-date="selectedDate = $event"
+    @select-date="selectDate"
+    @change-month="changeMonth"
     @select-transaction="selectTransaction"
+    @create-transaction="openCreateTransaction"
+    @view-expense-analysis="openExpenseAnalysis"
   />
 </template>
