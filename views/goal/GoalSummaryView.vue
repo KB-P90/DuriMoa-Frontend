@@ -1,10 +1,22 @@
 <script setup lang="ts">
 import { ChevronRight } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { useRouter } from 'vue-router';
 
 import { getGoalCategoryStat, getGoalProposals } from '@/server/goalApi';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
 import { useGoalStore } from '@/stores/goalStore';
@@ -18,6 +30,13 @@ const goalStore = useGoalStore();
 
 const isEditing = computed(() => goalStore.editingGoalId !== null);
 
+const goalName = computed({
+  get: () => goalStore.draft.name ?? '',
+  set: (value: string) => {
+    goalStore.draft.name = value;
+  },
+});
+
 // GoalBudgetTypeView와 동일한 목업 표. GET /api/goal/stat이 전국 평균까지 함께
 // 내려주게 되면 그쪽 응답으로 교체한다.
 const NATIONAL_AVERAGE: Record<BudgetTypeCode, number> = {
@@ -30,7 +49,13 @@ const NATIONAL_AVERAGE: Record<BudgetTypeCode, number> = {
 const CURRENT_ASSET = 3119;
 const AVAILABLE_MONTHLY = 180;
 
-const CO_TONES = ['#F8C9BE', '#FFBFA1', '#F2A390', '#FFA28C', '#D17C69'];
+// 예식장 / 스튜디오·드레스·메이크업 / 예물 / 예비비 4개 그룹으로 묶어서 예산 비중 막대를 그린다.
+const CATEGORY_BUDGET_GROUPS: { codes: GoalCategoryCode[]; colorClass: string }[] = [
+  { codes: ['venue'], colorClass: 'bg-dm-co-light' },
+  { codes: ['studio', 'dress', 'makeup'], colorClass: 'bg-dm-co-dark' },
+  { codes: ['jewelry'], colorClass: 'bg-dm-rose' },
+  { codes: ['reserve'], colorClass: 'bg-dm-rose-dark' },
+];
 
 const totalManwon = computed(() => Math.round(goalStore.totalBudget / 10_000));
 const nationalAverage = computed(() => NATIONAL_AVERAGE[goalStore.draft.budgetType ?? 'balanced']);
@@ -64,10 +89,10 @@ const requiredMonthly = computed(() =>
 );
 
 const categorySegments = computed(() =>
-  GOAL_CATEGORIES.map((category, index) => {
-    const amount = goalStore.draft.items[category.code] ?? 0;
+  CATEGORY_BUDGET_GROUPS.map((group) => {
+    const amount = group.codes.reduce((sum, code) => sum + (goalStore.draft.items[code] ?? 0), 0);
     const percent = goalStore.totalBudget > 0 ? (amount / goalStore.totalBudget) * 100 : 0;
-    return { code: category.code, percent, color: CO_TONES[index % CO_TONES.length] };
+    return { key: group.codes.join('-'), percent, colorClass: group.colorClass };
   })
 );
 
@@ -91,6 +116,12 @@ async function ensureDraftForEditing() {
 
 onMounted(async () => {
   await ensureDraftForEditing();
+
+  // 새로 만드는 흐름에서는 시안 이름을 아직 안 정했을 테니, 이름 입력창에 기본값을 채워둔다.
+  if (!isEditing.value && !goalStore.draft.name) {
+    goalStore.draft.name = goalStore.defaultName;
+  }
+
   if (!goalStore.draft.region) return;
 
   const results = await Promise.all(
@@ -111,17 +142,33 @@ onMounted(async () => {
   }
 });
 
-function budgetTypeLabelFor(code: GoalCategoryCode) {
+function budgetTypeFor(code: GoalCategoryCode): BudgetTypeCode {
   const stat = categoryStats.value[code];
   const amount = goalStore.draft.items[code] ?? 0;
 
-  let type: BudgetTypeCode = 'balanced';
   if (stat) {
-    if (amount <= stat.lower25) type = 'saving';
-    else if (amount >= stat.upper25) type = 'flex';
+    if (amount <= stat.lower25) return 'saving';
+    if (amount >= stat.upper25) return 'flex';
   }
 
-  return BUDGET_TYPES.find((budgetType) => budgetType.code === type)?.label ?? '-';
+  return 'balanced';
+}
+
+// 예비비는 사용자가 임의로 정하는 금액이라 알뜰형/균형형/플렉스형 구분을 두지 않는다.
+function budgetTypeLabelFor(code: GoalCategoryCode) {
+  if (code === 'reserve') return '';
+  return BUDGET_TYPES.find((budgetType) => budgetType.code === budgetTypeFor(code))?.label ?? '-';
+}
+
+// 알뜰형/균형형/플렉스형 배지 색을 dm-mint 팔레트 농도로 구분한다.
+const BUDGET_TYPE_BADGE_CLASS: Record<BudgetTypeCode, string> = {
+  saving: 'bg-dm-mint text-dm-mint-darker',
+  balanced: 'bg-dm-mint-dark text-white',
+  flex: 'bg-dm-mint-darker text-white',
+};
+
+function budgetTypeBadgeClass(code: GoalCategoryCode) {
+  return BUDGET_TYPE_BADGE_CLASS[budgetTypeFor(code)];
 }
 
 function diffFor(code: GoalCategoryCode) {
@@ -141,7 +188,6 @@ function editCategory(code: GoalCategoryCode) {
 }
 
 const submitting = ref(false);
-const submitError = ref(false);
 
 const submitLabel = computed(() => {
   if (submitting.value) return '저장 중이에요...';
@@ -154,31 +200,64 @@ async function handleShare() {
   );
 
   submitting.value = true;
-  submitError.value = false;
   try {
     await goalStore.submitGoal(categoryTypeLabels);
+    toast.success(isEditing.value ? '시안을 수정했어요.' : '예산 시안을 저장했어요.');
     router.push({ name: isEditing.value ? 'goal-list' : 'home' });
   } catch {
-    submitError.value = true;
+    toast.error('저장에 실패했어요. 다시 시도해주세요.');
   } finally {
     submitting.value = false;
+  }
+}
+
+const deleteDialogOpen = ref(false);
+
+function openDeleteDialog() {
+  deleteDialogOpen.value = true;
+}
+
+// AlertDialogAction은 클릭 시 응답을 기다리지 않고 모달을 바로 닫기 때문에,
+// 삭제 성공/실패 결과는 토스트로 알려준다.
+async function confirmDelete() {
+  try {
+    await goalStore.deleteEditingGoal();
+    toast.success('시안을 삭제했어요.');
+    router.push({ name: 'goal-list' });
+  } catch {
+    toast.error('삭제에 실패했어요. 다시 시도해주세요.');
   }
 }
 </script>
 
 <template>
   <div class="p-4">
-    <div class="mb-6 text-center">
+    <div class="mt-6 mb-6 text-center">
       <h1 class="text-lg font-extrabold text-[#232631]">
         {{ isEditing ? '예산 시안을 수정하고 있어요' : '예산 시안이 완성됐어요' }}
       </h1>
-      <p class="mt-1 text-sm text-dm-gray-dark">
-        {{
-          isEditing
-            ? '저장하면 이 시안의 내용이 바뀌어요'
-            : '두 사람이 확인하면 공동 목표로 확정돼요'
-        }}
-      </p>
+
+      <div class="mx-auto mt-3 w-[220px]">
+        <label
+          for="goal-name"
+          class="sr-only"
+        >
+          시안 이름
+        </label>
+        <Input
+          id="goal-name"
+          v-model="goalName"
+          maxlength="12"
+          placeholder="시안 이름을 입력하세요"
+          class="h-9 rounded-lg border-dm-gray/40 text-center text-sm font-medium text-[#232631] shadow-none focus-visible:border-btn-pk focus-visible:ring-3 focus-visible:ring-btn-pk/10"
+        />
+        <p
+          v-if="goalName.length >= 12"
+          class="mt-1 text-[11px] font-semibold text-destructive"
+        >
+          시안 이름은 최대 12자까지 입력할 수 있어요.
+        </p>
+      </div>
     </div>
 
     <div class="rounded-2xl bg-dm-cb-light p-5 text-center">
@@ -197,9 +276,10 @@ async function handleShare() {
       <div class="mt-4 flex h-2 w-full overflow-hidden rounded-full">
         <div
           v-for="segment in categorySegments"
-          :key="segment.code"
+          :key="segment.key"
           class="h-full"
-          :style="{ width: `${segment.percent}%`, backgroundColor: segment.color }"
+          :class="segment.colorClass"
+          :style="{ width: `${segment.percent}%` }"
         />
       </div>
     </div>
@@ -218,7 +298,9 @@ async function handleShare() {
             <div class="flex items-center gap-1.5">
               <span class="text-sm font-bold text-[#232631]">{{ category.label }}</span>
               <span
-                class="rounded-full bg-dm-gray-light px-1.5 py-0.5 text-[10px] font-bold text-dm-gray-dark"
+                v-if="category.code !== 'reserve'"
+                class="rounded-full px-1.5 py-0.5 text-[10px] font-bold"
+                :class="budgetTypeBadgeClass(category.code)"
               >
                 {{ budgetTypeLabelFor(category.code) }}
               </span>
@@ -309,13 +391,6 @@ async function handleShare() {
       지역 평균 출처 · 2025년 결혼 비용 통계 (기준연도 2025 · 갱신 2026.06.30)
     </p>
 
-    <p
-      v-if="submitError"
-      class="mt-3 text-center text-xs font-semibold text-destructive"
-    >
-      저장에 실패했어요. 다시 시도해주세요.
-    </p>
-
     <Button
       type="button"
       :disabled="submitting"
@@ -324,5 +399,49 @@ async function handleShare() {
     >
       {{ submitLabel }}
     </Button>
+
+    <Button
+      v-if="isEditing"
+      type="button"
+      variant="outline"
+      class="mt-3 h-[52px] w-full rounded-xl border-dm-mint-dark/60 bg-dm-mint-dark text-[15px] font-extrabold text-white shadow-none hover:bg-dm-mint-darker hover:text-white"
+      @click="openDeleteDialog"
+    >
+      시안 삭제
+    </Button>
+
+    <AlertDialog v-model:open="deleteDialogOpen">
+      <AlertDialogContent>
+        <template v-if="goalStore.editingGoalIsMain">
+          <AlertDialogHeader>
+            <AlertDialogTitle>삭제할 수 없어요</AlertDialogTitle>
+            <AlertDialogDescription>
+              메인 시안은 다른 시안으로 변경해야만 삭제할 수 있어요.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter class="flex-row">
+            <AlertDialogAction class="h-12 w-full rounded-xl bg-btn-pk hover:bg-btn-pk-dark">
+              확인
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </template>
+
+        <template v-else>
+          <AlertDialogHeader>
+            <AlertDialogTitle>시안을 삭제할까요?</AlertDialogTitle>
+            <AlertDialogDescription>삭제하면 되돌릴 수 없어요.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter class="flex-row gap-2">
+            <AlertDialogCancel class="h-12 flex-1 rounded-xl"> 취소 </AlertDialogCancel>
+            <AlertDialogAction
+              class="h-12 flex-1 rounded-xl bg-btn-pk text-white hover:bg-btn-pk-dark"
+              @click="confirmDelete"
+            >
+              삭제
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </template>
+      </AlertDialogContent>
+    </AlertDialog>
   </div>
 </template>

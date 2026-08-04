@@ -10,6 +10,8 @@ export interface GoalDraft {
   budgetType: BudgetTypeCode | null;
   items: Partial<Record<GoalCategoryCode, number>>;
   groomRatio: number;
+  // 시안 이름. 새로 만드는 흐름에서는 null로 두고 제출 시 자동으로 이름을 붙인다.
+  name: string | null;
 }
 
 // GET /api/goal/stat 응답 (지역·카테고리별 결혼 비용 분포)
