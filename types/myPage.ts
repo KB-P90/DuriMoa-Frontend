@@ -1,13 +1,16 @@
 export type CoupleRole = 'GROOM' | 'BRIDE';
 
-export type PartnerConnectionStatus = 'CONNECTED' | 'WAIT' | 'DISCONNECTED';
+export type PartnerConnectionStatus = 'CONNECTED' | 'WAIT' | 'REQUESTED' | 'DISCONNECTED';
 
 export type ShareScope = 'WEDDING_FUND_ONLY' | 'ALL';
 
 export interface MyPageUser {
+  id: number;
   name: string;
   role: CoupleRole;
   phoneNumber: string;
+  profileImage: string | null;
+  provider: string;
 }
 
 export interface MyPagePartner {
@@ -33,4 +36,13 @@ export interface MyPage {
   assetSummary: MyPageAssetSummary;
   shareSetting: MyPageShareSetting;
   appVersion: string;
+}
+
+export interface MyPageProfileForm {
+  name: string;
+  role: CoupleRole;
+  phoneNumber: string;
+  currentPassword: string;
+  newPassword: string;
+  newPasswordConfirm: string;
 }

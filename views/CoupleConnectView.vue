@@ -37,7 +37,7 @@ const {
       </header>
 
       <main class="px-5 pb-5 pt-4">
-        <h2 class="text-[21px] font-extrabold leading-tight tracking-[-0.055em]">
+        <h2 class="text-[21px] font-extrabold leading-tight">
           파트너를 연결해주세요
         </h2>
         <p class="mt-1.5 text-[12px] leading-5 text-dm-gray-dark">

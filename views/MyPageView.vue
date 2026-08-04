@@ -3,7 +3,6 @@ import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { BookOpenText, ChevronRight, CreditCard, Heart, UserRound } from '@lucide/vue';
-import { ACCESS_TOKEN_KEY } from '@/apis/axios.js';
 import { useMyPageStore } from '@/stores/myPageStore';
 import type { ShareScope } from '@/types/myPage';
 
@@ -16,7 +15,7 @@ type AssetSummary = {
 
 const router = useRouter();
 const myPageStore = useMyPageStore();
-const { myPage } = storeToRefs(myPageStore);
+const { isUpdatingShare, myPage } = storeToRefs(myPageStore);
 
 const roleLabels = {
   GROOM: '신랑',
@@ -26,6 +25,7 @@ const roleLabels = {
 const connectionStatusLabels = {
   CONNECTED: '연결됨',
   WAIT: '대기중',
+  REQUESTED: '요청됨',
   DISCONNECTED: '미연결',
 } as const;
 
@@ -58,33 +58,36 @@ const assetSummaries = computed<AssetSummary[]>(() => [
 ]);
 
 const selectedShareCaption = computed(() => {
-  const selectedOption = shareOptions.find((option) => option.value === myPage.value.shareSetting.selectedScope);
+  const selectedOption = shareOptions.find(
+    (option) => option.value === myPage.value.shareSetting.selectedScope
+  );
   return selectedOption?.caption ?? '';
 });
 
 const isPartnerConnected = computed(() => myPage.value.partner?.status === 'CONNECTED');
 
 function goProfileEdit() {
-  router.push({ name: 'mypage-profile' });
+  router.push({ name: 'myinfo-profile' });
 }
 
 function goAssetConnect(id: AssetSummary['id']) {
-  if (id === 'accounts') {
-    router.push({ name: 'mypage-account-connect' });
-    return;
-  }
-
-  if (id === 'cards') {
-    router.push({ name: 'mypage-card-connect' });
-  }
+  router.push({ name: id === 'accounts' ? 'myinfo-account-connect' : 'myinfo-card-connect' });
 }
 
 function goCoupleConnect() {
-  router.push({ name: 'mypage-couple-connect' });
+  router.push({ name: 'myinfo-couple-connect' });
 }
 
-function handleLogout() {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
+async function handleShareToggle(scope: ShareScope) {
+  if (scope === myPage.value.shareSetting.selectedScope) {
+    return;
+  }
+
+  await myPageStore.toggleShareScope();
+}
+
+async function handleLogout() {
+  await myPageStore.logout();
   router.push({ name: 'login' });
 }
 
@@ -111,15 +114,16 @@ onMounted(() => {
         <article class="relative h-[98px] overflow-hidden rounded-2xl border border-[#F2EFEE] bg-[linear-gradient(105deg,#FFFFFF_0%,#FFFFFF_49%,#FFF1EF_100%)] p-[18px] shadow-[0_1px_2px_rgba(34,34,43,0.04),0_6px_18px_-8px_rgba(34,34,43,0.14)]">
           <div class="absolute -bottom-[45px] -right-[29px] h-28 w-28 rounded-full bg-[#F2EFEF]/30" aria-hidden="true" />
           <div class="relative z-10 flex h-[60px] items-center gap-[13px]">
-            <div class="grid h-[60px] w-[60px] place-items-center rounded-[21px] bg-dm-cb shadow-[inset_0_0_0_5px_rgba(255,255,255,0.58)]">
-              <UserRound class="h-[26px] w-[26px] text-[#292934]" :stroke-width="1.8" />
+            <div class="grid h-[60px] w-[60px] place-items-center overflow-hidden rounded-[21px] bg-dm-cb shadow-[inset_0_0_0_5px_rgba(255,255,255,0.58)]">
+              <img v-if="myPage.user.profileImage" :src="myPage.user.profileImage" alt="" class="h-full w-full object-cover" />
+              <UserRound v-else class="h-[26px] w-[26px] text-[#292934]" :stroke-width="1.8" />
             </div>
             <div class="flex flex-col gap-[3px]">
               <div class="flex items-center gap-1.5">
                 <strong class="text-base font-extrabold leading-[19px]">{{ myPage.user.name }}</strong>
                 <span class="rounded-full bg-dm-mint-lighter px-2 py-1 text-[10px] font-extrabold leading-3 text-[#77A0A0] shadow-[0_0.6px_2px_rgba(0,0,0,0.2)]">{{ roleLabels[myPage.user.role] }}</span>
               </div>
-              <p class="text-[10.2px] leading-4 text-dm-gray-dark">{{ myPage.user.phoneNumber }}</p>
+              <p class="text-[10.2px] leading-4 text-dm-gray-dark">{{ myPage.user.phoneNumber || '전화번호 확인 중' }}</p>
             </div>
             <div class="ml-auto">
               <button type="button" class="h-[31px] rounded-[10px] bg-white px-2.5 text-[10.5px] font-bold leading-[13px] text-dm-co-darker shadow-[0_0.5px_2px_rgba(0,0,0,0.25)]" @click="goProfileEdit">
@@ -143,7 +147,7 @@ onMounted(() => {
           <span class="rounded-full bg-dm-mint-light px-2 py-1 text-[10px] font-extrabold leading-3 text-[#77A0A0]">{{ connectionStatusLabels[myPage.partner.status] }}</span>
         </article>
         <button v-else type="button" class="flex h-[34px] items-center justify-between rounded-[10px] bg-btn-mt-dark px-3.5 text-[10.5px] font-extrabold leading-[13px] text-white shadow-[0_1px_2px_rgba(34,34,43,0.04)]" @click="goCoupleConnect">
-          <span>상대와 연결 하기</span>
+          <span>상대와 연결하기</span>
           <ChevronRight class="h-[17px] w-[17px]" :stroke-width="2.2" />
         </button>
 
@@ -184,8 +188,10 @@ onMounted(() => {
                 v-for="option in shareOptions"
                 :key="option.value"
                 type="button"
-                class="flex flex-1 items-center justify-center rounded-[9px] text-[9.5px] font-bold leading-[11px]"
+                class="flex flex-1 items-center justify-center rounded-[9px] text-[9.5px] font-bold leading-[11px] disabled:cursor-wait"
                 :class="myPage.shareSetting.selectedScope === option.value ? 'bg-white text-dm-co-darker shadow-[0_2px_8px_rgba(82,55,64,0.08)]' : 'text-dm-gray-dark'"
+                :disabled="isUpdatingShare"
+                @click="handleShareToggle(option.value)"
               >
                 {{ option.label }}
               </button>

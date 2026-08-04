@@ -4,11 +4,11 @@ import { toAssetConnectionForm } from '@/models/AssetConnection';
 import type { AssetConnectionForm } from '@/types/assetConnection';
 
 const MOCK_ACCOUNT_CONNECTION_FORM: AssetConnectionForm = {
-  selectedProvider: '국민은행',
+  selectedProvider: 'KB국민은행',
   loginId: 'password123!',
   loginPassword: 'password123!',
   helperText: '영문·숫자·특수문자 포함 8자 이상',
-  passwordMessage: '✓ 비밀번호가 일치해요',
+  passwordMessage: '비밀번호가 입력되었어요',
 };
 
 const MOCK_CARD_CONNECTION_FORM: AssetConnectionForm = {
@@ -16,7 +16,7 @@ const MOCK_CARD_CONNECTION_FORM: AssetConnectionForm = {
   loginId: 'password123!',
   loginPassword: 'password123!',
   helperText: '영문·숫자·특수문자 포함 8자 이상',
-  passwordMessage: '✓ 비밀번호가 일치해요',
+  passwordMessage: '비밀번호가 입력되었어요',
 };
 
 export const useAssetConnectionStore = defineStore('assetConnection', {

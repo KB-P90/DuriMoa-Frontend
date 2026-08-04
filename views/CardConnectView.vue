@@ -6,7 +6,7 @@ import { ArrowLeft } from '@lucide/vue';
 import AccountConnectionForm from '@/components/common/AccountConnectionForm.vue';
 import { useAssetConnectionStore } from '@/stores/assetConnectionStore';
 
-const CARD_PROVIDER_OPTIONS = ['신한카드', '국민카드', '삼성카드', '현대카드'] as const;
+const CARD_PROVIDER_OPTIONS = ['신한카드', 'KB국민카드', '삼성카드', '현대카드'] as const;
 
 const router = useRouter();
 const assetConnectionStore = useAssetConnectionStore();
@@ -61,7 +61,7 @@ onMounted(() => {
           v-model:bank="cardCompany"
           v-model:internet-banking-id="cardLoginId"
           v-model:internet-banking-password="cardLoginPassword"
-          form-id-prefix="mypage-card"
+          form-id-prefix="myinfo-card"
           provider-label="카드사 선택"
           id-label="카드사 로그인 아이디"
           id-placeholder="카드사 로그인 아이디"

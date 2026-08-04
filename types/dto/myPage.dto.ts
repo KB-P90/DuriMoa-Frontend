@@ -1,28 +1,43 @@
-export interface MyPagePartnerDto {
+export type MyPageRoleDto = 'G' | 'B' | 'GROOM' | 'BRIDE';
+
+export type MyPageCoupleStatusDto = 'CONNECTED' | 'WAIT' | 'REQUESTED' | 'DISCONNECTED' | null;
+
+export interface MyPageProfileResponseDto {
+  id: number;
   name: string;
-  role: 'GROOM' | 'BRIDE';
-  connected_since: string;
-  status: 'CONNECTED' | 'WAIT' | 'DISCONNECTED';
+  role: MyPageRoleDto;
+  provider: string;
+  profileImage: string | null;
+  phone: string | null;
+  shared: boolean;
+  password?: null;
+  partnerName: string | null;
+  partnerRole: MyPageRoleDto | null;
+  coupleCreatedAt: string | null;
+  coupleStatus: MyPageCoupleStatusDto;
+}
+
+export interface MyPageProfileUpdateRequestDto {
+  id: number;
+  name: string;
+  role?: MyPageRoleDto;
+  phone?: string | null;
+  password?: string;
 }
 
 export interface MyPageAssetSummaryDto {
-  connected_accounts_count: number;
-  connected_cards_count: number;
+  accountCount: number;
+  cardCount: number;
 }
 
-export interface MyPageShareScopeDto {
-  selected_scope: 'WEDDING_FUND_ONLY' | 'ALL';
-  status_text: string;
+export interface MyPageAssetSummaryResponseDto {
+  summary: MyPageAssetSummaryDto;
 }
 
-export interface MyPageResponseDto {
-  user: {
-    name: string;
-    role: 'GROOM' | 'BRIDE';
-    phone_number: string;
-  };
-  partner: MyPagePartnerDto | null;
-  asset_summary: MyPageAssetSummaryDto;
-  share_scope: MyPageShareScopeDto;
-  app_version: string;
+export interface MyPageLogoutResponseDto {
+  loggedOut: boolean;
+}
+
+export interface MyPageProfileImageResponseDto {
+  profileImage: string;
 }

@@ -24,7 +24,7 @@ const emit = defineEmits<{
 const router = useRouter();
 
 const quickLinks: readonly QuickLink[] = [
-  { label: '마이페이지', icon: UserRound, color: 'text-[#517CA6]', routeName: 'mypage' },
+  { label: '마이페이지', icon: UserRound, color: 'text-[#517CA6]', routeName: 'myinfo' },
   { label: '목표 설정', icon: Target, color: 'text-[#E45B62]', routeName: null },
   { label: '월별 지출 관리', icon: BarChart3, color: 'text-[#19A786]', routeName: null },
   { label: '고객센터 (준비중)', icon: MessageCircle, color: 'text-dm-gray-dark', routeName: null },
