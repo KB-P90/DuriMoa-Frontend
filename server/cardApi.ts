@@ -2,24 +2,18 @@ import { api } from '@/server/axios.js';
 import type { ApiResponse } from '@/types/common';
 import type { CardDetailResponseDto, CardStrategyDataDto } from '@/types/dto/card.dto';
 
-const CARD_API_TOKEN =
-  'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZSI6IkciLCJpYXQiOjE3ODU4MTg1OTEsImV4cCI6MTc4NTgyMjE5MX0.DdZp6UvQ6GNlzCo45noxOIHZ6Aqoq65Ku1WPAr72HXM';
-
 export const getCardStrategyApi = async (amount?: number): Promise<CardStrategyDataDto> => {
+  console.log('카드추천 api 요청', { amount });
   const { data } = await api.get<ApiResponse<CardStrategyDataDto>>('/strategy/card', {
     params: amount ? { amount } : undefined,
-    headers: {
-      Authorization: `Bearer ${CARD_API_TOKEN}`,
-    },
   });
+  console.log('카드추천 api 응답', data);
   return data.data;
 };
 
 export const getCardDetailApi = async (userCardKey: string): Promise<CardDetailResponseDto> => {
-  const { data } = await api.get<ApiResponse<CardDetailResponseDto>>(`/strategy/card/${userCardKey}`, {
-    headers: {
-      Authorization: `Bearer ${CARD_API_TOKEN}`,
-    },
-  });
+  console.log('카드상세 api 요청', { userCardKey });
+  const { data } = await api.get<ApiResponse<CardDetailResponseDto>>(`/strategy/card/${userCardKey}`);
+  console.log('카드상세 api 응답', data);
   return data.data;
 };

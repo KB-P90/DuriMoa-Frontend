@@ -22,6 +22,9 @@ export const useCardStore = defineStore('card', () => {
 
   const cardStrategyData = ref<CardStrategy | null>(null);
 
+  // 카드 상세 정보 메모리 캐시 맵 (중복 네트워크 요청 방지)
+  const cardDetailCache = new Map<string, CardDetail>();
+
   const bestRecommendation = computed<BestCardRecommendation | null>(() => {
     return cardStrategyData.value?.bestCard ?? null;
   });
@@ -50,7 +53,7 @@ export const useCardStore = defineStore('card', () => {
       cardStrategyData.value = domainData;
       amount.value = domainData.paymentAmount;
 
-      // 추천 카드 목록 아이템에 대해 카드 상세 API를 병렬 조회하여 주요 혜택 최대 3개를 콤마(,) 연결로 채움
+      // 추천 카드 목록에 주요 혜택 3개가 표시될 수 있도록 각 카드의 혜택 정보 병렬 채우기 및 캐싱
       if (domainData?.userCardGroups) {
         const fetchPromises: Promise<void>[] = [];
 
@@ -59,8 +62,12 @@ export const useCardStore = defineStore('card', () => {
             if (card.userCardKey && !card.benefits) {
               const promise = getCardDetailApi(card.userCardKey)
                 .then((detailDto) => {
-                  if (detailDto?.benefits && detailDto.benefits.length > 0) {
-                    const topBenefits = detailDto.benefits
+                  const cardDetailObj = toCardDetail(detailDto);
+                  // 캐시에 저장하여 클릭 시 또 요청하지 않고 즉시 재사용
+                  cardDetailCache.set(card.userCardKey, cardDetailObj);
+
+                  if (cardDetailObj?.benefits && cardDetailObj.benefits.length > 0) {
+                    const topBenefits = cardDetailObj.benefits
                       .slice(0, 3)
                       .map((b) => b.title || b.description)
                       .filter(Boolean)
@@ -71,7 +78,7 @@ export const useCardStore = defineStore('card', () => {
                   }
                 })
                 .catch(() => {
-                  // Ignore errors for individual card detail fallback
+                  // 카드 상세 개별 조회 실패 시 무시
                 });
               fetchPromises.push(promise);
             }
@@ -107,10 +114,20 @@ export const useCardStore = defineStore('card', () => {
 
   async function openCardDetail(userCardKey?: string) {
     if (!userCardKey) return;
+
+    // 이미 저장(캐싱)된 카드 상세 데이터가 있는 경우 굳이 또 API 요청하지 않고 즉시 가져옴
+    if (cardDetailCache.has(userCardKey)) {
+      console.log(`[CARD STORE] ⚡ 캐시된 카드 상세 데이터를 재사용합니다. (userCardKey: ${userCardKey})`);
+      selectedCardDetail.value = cardDetailCache.get(userCardKey)!;
+      return;
+    }
+
     isDetailLoading.value = true;
     try {
       const dto = await getCardDetailApi(userCardKey);
-      selectedCardDetail.value = toCardDetail(dto);
+      const detailObj = toCardDetail(dto);
+      cardDetailCache.set(userCardKey, detailObj);
+      selectedCardDetail.value = detailObj;
     } catch (e: unknown) {
       console.error(`Failed to fetch card detail for key (${userCardKey}):`, e);
     } finally {
