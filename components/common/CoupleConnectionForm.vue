@@ -26,8 +26,15 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
 </script>
 
 <template>
-  <form class="mt-5" aria-label="파트너 초대 코드 확인" @submit.prevent="$emit('confirm')">
-    <label class="mb-2 block text-[12px] font-extrabold" for="couple-invite-code">
+  <form
+    class="mt-5"
+    aria-label="파트너 초대 코드 확인"
+    @submit.prevent="$emit('confirm')"
+  >
+    <label
+      class="mb-2 block text-[12px] font-extrabold"
+      for="couple-invite-code"
+    >
       상대 코드
     </label>
 
@@ -68,26 +75,59 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
       </button>
     </div>
 
-    <p v-if="hasInviteCodeError" id="couple-invite-code-error" class="mt-2 text-[11px] leading-4 text-btn-pk-dark" role="alert">
+    <p
+      v-if="hasInviteCodeError"
+      id="couple-invite-code-error"
+      class="mt-2 text-[11px] leading-4 text-btn-pk-dark"
+      role="alert"
+    >
       영문 대문자와 숫자 6자리로 입력해주세요.
     </p>
-    <p v-else-if="errorMessage" id="couple-invite-code-error" class="mt-2 flex items-start gap-1.5 text-[11px] leading-4 text-btn-pk-dark" role="alert">
-      <TriangleAlert class="mt-px h-3.5 w-3.5 shrink-0" :stroke-width="2" aria-hidden="true" />
+    <p
+      v-else-if="errorMessage"
+      id="couple-invite-code-error"
+      class="mt-2 flex items-start gap-1.5 text-[11px] leading-4 text-btn-pk-dark"
+      role="alert"
+    >
+      <TriangleAlert
+        class="mt-px h-3.5 w-3.5 shrink-0"
+        :stroke-width="2"
+        aria-hidden="true"
+      />
       {{ errorMessage }}
     </p>
-    <p v-else id="couple-invite-code-description" class="mt-2 text-[11px] leading-4 text-dm-gray-dark">
+    <p
+      v-else
+      id="couple-invite-code-description"
+      class="mt-2 text-[11px] leading-4 text-dm-gray-dark"
+    >
       공백 없이 영문 대문자와 숫자 6자리로 입력해주세요.
     </p>
   </form>
 
-  <div class="mt-2 min-h-5" aria-live="polite" aria-atomic="true">
-    <p v-if="feedbackMessage" class="flex items-center gap-1 text-[11px] font-medium text-btn-mt-dark">
-      <Check class="h-3.5 w-3.5" :stroke-width="2" aria-hidden="true" />
+  <div
+    class="mt-2 min-h-5"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <p
+      v-if="feedbackMessage"
+      class="flex items-center gap-1 text-[11px] font-medium text-btn-mt-dark"
+    >
+      <Check
+        class="h-3.5 w-3.5"
+        :stroke-width="2"
+        aria-hidden="true"
+      />
       {{ feedbackMessage }}
     </p>
   </div>
 
-  <div v-if="statusErrorMessage" class="mt-2.5 flex items-center justify-between gap-3 rounded-[13px] border border-btn-pk/30 px-3.5 py-3" role="alert">
+  <div
+    v-if="statusErrorMessage"
+    class="mt-2.5 flex items-center justify-between gap-3 rounded-[13px] border border-btn-pk/30 px-3.5 py-3"
+    role="alert"
+  >
     <p class="text-[11px] leading-4 text-btn-pk-dark">
       {{ statusErrorMessage }}
     </p>
@@ -101,11 +141,19 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
     </button>
   </div>
 
-  <p v-else-if="isLoadingStatus && requests.length === 0" class="mt-2.5 text-center text-[11px] text-dm-gray-dark" role="status">
+  <p
+    v-else-if="isLoadingStatus && requests.length === 0"
+    class="mt-2.5 text-center text-[11px] text-dm-gray-dark"
+    role="status"
+  >
     연결 상태를 불러오는 중이에요.
   </p>
 
-  <ul v-if="requests.length > 0" class="mt-2.5 flex flex-col gap-2" aria-label="커플 연결 요청 목록">
+  <ul
+    v-if="requests.length > 0"
+    class="mt-2.5 flex flex-col gap-2"
+    aria-label="커플 연결 요청 목록"
+  >
     <CoupleRequestCard
       v-for="request in requests"
       :key="request.userId"
@@ -116,8 +164,15 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
     />
   </ul>
 
-  <div v-if="isConnected" class="mt-3 flex items-center gap-2 rounded-[13px] bg-dm-mint-light px-3.5 py-3 text-[12px] font-bold text-btn-mt-dark" role="status">
-    <Check class="h-4 w-4" aria-hidden="true" />
+  <div
+    v-if="isConnected"
+    class="mt-3 flex items-center gap-2 rounded-[13px] bg-dm-mint-light px-3.5 py-3 text-[12px] font-bold text-btn-mt-dark"
+    role="status"
+  >
+    <Check
+      class="h-4 w-4"
+      aria-hidden="true"
+    />
     파트너 연결이 완료되었어요.
   </div>
 
