@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const ACCESS_TOKEN_KEY = 'accessToken';
+export const ACCESS_TOKEN_KEY = 'accessToken';
 const PUBLIC_API_PATHS = new Set(['/auth/login', '/auth/signup']);
 
 export const api = axios.create({
