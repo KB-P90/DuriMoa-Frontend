@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { useRouter, onBeforeRouteLeave } from 'vue-router';
 import CardSmartBanner from '@/components/card/CardSmartBanner.vue';
 import CardBestRecommendBanner from '@/components/card/CardBestRecommendBanner.vue';
@@ -12,6 +13,12 @@ import type { RecommendedCard } from '@/types/card';
 const router = useRouter();
 const cardStore = useCardStore();
 
+onMounted(async () => {
+  if (!cardStore.cardStrategyData) {
+    await cardStore.fetchCardStrategy(cardStore.amount);
+  }
+});
+
 function handleGoToAmountInput() {
   router.push({ name: 'card-amount' });
 }
@@ -24,7 +31,6 @@ function handleSelectBestCard(cardName: string) {
   cardStore.openCardDetail(cardName);
 }
 
-// 네비바 또는 다른 메뉴로 이동할 때는 카드추천 화면2 상태로 초기화
 onBeforeRouteLeave((to) => {
   if (to.name !== 'card-amount') {
     cardStore.resetToDefaultView();
@@ -35,59 +41,80 @@ onBeforeRouteLeave((to) => {
 <template>
   <div class="mx-auto w-full max-w-xl px-5 pb-10 pt-4">
     <!-- Header -->
-    <header class="mb-5 flex items-center">
+    <header class="mb-5 flex items-center justify-between">
       <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">카드 추천</h1>
     </header>
 
-    <!-- Top Banner Section (Screen 2 vs Screen 3 Condition) -->
-    <section class="mb-7">
-      <!-- Screen 3 Banner: When Custom Amount is set -->
-      <CardBestRecommendBanner
-        v-if="cardStore.isCustomAmountSet"
-        :amount="cardStore.amount"
-        :best="cardStore.bestRecommendation"
-        @click-change-amount="handleGoToAmountInput"
-        @click-card="handleSelectBestCard"
-      />
+    <!-- Loading State -->
+    <div v-if="cardStore.isLoading" class="py-12 text-center text-dm-gray-dark">
+      <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-btn-pk border-t-transparent mb-2"></div>
+      <p class="text-sm font-semibold">카드 추천 정보를 불러오는 중입니다...</p>
+    </div>
 
-      <!-- Screen 2 Banner: Default View -->
-      <CardSmartBanner
-        v-else
-        @click-input-amount="handleGoToAmountInput"
-      />
-    </section>
+    <!-- Error State -->
+    <div v-else-if="cardStore.error" class="rounded-2xl bg-rose-50 p-6 text-center text-rose-600">
+      <p class="text-sm font-bold">{{ cardStore.error }}</p>
+      <button
+        type="button"
+        class="mt-3 rounded-full bg-btn-pk px-4 py-2 text-xs font-bold text-white shadow-sm"
+        @click="cardStore.fetchCardStrategy(cardStore.amount)"
+      >
+        다시 시도
+      </button>
+    </div>
 
-    <!-- Recommend Card Rank Section Header -->
-    <section class="mb-4">
-      <h2 class="text-lg font-bold text-gray-900">추천 카드 순위</h2>
+    <!-- Main Content -->
+    <template v-else>
+      <!-- Top Banner Section (Screen 2 vs Screen 3 Condition) -->
+      <section class="mb-7">
+        <!-- Screen 3 Banner: When Custom Amount is set or best recommendation exists -->
+        <CardBestRecommendBanner
+          v-if="cardStore.isCustomAmountSet && cardStore.bestRecommendation"
+          :amount="cardStore.amount"
+          :best="cardStore.bestRecommendation"
+          @click-change-amount="handleGoToAmountInput"
+          @click-card="handleSelectBestCard"
+        />
 
-      <!-- Subtext for Screen 3 -->
-      <p v-if="cardStore.isCustomAmountSet" class="mt-1 text-xs text-dm-gray-dark">
-        입력하신 금액에 따른 추천 카드 순위를 보여드려요.
-      </p>
+        <!-- Screen 2 Banner: Default View -->
+        <CardSmartBanner
+          v-else
+          @click-input-amount="handleGoToAmountInput"
+        />
+      </section>
 
-      <!-- Subtext for Screen 2 -->
-      <p v-else class="mt-1 text-xs text-dm-gray-dark">
-        해당 화면은
-        <strong class="font-bold text-btn-mt-dark">{{ formatWon(cardStore.amount) }}</strong>
-        결제를 기준으로 나열됐습니다.
-      </p>
-    </section>
+      <!-- Recommend Card Rank Section Header -->
+      <section class="mb-4">
+        <h2 class="text-lg font-bold text-gray-900">추천 카드 순위</h2>
 
-    <!-- User Card Groups -->
-    <section class="mb-6 flex flex-col gap-4">
-      <UserCardGroupSection
-        v-for="group in cardStore.userCardGroups"
-        :key="group.userId"
-        :group="group"
-        @select-card="handleSelectCard"
-      />
-    </section>
+        <!-- Subtext for Screen 3 -->
+        <p v-if="cardStore.isCustomAmountSet" class="mt-1 text-xs text-dm-gray-dark">
+          입력하신 <strong class="font-bold text-btn-mt-dark">{{ formatWon(cardStore.amount) }}</strong> 기준 추천 카드 순위입니다.
+        </p>
 
-    <!-- Disclaimer Section -->
-    <section>
-      <CardDisclaimer />
-    </section>
+        <!-- Subtext for Screen 2 -->
+        <p v-else class="mt-1 text-xs text-dm-gray-dark">
+          해당 화면은
+          <strong class="font-bold text-btn-mt-dark">{{ formatWon(cardStore.amount) }}</strong>
+          결제를 기준으로 나열됐습니다.
+        </p>
+      </section>
+
+      <!-- User Card Groups -->
+      <section class="mb-6 flex flex-col gap-4">
+        <UserCardGroupSection
+          v-for="group in cardStore.userCardGroups"
+          :key="group.userId"
+          :group="group"
+          @select-card="handleSelectCard"
+        />
+      </section>
+
+      <!-- Disclaimer Section -->
+      <section>
+        <CardDisclaimer />
+      </section>
+    </template>
 
     <!-- Card Detail Modal (Screen 4 UI) -->
     <CardDetailModal

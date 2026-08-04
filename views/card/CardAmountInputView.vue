@@ -16,9 +16,9 @@ function handleBack() {
   }
 }
 
-function handleSubmit() {
+async function handleSubmit() {
   if (!cardStore.isValidAmount) return;
-  cardStore.applyCustomAmount();
+  await cardStore.applyCustomAmount();
   router.push({ name: 'card' });
 }
 </script>

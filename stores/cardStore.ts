@@ -1,13 +1,25 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import type { BestCardRecommendation, CardDetail, UserCardGroup } from '@/types/card';
+import type {
+  BestCardRecommendation,
+  CardDetail,
+  CardStrategy,
+  UserCardGroup,
+} from '@/types/card';
+import { getCardStrategyApi } from '@/server/cardApi';
+import { toCardStrategy } from '@/models/Card';
 
 export const useCardStore = defineStore('card', () => {
   const DEFAULT_AMOUNT = 100000;
-  const amount = ref<number>(DEFAULT_AMOUNT);
   const MIN_AMOUNT = 1000;
+
+  const amount = ref<number>(DEFAULT_AMOUNT);
   const isCustomAmountSet = ref<boolean>(false);
   const selectedCardDetail = ref<CardDetail | null>(null);
+  const isLoading = ref<boolean>(false);
+  const error = ref<string | null>(null);
+
+  const cardStrategyData = ref<CardStrategy | null>(null);
 
   const sampleCardDetail: CardDetail = {
     id: 'zero-edition2',
@@ -43,66 +55,13 @@ export const useCardStore = defineStore('card', () => {
     ],
   };
 
-  const bestRecommendation = computed<BestCardRecommendation>(() => {
-    const rate = 1.2;
-    const benefitAmount = Math.floor((amount.value * rate) / 100);
-    return {
-      cardName: '신한 Mr.Life',
-      expectedBenefitAmount: benefitAmount > 0 ? benefitAmount : 1200,
-      benefitRate: rate,
-      ownerName: '김민준',
-      cardBgColor: 'bg-[#FF4D88]',
-    };
+  const bestRecommendation = computed<BestCardRecommendation | null>(() => {
+    return cardStrategyData.value?.bestCard ?? null;
   });
 
-  const userCardGroups = ref<UserCardGroup[]>([
-    {
-      userId: 'groom',
-      userName: '김민준',
-      ownedCardCount: 3,
-      cards: [
-        {
-          id: 'm1',
-          name: '신한 Mr.Life',
-          rank: 1,
-          rankLabel: '1순위',
-          benefits: '온라인쇼핑 10%, 카페 10%',
-          bgColor: 'bg-[#91BAF8]',
-        },
-        {
-          id: 'm2',
-          name: '신한 Mr.Life',
-          rank: 2,
-          rankLabel: '2순위',
-          benefits: '온라인쇼핑 10%, 카페 10%',
-          bgColor: 'bg-[#F8B3C5]',
-        },
-      ],
-    },
-    {
-      userId: 'bride',
-      userName: '이서연',
-      ownedCardCount: 3,
-      cards: [
-        {
-          id: 'b1',
-          name: '신한 Mr.Life',
-          rank: 1,
-          rankLabel: '1순위',
-          benefits: '온라인쇼핑 10%, 카페 10%',
-          bgColor: 'bg-[#FF85B3]',
-        },
-        {
-          id: 'b2',
-          name: '신한 Mr.Life',
-          rank: 2,
-          rankLabel: '2순위',
-          benefits: '온라인쇼핑 10%, 카페 10%',
-          bgColor: 'bg-[#FFC67A]',
-        },
-      ],
-    },
-  ]);
+  const userCardGroups = computed<UserCardGroup[]>(() => {
+    return cardStrategyData.value?.userCardGroups ?? [];
+  });
 
   const isValidAmount = computed(() => amount.value >= MIN_AMOUNT);
 
@@ -114,15 +73,38 @@ export const useCardStore = defineStore('card', () => {
     amount.value = (amount.value || 0) + val;
   }
 
-  function applyCustomAmount() {
-    if (isValidAmount.value) {
-      isCustomAmountSet.value = true;
+  async function fetchCardStrategy(targetAmount?: number) {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const fetchVal = targetAmount !== undefined ? targetAmount : amount.value;
+      const dto = await getCardStrategyApi(fetchVal);
+      const domainData = toCardStrategy(dto);
+      cardStrategyData.value = domainData;
+      amount.value = domainData.paymentAmount;
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        error.value = e.message;
+      } else {
+        error.value = '카드 추천 정보를 가져오는 데 실패했습니다.';
+      }
+      console.error('Failed to fetch card strategy:', e);
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  function resetToDefaultView() {
+  async function applyCustomAmount() {
+    if (isValidAmount.value) {
+      isCustomAmountSet.value = true;
+      await fetchCardStrategy(amount.value);
+    }
+  }
+
+  async function resetToDefaultView() {
     isCustomAmountSet.value = false;
     amount.value = DEFAULT_AMOUNT;
+    await fetchCardStrategy(DEFAULT_AMOUNT);
   }
 
   function openCardDetail(cardName?: string) {
@@ -146,11 +128,15 @@ export const useCardStore = defineStore('card', () => {
     isValidAmount,
     MIN_AMOUNT,
     isCustomAmountSet,
+    isLoading,
+    error,
     selectedCardDetail,
     bestRecommendation,
     userCardGroups,
+    cardStrategyData,
     setAmount,
     addAmount,
+    fetchCardStrategy,
     applyCustomAmount,
     resetToDefaultView,
     openCardDetail,

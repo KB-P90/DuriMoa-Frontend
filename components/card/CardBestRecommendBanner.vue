@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { ChevronRight } from '@lucide/vue';
 import type { BestCardRecommendation } from '@/types/card';
 import { formatAmount, formatWon } from '@/utils/format';
@@ -12,6 +13,8 @@ defineEmits<{
   'click-change-amount': [];
   'click-card': [cardName: string];
 }>();
+
+const imageError = ref(false);
 </script>
 
 <template>
@@ -44,17 +47,30 @@ defineEmits<{
     >
       <!-- BEST 1 Badge -->
       <span class="absolute right-5 top-5 rounded-full bg-[#FF7666] px-3 py-1 text-[10px] font-bold text-white shadow-2xs">
-        BEST 1
+        BEST {{ best.rank || 1 }}
       </span>
 
       <div class="flex items-center gap-5">
-        <!-- Vertical Pink Card Visual Plate -->
-        <div class="relative flex h-36 w-24 shrink-0 flex-col justify-between rounded-2xl bg-[#FF4983] p-3 shadow-md">
-          <div class="h-3.5 w-5 rounded-sm bg-white/70" />
-          <div class="flex flex-col items-center gap-0.5">
-            <span class="text-sm font-bold tracking-widest text-white/80">...</span>
-            <span class="text-[11px] font-extrabold tracking-wider text-white">ZERO</span>
-          </div>
+        <!-- Vertical Card Visual Plate -->
+        <div
+          class="relative flex h-36 w-24 shrink-0 flex-col justify-between overflow-hidden rounded-2xl p-3 shadow-md"
+          :class="best.cardBgColor || 'bg-[#FF4983]'"
+        >
+          <template v-if="best.cardImage && !imageError">
+            <img
+              :src="best.cardImage"
+              :alt="best.cardName"
+              class="h-full w-full object-contain"
+              @error="imageError = true"
+            />
+          </template>
+          <template v-else>
+            <div class="h-3.5 w-5 rounded-sm bg-white/70" />
+            <div class="flex flex-col items-center gap-0.5">
+              <span class="text-xs font-bold tracking-widest text-white/80">{{ best.cardCompany }}</span>
+              <span class="text-[11px] font-extrabold tracking-wider text-white line-clamp-1">{{ best.cardName }}</span>
+            </div>
+          </template>
         </div>
 
         <!-- Card Detail Info -->
@@ -75,7 +91,7 @@ defineEmits<{
             <strong class="text-xl font-extrabold text-gray-900">
               {{ formatAmount(best.expectedBenefitAmount) }}원
             </strong>
-            <span class="ml-1.5 text-xs font-bold text-btn-pk">
+            <span v-if="best.benefitRate > 0" class="ml-1.5 text-xs font-bold text-btn-pk">
               {{ best.benefitRate }}%
             </span>
           </div>
