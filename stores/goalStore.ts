@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia';
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
-import { postGoal } from '@/server/goalApi';
+import { postGoal, updateGoal } from '@/server/goalApi';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
 import type {
   BudgetTypeCode,
   GoalCategoryCode,
   GoalDraft,
+  GoalProposal,
   GoalSubmission,
   RegionName,
 } from '@/types/goal';
@@ -21,6 +22,39 @@ export const useGoalStore = defineStore('goal', () => {
   });
 
   const excluded = reactive<Partial<Record<GoalCategoryCode, boolean>>>({});
+
+  // 예산 시안 목록 카드를 눌러 수정하러 들어온 경우, 대상 goalId. 새로 만드는 흐름이면 null.
+  const editingGoalId = ref<number | null>(null);
+
+  // 예산 시안 카드를 눌러 수정 화면으로 들어올 때, 이미 만들어진 시안 데이터를 draft로 채운다.
+  function loadFromProposal(goal: GoalProposal) {
+    editingGoalId.value = goal.goalId;
+    draft.weddingDate = goal.weddingDate;
+    draft.region = goal.region as RegionName;
+    draft.groomRatio = goal.groomRatio;
+    draft.items = {};
+
+    for (const key of Object.keys(excluded)) {
+      delete excluded[key as GoalCategoryCode];
+    }
+
+    for (const item of goal.items) {
+      const category = GOAL_CATEGORIES.find(
+        (candidate) => candidate.label === item.category.trim()
+      );
+      if (!category) {
+        if (import.meta.env.DEV) {
+          console.warn(
+            `[goalStore] "${item.category}" 카테고리를 GOAL_CATEGORIES에서 찾지 못해 금액을 채우지 못했어요.`
+          );
+        }
+        continue;
+      }
+
+      draft.items[category.code] = item.targetAmount;
+      excluded[category.code] = !item.included;
+    }
+  }
 
   const totalBudget = computed(() =>
     Object.values(draft.items).reduce((sum: number, amount) => sum + (amount ?? 0), 0)
@@ -55,6 +89,7 @@ export const useGoalStore = defineStore('goal', () => {
     draft.budgetType = null;
     draft.items = {};
     draft.groomRatio = 50;
+    editingGoalId.value = null;
     for (const key of Object.keys(excluded)) {
       delete excluded[key as GoalCategoryCode];
     }
@@ -80,18 +115,24 @@ export const useGoalStore = defineStore('goal', () => {
       })),
     };
 
+    if (editingGoalId.value !== null) {
+      return updateGoal(editingGoalId.value, payload);
+    }
+
     return postGoal(payload);
   }
 
   return {
     draft,
     excluded,
+    editingGoalId,
     totalBudget,
     setSchedule,
     setBudgetType,
     setCategoryAmount,
     excludeCategory,
     setGroomRatio,
+    loadFromProposal,
     submitGoal,
     reset,
   };
