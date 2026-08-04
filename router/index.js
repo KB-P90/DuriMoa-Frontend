@@ -2,18 +2,23 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import MainLayout from '@/layouts/MainLayout.vue';
 import { authTermRoutes } from '@/router/routes/authTermRoutes';
+import AccountConnectView from '@/views/AccountConnectView.vue';
 import AccountHelpView from '@/views/auth/AccountHelpView.vue';
 import AuthSessionView from '@/views/auth/AuthSessionView.vue';
 import LoginView from '@/views/auth/LoginView.vue';
 import SignupView from '@/views/auth/SignupView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
+import CardConnectView from '@/views/CardConnectView.vue';
+import CoupleConnectView from '@/views/CoupleConnectView.vue';
 import GoalBudgetTypeView from '@/views/goal/GoalBudgetTypeView.vue';
 import GoalCategoryBudgetView from '@/views/goal/GoalCategoryBudgetView.vue';
 import GoalScheduleView from '@/views/goal/GoalScheduleView.vue';
 import GoalSummaryView from '@/views/goal/GoalSummaryView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
 import HomeView from '@/views/HomeView.vue';
+import MyPageView from '@/views/MyPageView.vue';
 import OnboardingView from '@/views/onboarding/OnboardingView.vue';
+import ProfileEditView from '@/views/ProfileEditView.vue';
 import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
 import ProgressStatusView from '@/views/ProgressStatusView.vue';
 
@@ -28,6 +33,7 @@ const router = createRouter({
         { path: 'home', name: 'home', component: HomeView },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         { path: 'status', name: 'status', component: ProgressStatusView, props: { title: '현황' } },
+        { path: 'myinfo', name: 'myinfo', component: MyPageView },
         { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
         {
           path: 'expense/:yearMonth(\\d{4}-\\d{2})?',
@@ -56,6 +62,10 @@ const router = createRouter({
     { path: '/account-help', name: 'account-help', component: AccountHelpView },
     { path: '/auth/session', name: 'session', component: AuthSessionView },
     { path: '/onboarding', name: 'onboarding', component: OnboardingView },
+    { path: '/myinfo/profile', name: 'myinfo-profile', component: ProfileEditView },
+    { path: '/myinfo/accounts', name: 'myinfo-account-connect', component: AccountConnectView },
+    { path: '/myinfo/cards', name: 'myinfo-card-connect', component: CardConnectView },
+    { path: '/myinfo/couple', name: 'myinfo-couple-connect', component: CoupleConnectView },
     { path: '/:pathMatch(.*)*', redirect: '/login' },
   ],
   scrollBehavior: () => ({ top: 0 }),
