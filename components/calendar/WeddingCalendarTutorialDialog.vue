@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { CalendarHeart, FilePenLine } from '@lucide/vue';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,23 +30,10 @@ const open = defineModel<boolean>('open', { default: false });
             class="flex h-16 w-16 items-center justify-center rounded-full bg-btn-mt/60 text-btn-mt-dark"
             aria-hidden="true"
           >
-            <svg
-              viewBox="0 0 56 56"
-              class="h-11 w-11"
-              fill="none"
-            >
-              <g
-                stroke="currentColor"
-                stroke-width="2.4"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M12 7h22l9 9v22" />
-                <path d="M34 7v9h9M12 7v42h25M19 24h15M19 32h11" />
-                <path d="m30 47 2.5-8.5 10.8-10.8a3.8 3.8 0 0 1 5.4 5.4L37.9 43.9 30 47Z" />
-                <path d="m40.8 30.2 5.4 5.4" />
-              </g>
-            </svg>
+            <FilePenLine
+              class="h-10 w-10"
+              :stroke-width="1.4"
+            />
           </span>
           <p class="text-sm leading-6 text-gray-800">
             캘린더에서 소비 내역을<br />추가하거나 수정해요.
@@ -64,31 +52,10 @@ const open = defineModel<boolean>('open', { default: false });
             class="flex h-16 w-16 items-center justify-center rounded-full bg-dm-cb text-btn-pk-dark"
             aria-hidden="true"
           >
-            <svg
-              viewBox="0 0 56 56"
-              class="h-11 w-11"
-              fill="none"
-            >
-              <g
-                stroke="currentColor"
-                stroke-width="2.4"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect
-                  x="8"
-                  y="12"
-                  width="40"
-                  height="37"
-                  rx="4"
-                />
-                <path d="M8 22h40M18 7v10M38 7v10" />
-              </g>
-              <path
-                d="M19 32c0-5.6 7.2-6.6 9-2 1.8-4.6 9-3.6 9 2 0 4.7-4.7 7.7-9 10.7-4.3-3-9-6-9-10.7Z"
-                fill="currentColor"
-              />
-            </svg>
+            <CalendarHeart
+              class="h-9 w-9"
+              :stroke-width="1.4"
+            />
           </span>
           <div class="min-w-0">
             <p class="text-sm leading-6 text-gray-800">
