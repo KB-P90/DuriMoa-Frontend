@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { useStatusStore } from '@/stores/statusStore';
+import { useProgressStore } from '@/stores/progressStore';
 import { computed } from 'vue';
 
-const stateStore = useStatusStore();
+const progressStore = useProgressStore();
 
-const overallStatus = computed(() => stateStore.overallStatus);
+const overallProgress = computed(() => progressStore.overallProgress);
 
-const progressRateLabel = computed(() => Math.round(overallStatus.value.progressRate));
+const progressRateLabel = computed(() => Math.round(overallProgress.value.progressRate));
 
 // 진행 바는 100%를 넘지 않도록 처리
 const progressBarWidth = computed(() =>
-  Math.min(100, Math.max(0, overallStatus.value.progressRate))
+  Math.min(100, Math.max(0, overallProgress.value.progressRate))
 );
 
 // 예비비와 기타 카테고리 문구(미사용/미계약) 구분
@@ -33,8 +33,8 @@ const unfilledLabel = (category: string) => (category.includes('예비') ? '미�
       </div>
 
       <span class="flex mt-3 text-m font-semibold gap-1">
-        <p>{{ overallStatus.currentAmount.toLocaleString() }}원</p>
-        <p class="text-dm-gray-dark">/ {{ overallStatus.targetAmount.toLocaleString() }}원</p>
+        <p>{{ overallProgress.currentAmount.toLocaleString() }}원</p>
+        <p class="text-dm-gray-dark">/ {{ overallProgress.targetAmount.toLocaleString() }}원</p>
       </span>
     </section>
 
@@ -44,13 +44,13 @@ const unfilledLabel = (category: string) => (category.includes('예비') ? '미�
         <span
           class="rounded-full bg-dm-mint-light px-3 py-1 text-m font-semibold text-dm-mint-darker"
         >
-          {{ overallStatus.completedItemCount }} / {{ overallStatus.totalItemCount }} 완료
+          {{ overallProgress.completedItemCount }} / {{ overallProgress.totalItemCount }} 완료
         </span>
       </div>
 
       <div class="overflow-hidden rounded-3xl border border-dm-mint bg-white shadow-md">
         <div
-          v-for="item in overallStatus.items"
+          v-for="item in overallProgress.items"
           :key="item.goalItemId"
           class="flex items-center gap-3 border-b border-dm-gray-light px-7 py-5 last:border-b-0"
         >

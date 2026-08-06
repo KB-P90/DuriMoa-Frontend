@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import OverallStatus from './status/OverallStatus.vue';
-import PersonalStatus from './status/PersonalStatus.vue';
-import MonthlyProgress from './status/MonthlyProgress.vue';
-import { useStatusStore } from '@/stores/statusStore.js';
+import OverallProgress from './progress/OverallProgress.vue';
+import PersonalProgress from './progress/PersonalProgress.vue';
+import MonthlyProgress from './progress/MonthlyProgress.vue';
+import { useProgressStore } from '@/stores/progressStore';
 
-const statusStore = useStatusStore();
+const progressStore = useProgressStore();
 
 // 페이지 진입 시 현황 데이터 로드
 onMounted(() => {
-  statusStore.fetchProgressStatus();
+  progressStore.fetchProgress();
 });
 
-const STATUS_TABS = [
+const PROGRESS_TABS = [
   { key: 'overall', label: '전체 현황' },
   { key: 'personal', label: '개인별 현황' },
   { key: 'monthly', label: '진행 현황' },
@@ -38,7 +38,7 @@ const activeTab = ref('overall');
       role="tablist"
     >
       <button
-        v-for="tab in STATUS_TABS"
+        v-for="tab in PROGRESS_TABS"
         :key="tab.key"
         role="tab"
         :aria-selected="activeTab === tab.key"
@@ -55,8 +55,8 @@ const activeTab = ref('overall');
     </nav>
 
     <div>
-      <OverallStatus v-if="activeTab === 'overall'" />
-      <PersonalStatus v-if="activeTab === 'personal'" />
+      <OverallProgress v-if="activeTab === 'overall'" />
+      <PersonalProgress v-if="activeTab === 'personal'" />
       <MonthlyProgress v-if="activeTab === 'monthly'" />
     </div>
   </div>

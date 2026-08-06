@@ -1,4 +1,4 @@
-export interface CategoryStatus {
+export interface CategoryProgress {
   goalItemId: number;
   category: string;
   targetAmount: number;
@@ -7,16 +7,16 @@ export interface CategoryStatus {
   completed: boolean;
 }
 
-export interface OverallStatus {
+export interface OverallProgress {
   targetAmount: number;
   currentAmount: number;
   progressRate: number;
   completedItemCount: number;
   totalItemCount: number;
-  items: CategoryStatus[];
+  items: CategoryProgress[];
 }
 
-export interface MemberStatus {
+export interface MemberProgress {
   userId: number;
   name: string;
   assetShared: boolean;
@@ -26,8 +26,8 @@ export interface MemberStatus {
   progressRate: number;
 }
 
-export interface PersonalStatus {
-  members: MemberStatus[];
+export interface PersonalProgress {
+  members: MemberProgress[];
 }
 
 export interface MonthlyProgressItem {
@@ -42,8 +42,8 @@ export interface MonthlyProgress {
   months: MonthlyProgressItem[];
 }
 
-export interface ProgressStatusResponse {
-  overall: OverallStatus;
-  personal: PersonalStatus;
+export interface ProgressResponse {
+  overall: OverallProgress;
+  personal: PersonalProgress;
   monthlyProgress: MonthlyProgress;
 }
