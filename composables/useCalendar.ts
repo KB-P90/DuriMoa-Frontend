@@ -103,6 +103,8 @@ export function useCalendar() {
   const transactions = ref<readonly Transaction[]>([]);
   const isLoading = ref(false);
   const isSubmitting = ref(false);
+  const hasLoadedMonth = ref(false);
+  const hasMonthlyRecords = ref(false);
 
   const monthKey = computed(() => toMonthKey(visibleMonth.value));
   const monthLabel = computed(
@@ -116,6 +118,13 @@ export function useCalendar() {
     return `${Number(month)}월 ${Number(date)}일`;
   });
   const calendarDays = computed(() => createCalendarDays(visibleMonth.value, markersByDate.value));
+  const showWeddingEmptyState = computed(
+    () =>
+      mode.value === 'wedding' &&
+      hasLoadedMonth.value &&
+      !isLoading.value &&
+      !hasMonthlyRecords.value
+  );
 
   async function fetchDaily() {
     try {
@@ -128,16 +137,24 @@ export function useCalendar() {
 
   async function fetchMonth() {
     isLoading.value = true;
+    hasLoadedMonth.value = false;
+    hasMonthlyRecords.value = false;
     summary.value = EMPTY_SUMMARY;
     markersByDate.value = {};
     transactions.value = [];
     try {
       const response = await getMonthlyCalendar(monthKey.value, MODE_TO_API_TYPE[mode.value]);
       const calendar = toCalendarMonthData(response, mode.value);
+      hasMonthlyRecords.value = response.calendar.some(
+        (day) => day.hasIncome || day.hasExpense || day.hasSaving
+      );
       summary.value = calendar.summary;
       markersByDate.value = calendar.markersByDate;
+      hasLoadedMonth.value = true;
       await fetchDaily();
     } catch {
+      hasLoadedMonth.value = false;
+      hasMonthlyRecords.value = false;
       summary.value = EMPTY_SUMMARY;
       markersByDate.value = {};
       transactions.value = [];
@@ -237,6 +254,7 @@ export function useCalendar() {
     expenseAnalysisLabel,
     summary,
     transactions,
+    showWeddingEmptyState,
     isLoading,
     isSubmitting,
     selectDate,
