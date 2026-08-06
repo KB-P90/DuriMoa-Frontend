@@ -4,7 +4,7 @@ import CategoryExpenseCard from '@/components/expense/CategoryExpenseCard.vue';
 import MonthPicker from '@/components/expense/MonthPicker.vue';
 import SavingMissionCard from '@/components/expense/SavingMissionCard.vue';
 import { computed, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useExpenseStore } from '@/stores/expenseStore';
 
 interface Props {
@@ -13,7 +13,6 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const route = useRoute();
 const router = useRouter();
 
 const expenseStore = useExpenseStore();

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import OverallProgress from '../components/progress/OverallProgress.vue';
-import PersonalProgress from '../components/progress/PersonalProgress.vue';
+import OverallProgress from '../../components/progress/OverallProgress.vue';
+import PersonalProgress from '../../components/progress/PersonalProgress.vue';
 import { useProgressStore } from '@/stores/progressStore';
 
 const progressStore = useProgressStore();

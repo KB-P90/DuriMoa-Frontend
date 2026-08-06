@@ -20,8 +20,8 @@ import MyPageView from '@/views/MyPageView.vue';
 import OnboardingView from '@/views/onboarding/OnboardingView.vue';
 import ProfileEditView from '@/views/ProfileEditView.vue';
 import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
-import ProgressView from '@/views/ProgressView.vue';
-import MonthlyProgressView from '@/views/MonthlyProgressView.vue';
+import ProgressView from '@/views/progress/ProgressView.vue';
+import MonthlyProgressView from '@/views/progress/MonthlyProgressView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
