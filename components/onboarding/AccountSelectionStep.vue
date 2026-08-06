@@ -60,25 +60,37 @@ defineEmits<{
         <label
           v-for="(account, index) in accounts"
           :key="account.accountNumber"
-          class="flex min-h-[58px] cursor-pointer items-center gap-3 px-4 transition hover:bg-dm-cb-light"
-          :class="{ 'border-t border-dm-gray/20': index > 0 }"
+          class="flex min-h-[58px] items-center gap-3 px-4 transition"
+          :class="[
+            { 'border-t border-dm-gray/20': index > 0 },
+            account.isRegistered || isLoading
+              ? 'cursor-not-allowed bg-dm-gray-light text-dm-gray-dark'
+              : 'cursor-pointer hover:bg-dm-cb-light',
+          ]"
         >
           <input
             class="peer sr-only"
             type="checkbox"
             :checked="selectedAccountNumbers.includes(account.accountNumber)"
-            :disabled="isLoading"
+            :disabled="isLoading || account.isRegistered"
             @change="$emit('toggle', account.accountNumber)"
           />
           <span class="min-w-0 flex-1">
             <strong class="block truncate text-[13px] font-extrabold">
-              {{ account.accountNumber }}
+              {{ account.accountDisplay }}
             </strong>
             <span class="mt-0.5 block truncate text-[10px] text-dm-gray-dark">
               {{ account.accountName }}
             </span>
           </span>
           <span
+            v-if="account.isRegistered"
+            class="shrink-0 text-[11px] font-bold text-dm-gray-dark"
+          >
+            연결됨
+          </span>
+          <span
+            v-else
             class="grid h-[20px] w-[20px] shrink-0 place-items-center rounded-[6px] border border-dm-gray/35 bg-dm-gray-light text-[12px] font-bold text-transparent transition peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
             aria-hidden="true"
           >
