@@ -65,7 +65,7 @@ onMounted(() => {
     class="home-stage aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]"
   >
     <div
-      class="home-canvas absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-hidden bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--home-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
+      class="home-canvas absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-y-auto bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--home-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
     >
       <section
         class="home-hero relative h-[379px] overflow-hidden bg-gradient-to-b from-[#FDDFDD] to-white md:h-[440px]"
