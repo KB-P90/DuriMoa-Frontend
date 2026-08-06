@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
 import OverallProgress from '../../components/progress/OverallProgress.vue';
 import PersonalProgress from '../../components/progress/PersonalProgress.vue';
 import { useProgressStore } from '@/stores/progressStore';
 
 const progressStore = useProgressStore();
-const router = useRouter();
 
 // 페이지 진입 시 현황 데이터 로드
 onMounted(() => {

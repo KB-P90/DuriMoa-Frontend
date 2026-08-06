@@ -39,15 +39,12 @@ const progressBarWidth = computed(() =>
 
     <div class="mt-5 h-7 w-full overflow-hidden rounded-full bg-dm-gray-light">
       <div
-        class="h-full rounded-full bg-dm-co transition-all duration-300"
+        class="h-full rounded-full bg-dm-co transition-all duration-1000"
         :style="{ width: `${progressBarWidth}%` }"
       />
     </div>
 
-    <div
-      v-if="props.showDetail"
-      class="flex justify-between align-center mt-3"
-    >
+    <div class="flex justify-between align-center mt-3">
       <span class="flex text-m font-semibold gap-1">
         <p>{{ Math.round(overallProgress.currentAmount / 10000).toLocaleString() }}만원</p>
         <p class="text-dm-gray-dark">
@@ -56,6 +53,7 @@ const progressBarWidth = computed(() =>
       </span>
 
       <button
+        v-if="props.showDetail"
         type="button"
         class="flex items-center text-m font-semibold text-btn-pk cursor-pointer"
         @click="handleViewMonthlyProgress"

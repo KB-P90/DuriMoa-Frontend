@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CoupleAchievement from '@/components/progress/CoupleAchievement.vue';
+import MonthlyTimeline from '@/components/progress/MonthlyTimeline.vue';
 import { ArrowLeft } from '@lucide/vue';
 import { useRouter } from 'vue-router';
 
@@ -19,8 +20,9 @@ const router = useRouter();
       <h1 class="flex-1 ml-2 text-xl font-bold">월별 예산 달성 현황</h1>
     </header>
 
-    <div class="flex flex-col gap-10 px-4 py-4">
+    <div class="flex flex-col gap-10 px-4 pt-4 pb-10">
       <CoupleAchievement />
+      <MonthlyTimeline />
     </div>
   </div>
 </template>
