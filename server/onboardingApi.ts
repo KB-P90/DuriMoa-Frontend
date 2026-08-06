@@ -1,60 +1,72 @@
 import { api } from './axios';
 import type { ApiResponse } from '@/types/common';
 import type {
-  AccountListRequestDto,
-  AccountListResponseDto,
-  AccountSelectionRequestDto,
-  CodefTermsRequestDto,
   CoupleAcceptRequestDto,
   CoupleInviteRequestDto,
   CouplePartnerResponseDto,
   CoupleStatusResponseDto,
-  ShareScopeRequestDto,
-  ShareScopeResponseDto,
+  OnboardingAccountListResponseDto,
+  OnboardingRegisterRequestDto,
+  OnboardingRegisterResponseDto,
+  OnboardingSelectRequestDto,
+  OnboardingSelectResponseDto,
 } from '@/types/dto/onboarding.dto';
 
-// CODEF API 약관 동의 결과를 반환한다.
-export const agreeCodefTerms = async (request: CodefTermsRequestDto) => {
-  const { data } = await api.post<ApiResponse<null>>('/onboard/terms', request);
-  return data;
-};
-
-// 인터넷뱅킹 정보로 연결 가능한 계좌 목록을 조회한다.
-export const getAccounts = async (request: AccountListRequestDto) => {
-  const { data } = await api.get<ApiResponse<AccountListResponseDto>>('/onboard/account/list', {
-    data: request,
-  });
+// 인터넷뱅킹 정보로 CODEF 금융계정을 등록하거나 추가한다.
+export const registerOnboardingAccount = async (request: OnboardingRegisterRequestDto) => {
+  const { data } = await api.post<ApiResponse<OnboardingRegisterResponseDto>>(
+    '/onboarding/register',
+    request
+  );
   return data.data;
 };
 
-// 사용자가 고른 계좌 목록을 온보딩 계좌로 저장한다.
-export const selectAccounts = async (request: AccountSelectionRequestDto) => {
-  const { data } = await api.post<ApiResponse<null>>('/onboard/account/select', request);
-  return data;
+// 등록된 CODEF 계정으로 특정 금융기관의 계좌 목록을 조회한다.
+export const getOnboardingAccounts = async (company: string) => {
+  const { data } = await api.get<ApiResponse<OnboardingAccountListResponseDto>>(
+    '/onboarding/accounts',
+    { params: { company } }
+  );
+  return data.data;
+};
+
+// 선택한 계좌의 거래내역을 동기화하여 서버에 저장한다.
+export const selectOnboardingAccounts = async (request: OnboardingSelectRequestDto) => {
+  const { data } = await api.post<ApiResponse<OnboardingSelectResponseDto>>(
+    '/onboarding/select',
+    request
+  );
+  return data.data;
 };
 
 // 초대 코드에 해당하는 상대에게 커플 연결을 요청한다.
 export const invitePartner = async (inviteCode: string) => {
   const request: CoupleInviteRequestDto = { inviteCode };
-  const { data } = await api.post<ApiResponse<CouplePartnerResponseDto>>('/couple/invite', request);
+  const { data } = await api.post<ApiResponse<CouplePartnerResponseDto>>(
+    '/couples/invite',
+    request
+  );
   return data.data;
 };
 
 // 선택한 상대방이 보낸 커플 연결 요청을 수락한다.
 export const acceptPartner = async (partnerUserId: number) => {
   const request: CoupleAcceptRequestDto = { partnerUserId };
-  const { data } = await api.post<ApiResponse<CouplePartnerResponseDto>>('/couple/accept', request);
+  const { data } = await api.post<ApiResponse<CouplePartnerResponseDto>>(
+    '/couples/accept',
+    request
+  );
   return data.data;
 };
 
 // 현재 커플 연결 요청과 진행 상태 목록을 조회한다.
 export const getCoupleStatus = async () => {
-  const { data } = await api.get<ApiResponse<CoupleStatusResponseDto[]>>('/couple/status');
+  const { data } = await api.get<ApiResponse<CoupleStatusResponseDto[]>>('/couples/status');
   return data.data;
 };
 
-// 상대방에게 공개할 정보 범위를 저장한다.
-export const updateShareScope = async (request: ShareScopeRequestDto) => {
-  const { data } = await api.put<ApiResponse<ShareScopeResponseDto>>('/user/share', request);
+// 현재 사용자의 자산 공개 여부를 반전한다.
+export const toggleShareScope = async () => {
+  const { data } = await api.patch<ApiResponse<boolean>>('/users/share');
   return data.data;
 };

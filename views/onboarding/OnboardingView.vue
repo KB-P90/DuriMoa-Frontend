@@ -28,7 +28,7 @@ const {
   isSelectingAccounts,
   screen,
   selectConnectedAccounts,
-  selectedAccountIds,
+  selectedAccountNumbers,
   toggleAccount,
 } = useOnboardingFlow();
 
@@ -101,7 +101,7 @@ const {
         :can-continue="canContinueAccountSelection"
         :error-message="accountSelectionErrorMessage"
         :is-loading="isSelectingAccounts"
-        :selected-account-ids="selectedAccountIds"
+        :selected-account-numbers="selectedAccountNumbers"
         @back="goBack"
         @skip="goHome"
         @toggle="toggleAccount"

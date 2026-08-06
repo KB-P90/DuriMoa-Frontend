@@ -23,7 +23,6 @@ export interface OnboardingCoupleRequest {
 
 // 계좌 선택 화면에 표시할 온보딩 계좌 정보다.
 export interface OnboardingAccount {
-  accountId: number;
   accountName: string;
   accountNumber: string;
 }
