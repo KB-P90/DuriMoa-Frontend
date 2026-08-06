@@ -1,13 +1,43 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+
 import { useProgressStore } from '@/stores/progressStore';
+import type { CategoryProgress } from '@/types/progress';
+
+const WEDDING_CATEGORY_NAMES = [
+  '예식장',
+  '스튜디오',
+  '드레스',
+  '메이크업',
+  '예물',
+  '예비비',
+] as const;
+
+interface ChecklistItem extends CategoryProgress {
+  key: string;
+}
 
 const progressStore = useProgressStore();
 
 const overallProgress = computed(() => progressStore.overallProgress);
 
-// 예비비와 기타 카테고리 문구(미사용/미계약) 구분
-const unfilledLabel = (category: string) => (category.includes('예비') ? '미사용' : '미계약');
+const checklistItems = computed<ChecklistItem[]>(() =>
+  WEDDING_CATEGORY_NAMES.map((category, index) => {
+    const item = overallProgress.value.items.find(
+      (progressItem) => progressItem.category === category
+    );
+
+    return {
+      goalItemId: item?.goalItemId ?? -(index + 1),
+      category,
+      targetAmount: item?.targetAmount ?? 0,
+      currentAmount: item?.currentAmount ?? 0,
+      progressRate: item?.progressRate ?? 0,
+      completed: item?.completed ?? false,
+      key: category,
+    };
+  })
+);
 </script>
 
 <template>
@@ -23,13 +53,18 @@ const unfilledLabel = (category: string) => (category.includes('예비') ? '미�
 
     <div class="overflow-hidden rounded-3xl border border-dm-mint bg-white shadow-md">
       <div
-        v-for="item in overallProgress.items"
-        :key="item.goalItemId"
+        v-for="item in checklistItems"
+        :key="item.key"
         class="flex items-center gap-3 border-b border-dm-gray-light px-7 py-5 last:border-b-0"
+        :class="item.targetAmount == 0 ? 'bg-dm-gray-light text-dm-gray' : ''"
       >
         <div
           class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md"
-          :class="item.completed ? 'bg-dm-mint-darker' : 'border-2 border-dm-mint cursor-pointer'"
+          :class="{
+            'border-2': item.targetAmount == 0,
+            'bg-dm-mint-darker': item.targetAmount != 0 && item.completed,
+            'border-2 border-dm-mint cursor-pointer': item.targetAmount != 0 && !item.completed,
+          }"
         >
           <svg
             v-if="item.completed"
@@ -49,28 +84,23 @@ const unfilledLabel = (category: string) => (category.includes('예비') ? '미�
 
         <div class="ml-3 flex-1">
           <p class="text-m font-semibold">{{ item.category }}</p>
-          <p class="mt-0.5 text-sm text-dm-gray-dark">
-            목표 {{ Math.round(item.targetAmount / 10000).toLocaleString() }}만원 · 실제
-            {{
-              item.progressRate === null
-                ? unfilledLabel(item.category)
-                : Math.round(item.currentAmount / 10000).toLocaleString() + '만원'
-            }}
+          <p
+            v-if="item.targetAmount != 0"
+            class="mt-0.5 text-sm text-dm-gray-dark"
+          >
+            목표 {{ Math.round(item.targetAmount / 10000).toLocaleString() }}만원 /
+            {{ Math.round(item.currentAmount / 10000).toLocaleString() }}만원 사용
           </p>
         </div>
 
-        <div class="flex-shrink-0">
+        <div
+          v-if="item.targetAmount != 0"
+          class="flex-shrink-0"
+        >
           <span
-            v-if="item.progressRate !== null"
             class="rounded-3xl bg-dm-mint-light px-3 py-1 text-sm font-semibold text-dm-mint-darker"
           >
-            {{ Math.round(item.progressRate) }}%
-          </span>
-          <span
-            v-else
-            class="rounded-3xl bg-dm-gray-light px-3 py-1 text-sm font-bold text-dm-gray-dark"
-          >
-            --
+            {{ Math.round(item.progressRate ?? 0) }}%
           </span>
         </div>
       </div>
