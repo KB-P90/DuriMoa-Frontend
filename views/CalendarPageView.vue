@@ -17,6 +17,7 @@ const {
   expenseAnalysisLabel,
   summary,
   transactions,
+  showWeddingEmptyState,
   isLoading,
   isSubmitting,
   selectDate,
@@ -51,6 +52,7 @@ const {
     :days="calendarDays"
     :summary="summary"
     :transactions="transactions"
+    :show-wedding-empty-state="showWeddingEmptyState"
     :is-loading="isLoading"
     @update:mode="mode = $event"
     @select-date="selectDate"
