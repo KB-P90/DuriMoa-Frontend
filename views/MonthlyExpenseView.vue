@@ -8,7 +8,6 @@ import { useRoute, useRouter } from 'vue-router';
 import { useExpenseStore } from '@/stores/expenseStore';
 
 interface Props {
-  title: string;
   yearMonth?: string;
 }
 

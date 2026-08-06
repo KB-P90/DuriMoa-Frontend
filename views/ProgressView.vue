@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import OverallProgress from './progress/OverallProgress.vue';
-import PersonalProgress from './progress/PersonalProgress.vue';
-import MonthlyProgress from './progress/MonthlyProgress.vue';
+import OverallProgress from '../components/progress/OverallProgress.vue';
+import PersonalProgress from '../components/progress/PersonalProgress.vue';
 import { useProgressStore } from '@/stores/progressStore';
 
 const progressStore = useProgressStore();
@@ -52,7 +51,6 @@ const activeTab = ref('overall');
     <div>
       <OverallProgress v-if="activeTab === 'overall'" />
       <PersonalProgress v-if="activeTab === 'personal'" />
-      <MonthlyProgress v-if="activeTab === 'monthly'" />
     </div>
   </div>
 </template>
