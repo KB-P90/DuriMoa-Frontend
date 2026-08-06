@@ -63,7 +63,9 @@ const handleStartMission = async (mission: SavingMission & { isStarted?: boolean
 </script>
 
 <template>
-  <section class="rounded-3xl border border-dm-mint bg-white m-4 sm:m-6 shadow-md overflow-hidden">
+  <section
+    class="rounded-3xl border border-dm-mint-dark bg-white m-4 sm:m-6 shadow-md overflow-hidden"
+  >
     <div class="flex items-center justify-between p-4 sm:p-6">
       <h2 class="text-lg font-bold text-gray-800">이번 달 절약 미션</h2>
 

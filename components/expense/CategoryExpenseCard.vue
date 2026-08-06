@@ -39,7 +39,7 @@ const handleCategorySelect = (categoryId: number) => {
 </script>
 
 <template>
-  <section class="rounded-3xl border border-dm-rose-light bg-white m-4 sm:m-6 p-4 sm:p-6 shadow-md">
+  <section class="rounded-3xl border border-dm-co bg-white m-4 sm:m-6 p-4 sm:p-6 shadow-md">
     <div class="flex items-center gap-2">
       <h2 class="text-lg font-bold text-gray-800">카테고리별 지출</h2>
 

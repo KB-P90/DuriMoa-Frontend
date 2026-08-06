@@ -16,7 +16,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="px-7 pt-12 pb-8 rounded-3xl border border-dm-mint bg-white shadow-md">
+  <section class="px-7 pt-12 pb-8 rounded-3xl border border-dm-mint-dark bg-white shadow-md">
     <div
       v-for="(month, index) in months"
       :key="month.yearMonth"

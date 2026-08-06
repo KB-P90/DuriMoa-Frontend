@@ -31,15 +31,17 @@ const progressBarWidth = computed(() =>
 </script>
 
 <template>
-  <section class="rounded-3xl border border-dm-cb bg-dm-cb-light p-7 shadow-md">
+  <section class="rounded-3xl border border-dm-co bg-dm-cb-light p-7 shadow-md">
     <div class="flex items-start justify-between">
       <p class="text-lg font-medium font-semibold">공동 예산 달성률</p>
-      <p class="text-2xl font-bold text-dm-co">{{ progressRateLabel }}%</p>
+      <p class="text-2xl font-bold text-btn-pk">{{ progressRateLabel }}%</p>
     </div>
 
-    <div class="mt-5 h-7 w-full overflow-hidden rounded-full bg-dm-gray-light">
+    <div
+      class="mt-5 h-7 w-full overflow-hidden rounded-full bg-dm-gray-light border border-1 border-btn-pk"
+    >
       <div
-        class="h-full rounded-full bg-dm-co transition-all duration-1000"
+        class="h-full rounded-full bg-btn-pk transition-all duration-1000"
         :style="{ width: `${progressBarWidth}%` }"
       />
     </div>

@@ -51,7 +51,7 @@ const checklistItems = computed<ChecklistItem[]>(() =>
       </span>
     </div>
 
-    <div class="overflow-hidden rounded-3xl border border-dm-mint bg-white shadow-md">
+    <div class="overflow-hidden rounded-3xl border border-dm-mint-dark bg-white shadow-md">
       <div
         v-for="item in checklistItems"
         :key="item.key"
@@ -63,7 +63,8 @@ const checklistItems = computed<ChecklistItem[]>(() =>
           :class="{
             'border-2': item.targetAmount == 0,
             'bg-dm-mint-darker': item.targetAmount != 0 && item.completed,
-            'border-2 border-dm-mint cursor-pointer': item.targetAmount != 0 && !item.completed,
+            'border-2 border-dm-mint-dark cursor-pointer':
+              item.targetAmount != 0 && !item.completed,
           }"
         >
           <svg
