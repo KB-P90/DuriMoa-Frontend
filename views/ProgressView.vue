@@ -17,28 +17,15 @@ onMounted(() => {
 const PROGRESS_TABS = [
   { key: 'overall', label: '전체 현황' },
   { key: 'personal', label: '개인별 현황' },
-  { key: 'monthly', label: '진행 현황' },
 ];
 
 const activeTab = ref('overall');
-
-function handleGoalListClick() {
-  // TODO: 시안 목록 페이지가 없어 우선 home으로 이동 - 추후 name 확인 후 수정
-  router.push({ name: 'home' });
-}
 </script>
 
 <template>
   <div class="px-3 sm:px-20 pt-2">
     <header class="flex items-center justify-between px-3 py-5">
-      <h1 class="flex-1 ml-2 text-xl font-bold">우리들의 진행 상황</h1>
-
-      <button
-        class="rounded-full bg-btn-pk text-white px-4 py-1 text-m font-semibold cursor-pointer"
-        @click="handleGoalListClick"
-      >
-        시안 목록 >
-      </button>
+      <h1 class="flex-1 ml-2 text-xl font-bold">목표 달성 현황</h1>
     </header>
 
     <nav
