@@ -5,7 +5,7 @@ import type { MonthlyExpenseResponse, MonthlySavingMissionResponse } from '@/typ
 const EMPTY_MONTHLY_EXPENSE: MonthlyExpenseResponse = {
   year: 0,
   month: 0,
-  // totalAmount: 0,
+  totalAmount: 0,
   expenseCategories: [],
 };
 

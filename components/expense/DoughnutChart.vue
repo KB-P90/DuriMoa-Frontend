@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Doughnut } from 'vue-chartjs';
+import type { TooltipItem } from 'chart.js';
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
 import type { ExpenseCategory } from '@/types/expense';
 import { ExpenseCategoryName, ExpenseCategoryColors } from '@/types/category';
@@ -42,6 +43,16 @@ const options = {
   plugins: {
     legend: {
       display: false,
+    },
+    tooltip: {
+      displayColors: false,
+      callbacks: {
+        label: (context: TooltipItem<'doughnut'>) => {
+          const category = props.categories[context.dataIndex];
+
+          return `${category.expenseRate}%`;
+        },
+      },
     },
   },
 

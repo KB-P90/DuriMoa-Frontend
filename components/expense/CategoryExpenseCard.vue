@@ -67,11 +67,10 @@ const handleCategorySelect = (categoryId: number) => {
       <div class="flex w-full max-w-xl items-center justify-around">
         <!-- 차트 -->
         <div class="aspect-square w-[45%] max-w-56">
-          <!-- TODO totalAmount가 아직 api에 추가되지 않아서 임시로 데이터 처리: 추후 expenseStore.monthlyExpense.totalAmount로 변경 -->
           <DoughnutChart
             :month="month"
             :categories="expenseStore.monthlyExpense.expenseCategories"
-            :total-amount="0"
+            :total-amount="expenseStore.monthlyExpense.totalAmount"
             @select-category="handleCategorySelect"
           />
         </div>
