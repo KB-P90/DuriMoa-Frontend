@@ -49,8 +49,10 @@ const progressBarWidth = computed(() =>
       class="flex justify-between align-center mt-3"
     >
       <span class="flex text-m font-semibold gap-1">
-        <p>{{ overallProgress.currentAmount.toLocaleString() }}원</p>
-        <p class="text-dm-gray-dark">/ {{ overallProgress.targetAmount.toLocaleString() }}원</p>
+        <p>{{ Math.round(overallProgress.currentAmount / 10000).toLocaleString() }}만원</p>
+        <p class="text-dm-gray-dark">
+          / {{ Math.round(overallProgress.targetAmount / 10000).toLocaleString() }}만원
+        </p>
       </span>
 
       <button
