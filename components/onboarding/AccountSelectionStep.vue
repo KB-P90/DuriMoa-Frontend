@@ -11,7 +11,7 @@ defineProps<{
   canContinue: boolean;
   errorMessage: string;
   isLoading: boolean;
-  selectedAccountIds: number[];
+  selectedAccountNumbers: string[];
 }>();
 
 // 이전·다음 이동, 계좌 선택 변경과 온보딩 건너뛰기를 상위 화면에 요청한다.
@@ -19,7 +19,7 @@ defineEmits<{
   back: [];
   next: [];
   skip: [];
-  toggle: [accountId: number];
+  toggle: [accountNumber: string];
 }>();
 </script>
 
@@ -59,16 +59,16 @@ defineEmits<{
         <legend class="sr-only">연결할 계좌 선택</legend>
         <label
           v-for="(account, index) in accounts"
-          :key="account.accountId"
+          :key="account.accountNumber"
           class="flex min-h-[58px] cursor-pointer items-center gap-3 px-4 transition hover:bg-dm-cb-light"
           :class="{ 'border-t border-dm-gray/20': index > 0 }"
         >
           <input
             class="peer sr-only"
             type="checkbox"
-            :checked="selectedAccountIds.includes(account.accountId)"
+            :checked="selectedAccountNumbers.includes(account.accountNumber)"
             :disabled="isLoading"
-            @change="$emit('toggle', account.accountId)"
+            @change="$emit('toggle', account.accountNumber)"
           />
           <span class="min-w-0 flex-1">
             <strong class="block truncate text-[13px] font-extrabold">

@@ -51,7 +51,7 @@ export function useOnboardingCouplePublishing() {
     requests.value.some((request) => request.status === 'CONNECTED')
   );
 
-  // POST /api/couple/invite 예시처럼 입력 코드에 따라 사용자와 결과를 찾는다.
+  // POST /api/couples/invite 예시처럼 입력 코드에 따라 사용자와 결과를 찾는다.
   function confirmInviteCode() {
     if (!canConfirm.value) {
       return;
@@ -102,7 +102,7 @@ export function useOnboardingCouplePublishing() {
     errorMessage.value = '';
   }
 
-  // POST /api/couple/accept 예시처럼 받은 요청 중 한 명만 수락한다.
+  // POST /api/couples/accept 예시처럼 받은 요청 중 한 명만 수락한다.
   function acceptRequest(userId: number) {
     if (isConnected.value) {
       feedbackMessage.value = '';

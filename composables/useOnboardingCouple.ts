@@ -7,12 +7,24 @@ import {
 import { isOnboardingCoupleRequest, toOnboardingCoupleRequest } from '@/models/Onboarding';
 import type { OnboardingCoupleRequest } from '@/types/onboarding';
 import { getOnboardingApiErrorMessage } from '@/utils/onboardingApiError';
-import { acceptPartner, getCoupleStatus, invitePartner } from '@/server/onboardingApi';
+import {
+  acceptPartner,
+  getCoupleStatus,
+  getMyInviteCode,
+  invitePartner,
+} from '@/server/onboardingApi';
+
+const MY_INVITE_CODE_ERROR_MESSAGE = '내 초대 코드를 불러오지 못했어요.';
+const MY_INVITE_CODE_COPY_SUCCESS_MESSAGE = '내 초대 코드를 복사했어요.';
+const MY_INVITE_CODE_COPY_ERROR_MESSAGE = '초대 코드를 복사하지 못했어요.';
 
 // 커플 연결 단계의 API 상태와 사용자 동작을 관리한다.
 export function useOnboardingCouple(isActive: Readonly<Ref<boolean>>) {
   // 사용자가 입력하는 초대 코드 원본이다.
   const inviteCodeDraft = ref('');
+
+  // 로그인한 사용자가 파트너에게 공유할 초대 코드다.
+  const myInviteCode = ref('');
 
   // 서버에서 조회한 커플 연결 요청 목록이다.
   const requests = ref<OnboardingCoupleRequest[]>([]);
@@ -21,9 +33,13 @@ export function useOnboardingCouple(isActive: Readonly<Ref<boolean>>) {
   const feedbackMessage = ref('');
   const errorMessage = ref('');
   const statusErrorMessage = ref('');
+  const myInviteCodeErrorMessage = ref('');
+  const myInviteCodeCopyMessage = ref('');
+  const hasMyInviteCodeCopyError = ref(false);
 
   // 커플 상태 조회·초대·수락 요청의 진행 상태다.
   const isLoadingStatus = ref(false);
+  const isLoadingMyInviteCode = ref(false);
   const isInviting = ref(false);
   const acceptingUserIds = ref<number[]>([]);
 
@@ -78,6 +94,58 @@ export function useOnboardingCouple(isActive: Readonly<Ref<boolean>>) {
     requests.value = requests.value.map((currentRequest, index) =>
       index === requestIndex ? request : currentRequest
     );
+  }
+
+  // 현재 로그인한 사용자의 초대 코드를 조회한다.
+  async function loadMyInviteCode() {
+    if (isLoadingMyInviteCode.value) {
+      return;
+    }
+
+    isLoadingMyInviteCode.value = true;
+    myInviteCodeErrorMessage.value = '';
+    myInviteCodeCopyMessage.value = '';
+    hasMyInviteCodeCopyError.value = false;
+
+    try {
+      const inviteCodeResponse = (await getMyInviteCode()).trim().toUpperCase();
+
+      if (!ONBOARDING_INVITE_CODE_PATTERN.test(inviteCodeResponse)) {
+        throw new Error('Invalid invite code response');
+      }
+
+      myInviteCode.value = inviteCodeResponse;
+    } catch (error: unknown) {
+      myInviteCode.value = '';
+      myInviteCodeErrorMessage.value = getOnboardingApiErrorMessage(
+        error,
+        MY_INVITE_CODE_ERROR_MESSAGE
+      );
+    } finally {
+      isLoadingMyInviteCode.value = false;
+    }
+  }
+
+  // 내 초대 코드를 클립보드에 복사한다.
+  async function copyMyInviteCode() {
+    if (!ONBOARDING_INVITE_CODE_PATTERN.test(myInviteCode.value)) {
+      return;
+    }
+
+    myInviteCodeCopyMessage.value = '';
+    hasMyInviteCodeCopyError.value = false;
+
+    try {
+      if (!navigator.clipboard) {
+        throw new Error('Clipboard API is unavailable');
+      }
+
+      await navigator.clipboard.writeText(myInviteCode.value);
+      myInviteCodeCopyMessage.value = MY_INVITE_CODE_COPY_SUCCESS_MESSAGE;
+    } catch {
+      hasMyInviteCodeCopyError.value = true;
+      myInviteCodeCopyMessage.value = MY_INVITE_CODE_COPY_ERROR_MESSAGE;
+    }
   }
 
   // 서버 기준 커플 연결 요청과 상태 목록을 다시 조회한다.
@@ -178,11 +246,12 @@ export function useOnboardingCouple(isActive: Readonly<Ref<boolean>>) {
     }
   }
 
-  // 커플 연결 단계에 진입할 때마다 서버의 최신 상태를 조회한다.
+  // 커플 연결 단계에 진입할 때 내 코드와 연결 상태를 각각 조회한다.
   watch(
     isActive,
     (active) => {
       if (active) {
+        void loadMyInviteCode();
         void loadCoupleStatus();
       }
     },
@@ -195,14 +264,21 @@ export function useOnboardingCouple(isActive: Readonly<Ref<boolean>>) {
     acceptingUserIds,
     canConfirm,
     confirmInviteCode,
+    copyMyInviteCode,
     errorMessage,
     feedbackMessage,
+    hasMyInviteCodeCopyError,
     hasInviteCodeError,
     inviteCode,
     isConnected,
     isInviting,
+    isLoadingMyInviteCode,
     isLoadingStatus,
     loadCoupleStatus,
+    loadMyInviteCode,
+    myInviteCode,
+    myInviteCodeCopyMessage,
+    myInviteCodeErrorMessage,
     requests,
     statusErrorMessage,
   };
