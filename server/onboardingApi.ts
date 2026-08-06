@@ -65,6 +65,12 @@ export const getCoupleStatus = async () => {
   return data.data;
 };
 
+// 현재 로그인한 사용자의 커플 초대 코드를 조회한다.
+export const getMyInviteCode = async () => {
+  const { data } = await api.get<ApiResponse<string>>('/users/invite');
+  return data.data;
+};
+
 // 현재 사용자의 자산 공개 여부를 반전한다.
 export const toggleShareScope = async () => {
   const { data } = await api.patch<ApiResponse<boolean>>('/users/share');

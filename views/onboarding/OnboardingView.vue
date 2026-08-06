@@ -41,14 +41,21 @@ const {
   acceptingUserIds,
   canConfirm,
   confirmInviteCode,
+  copyMyInviteCode,
   errorMessage: coupleErrorMessage,
   feedbackMessage,
+  hasMyInviteCodeCopyError,
   hasInviteCodeError,
   inviteCode,
   isConnected,
   isInviting,
+  isLoadingMyInviteCode,
   isLoadingStatus,
   loadCoupleStatus,
+  loadMyInviteCode,
+  myInviteCode,
+  myInviteCodeCopyMessage,
+  myInviteCodeErrorMessage,
   requests,
   statusErrorMessage,
 } = useOnboardingCouple(isCoupleStepActive);
@@ -67,15 +74,22 @@ const {
         :can-confirm="canConfirm"
         :error-message="coupleErrorMessage"
         :feedback-message="feedbackMessage"
+        :has-my-invite-code-copy-error="hasMyInviteCodeCopyError"
         :has-invite-code-error="hasInviteCodeError"
         :is-connected="isConnected"
         :is-inviting="isInviting"
+        :is-loading-my-invite-code="isLoadingMyInviteCode"
         :is-loading-status="isLoadingStatus"
+        :my-invite-code="myInviteCode"
+        :my-invite-code-copy-message="myInviteCodeCopyMessage"
+        :my-invite-code-error-message="myInviteCodeErrorMessage"
         :requests="requests"
         :status-error-message="statusErrorMessage"
         @accept="acceptRequest"
         @back="goBack"
         @confirm="confirmInviteCode"
+        @copy-my-invite-code="copyMyInviteCode"
+        @retry-my-invite-code="loadMyInviteCode"
         @retry-status="loadCoupleStatus"
         @skip="goHome"
         @next="continueFromCouple"
