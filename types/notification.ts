@@ -9,3 +9,11 @@ export interface AppNotification {
   isRead: boolean;
   createdAt: string;
 }
+
+// SSE로 실시간 수신하는 알림 이벤트. 엔드포인트/이벤트명은 백엔드 미구현 상태라 가정값이다.
+export interface NotificationStreamEvent {
+  type: string;
+  partnerId: number;
+  message: string;
+  occurredAt: string;
+}
