@@ -1,10 +1,17 @@
 import { api } from '@/server/axios.js';
 import type { ApiResponse } from '@/types/common';
-import type { AppNotification } from '@/types/notification';
+import type { AppNotification, NotificationListResponseDto } from '@/types/notification';
 
 export const getNotifications = async () => {
-  const { data } = await api.get<ApiResponse<AppNotification[]>>('/notifications');
-  return data.data;
+  const { data } = await api.get<ApiResponse<NotificationListResponseDto>>('/notifications');
+  return data.data.notices.map((notice): AppNotification => ({
+    id: notice.noticeId,
+    type: notice.type,
+    title: notice.title,
+    content: notice.content,
+    isRead: notice.isRead,
+    createdAt: notice.createdAt,
+  }));
 };
 
 export const markNotificationRead = async (notificationId: number) => {

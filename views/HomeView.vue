@@ -61,7 +61,7 @@ onMounted(() => {
         >
           <Bell
             class="h-5 w-5"
-            :stroke-width="1.6"
+            :stroke-width="2.5"
           />
           <span
             v-if="notificationStore.unreadCount > 0"

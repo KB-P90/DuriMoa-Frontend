@@ -1,8 +1,29 @@
-// GET /api/notifications 응답 항목
+// GET /api/notifications 응답의 개별 알림 원본 형태
+export interface NotificationDto {
+  noticeId: number;
+  // 'GOAL' 등 서버가 내려주는 알림 종류. 확정된 전체 목록이 없어 문자열로 둔다.
+  type: string;
+  title: string;
+  content: string;
+  isRead: boolean;
+  createdAt: string;
+  targetType: string | null;
+  targetId: number | null;
+}
+
+// GET /api/notifications 응답 전체 (목록은 notices에 한 번 더 감싸져 온다)
+export interface NotificationListResponseDto {
+  notices: NotificationDto[];
+  page: number;
+  size: number;
+  totalElements: number;
+  hasNext: boolean;
+  unreadCount: number;
+}
+
+// 화면에서 사용하는 알림 형태 (NotificationDto의 noticeId를 id로 정규화)
 export interface AppNotification {
   id: number;
-  userId: number;
-  // 'GOAL' 등 서버가 내려주는 알림 종류. 확정된 전체 목록이 없어 문자열로 둔다.
   type: string;
   title: string;
   content: string;
