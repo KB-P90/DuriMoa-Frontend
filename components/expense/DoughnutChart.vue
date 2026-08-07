@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Doughnut } from 'vue-chartjs';
+import type { TooltipItem } from 'chart.js';
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
 import type { ExpenseCategory } from '@/types/expense';
 import { ExpenseCategoryName, ExpenseCategoryColors } from '@/types/category';
@@ -43,6 +44,16 @@ const options = {
     legend: {
       display: false,
     },
+    tooltip: {
+      displayColors: false,
+      callbacks: {
+        label: (context: TooltipItem<'doughnut'>) => {
+          const category = props.categories[context.dataIndex];
+
+          return `${category.expenseRate}%`;
+        },
+      },
+    },
   },
 
   onClick: (_event: any, elements: any[]) => {
@@ -67,7 +78,9 @@ const options = {
     <div class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
       <span class="text-xs text-gray-500"> {{ month }}월 총 소비 </span>
 
-      <span class="text-lg font-bold text-gray-800"> {{ totalAmount.toLocaleString() }}원 </span>
+      <span class="text-base font-bold text-gray-800">
+        {{ totalAmount.toLocaleString() }}원
+      </span>
     </div>
   </div>
 </template>

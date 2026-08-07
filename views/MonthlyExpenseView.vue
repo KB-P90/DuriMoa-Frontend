@@ -4,12 +4,11 @@ import CategoryExpenseCard from '@/components/expense/CategoryExpenseCard.vue';
 import MonthPicker from '@/components/expense/MonthPicker.vue';
 import SavingMissionCard from '@/components/expense/SavingMissionCard.vue';
 import { computed, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useExpenseStore } from '@/stores/expenseStore';
 
 interface Props {
-  title: string;
   yearMonth?: string;
 }
 
@@ -17,7 +16,6 @@ const props = defineProps<Props>();
 
 useAuthCheck();
 
-const route = useRoute();
 const router = useRouter();
 
 const expenseStore = useExpenseStore();
@@ -73,17 +71,17 @@ function changeMonth({ year, month }: { year: number; month: number }) {
 </script>
 
 <template>
-  <div class="px-3 sm:px-20">
+  <div class="px-3 sm:px-20 pt-2 whitespace-nowrap">
     <header class="flex items-center justify-between px-6 py-5">
       <button
         type="button"
         @click="router.back()"
-        class="text-2xl cursor-pointer"
+        class="cursor-pointer text-lg"
       >
         <ArrowLeft class="h-6 w-6" />
       </button>
 
-      <h1 class="flex-1 ml-2 text-xl font-bold">
+      <h1 class="ml-2 flex-1 text-lg font-bold">
         {{ selectedMonth.year }}년 {{ selectedMonth.month }}월 지출 관리
       </h1>
 
