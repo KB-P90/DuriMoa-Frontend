@@ -52,6 +52,9 @@ function handleSubmit() {
         form-id-prefix="onboarding"
         :connection-error-message="connectionErrorMessage"
         :disabled="isLoading"
+        helper-text="기존에 연결한 은행은 아이디와 비밀번호를 다시 입력하지 않아도 돼요"
+        id-label="인터넷뱅킹 아이디 (신규 연결 시)"
+        password-label="인터넷뱅킹 비밀번호 (신규 연결 시)"
         @submit="handleSubmit"
       />
     </div>

@@ -20,6 +20,7 @@ export interface OnboardingAccountItemDto {
   resAccountBalance?: string;
   resAccountDisplay?: string;
   resAccountName?: string;
+  isRegistered: boolean;
 }
 
 // 특정 금융기관의 계좌 목록 조회 결과다.
@@ -28,9 +29,14 @@ export interface OnboardingAccountListResponseDto {
 }
 
 // 선택한 계좌와 거래내역 동기화 요청이다.
+export interface OnboardingSelectItemDto {
+  name: string;
+  number: string;
+}
+
 export interface OnboardingSelectRequestDto {
   company: string;
-  selectedNumbers: string[];
+  selectedItems: OnboardingSelectItemDto[];
   startDate?: string;
   endDate?: string;
 }
