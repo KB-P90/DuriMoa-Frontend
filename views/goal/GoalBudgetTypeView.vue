@@ -6,9 +6,12 @@ import GoalStepHeader from '@/components/goal/GoalStepHeader.vue';
 import GoalStepNav from '@/components/goal/GoalStepNav.vue';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useGoalStore } from '@/stores/goalStore';
 import type { BudgetTypeCode } from '@/types/goal';
 import { formatAmount } from '@/utils/format';
+
+useAuthCheck();
 
 const router = useRouter();
 const goalStore = useGoalStore();

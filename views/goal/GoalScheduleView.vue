@@ -12,8 +12,11 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { REGIONS } from '@/constants/goal';
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useGoalStore } from '@/stores/goalStore';
 import type { RegionName } from '@/types/goal';
+
+useAuthCheck();
 
 const router = useRouter();
 const goalStore = useGoalStore();

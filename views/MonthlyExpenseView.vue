@@ -5,6 +5,7 @@ import MonthPicker from '@/components/expense/MonthPicker.vue';
 import SavingMissionCard from '@/components/expense/SavingMissionCard.vue';
 import { computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useExpenseStore } from '@/stores/expenseStore';
 
 interface Props {
@@ -12,6 +13,8 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+useAuthCheck();
 
 const router = useRouter();
 

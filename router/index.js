@@ -14,10 +14,13 @@ import GoalBudgetTypeView from '@/views/goal/GoalBudgetTypeView.vue';
 import GoalCategoryBudgetView from '@/views/goal/GoalCategoryBudgetView.vue';
 import GoalScheduleView from '@/views/goal/GoalScheduleView.vue';
 import GoalSummaryView from '@/views/goal/GoalSummaryView.vue';
+import CardStrategyView from '@/views/card/CardStrategyView.vue';
+import CardAmountInputView from '@/views/card/CardAmountInputView.vue';
 import PlaceholderView from '@/views/PlaceholderView.vue';
 import HomeView from '@/views/HomeView.vue';
 import MyPageView from '@/views/MyPageView.vue';
 import OnboardingView from '@/views/onboarding/OnboardingView.vue';
+import GoalListView from '@/views/goal/GoalListView.vue';
 import ProfileEditView from '@/views/ProfileEditView.vue';
 import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
 import ProgressView from '@/views/progress/ProgressView.vue';
@@ -46,7 +49,7 @@ const router = createRouter({
           props: { title: '월별 예산 달성 현황' },
         },
         { path: 'myinfo', name: 'myinfo', component: MyPageView },
-        { path: 'card', name: 'card', component: PlaceholderView, props: { title: '카드추천' } },
+        { path: 'card', name: 'card', component: CardStrategyView, props: { title: '카드추천' } },
         {
           path: 'expense/:yearMonth(\\d{4}-\\d{2})?',
           name: 'expense',
@@ -56,7 +59,7 @@ const router = createRouter({
             yearMonth: route.params.yearMonth,
           }),
         },
-        { path: 'goal', redirect: { name: 'goal-schedule' } },
+        { path: 'goal', name: 'goal-list', component: GoalListView },
         { path: 'goal/schedule', name: 'goal-schedule', component: GoalScheduleView },
         { path: 'goal/budget-type', name: 'goal-budget-type', component: GoalBudgetTypeView },
         {
@@ -65,9 +68,15 @@ const router = createRouter({
           component: GoalCategoryBudgetView,
           props: true,
         },
-        { path: 'goal/summary', name: 'goal-summary', component: GoalSummaryView },
+        {
+          path: 'goal/summary/:goalId?',
+          name: 'goal-summary',
+          component: GoalSummaryView,
+          props: true,
+        },
       ],
     },
+    { path: '/card/amount', name: 'card-amount', component: CardAmountInputView },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/signup', name: 'signup', component: SignupView },
     ...authTermRoutes,

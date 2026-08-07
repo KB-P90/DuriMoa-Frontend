@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, TriangleAlert } from '@lucide/vue';
+import { Check, Copy, TriangleAlert } from '@lucide/vue';
 import CoupleRequestCard from '@/components/onboarding/CoupleRequestCard.vue';
 import type { OnboardingCoupleRequest } from '@/types/onboarding';
 
@@ -8,10 +8,15 @@ defineProps<{
   canConfirm: boolean;
   errorMessage: string;
   feedbackMessage: string;
+  hasMyInviteCodeCopyError: boolean;
   hasInviteCodeError: boolean;
   isConnected: boolean;
   isInviting: boolean;
+  isLoadingMyInviteCode: boolean;
   isLoadingStatus: boolean;
+  myInviteCode: string;
+  myInviteCodeCopyMessage: string;
+  myInviteCodeErrorMessage: string;
   requests: OnboardingCoupleRequest[];
   statusErrorMessage: string;
 }>();
@@ -19,6 +24,8 @@ defineProps<{
 defineEmits<{
   accept: [userId: number];
   confirm: [];
+  copyMyInviteCode: [];
+  retryMyInviteCode: [];
   retryStatus: [];
 }>();
 
@@ -26,6 +33,105 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
 </script>
 
 <template>
+  <section
+    class="mt-5"
+    aria-labelledby="my-invite-code-label"
+  >
+    <h2
+      id="my-invite-code-label"
+      class="mb-2 text-[12px] font-extrabold"
+    >
+      내 코드
+    </h2>
+
+    <div
+      class="grid grid-cols-[minmax(0,1fr)_64px] gap-2 max-[359px]:grid-cols-[minmax(0,1fr)_56px]"
+    >
+      <output
+        class="flex h-[52px] min-w-0 items-center rounded-[13px] border border-dm-gray/35 bg-dm-gray-light px-4 font-mono text-[14px] font-extrabold tracking-[0.12em]"
+        aria-live="polite"
+      >
+        <span
+          v-if="isLoadingMyInviteCode"
+          class="font-sans text-[12px] font-medium tracking-normal text-dm-gray-dark"
+        >
+          불러오는 중...
+        </span>
+        <span v-else-if="myInviteCode">{{ myInviteCode }}</span>
+        <span
+          v-else
+          class="font-sans text-[12px] font-medium tracking-normal text-dm-gray"
+        >
+          코드를 불러올 수 없어요
+        </span>
+      </output>
+
+      <button
+        type="button"
+        class="flex h-[52px] items-center justify-center gap-1 rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[12px] font-extrabold transition enabled:hover:border-btn-pk enabled:hover:bg-dm-cb-light disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+        :disabled="isLoadingMyInviteCode || !myInviteCode"
+        aria-label="내 초대 코드 복사"
+        @click="$emit('copyMyInviteCode')"
+      >
+        <Copy
+          class="h-3.5 w-3.5"
+          :stroke-width="1.8"
+          aria-hidden="true"
+        />
+        복사
+      </button>
+    </div>
+
+    <div
+      v-if="myInviteCodeErrorMessage"
+      class="mt-2 flex items-start justify-between gap-3"
+      role="alert"
+    >
+      <p class="flex items-start gap-1.5 text-[11px] leading-4 text-btn-pk-dark">
+        <TriangleAlert
+          class="mt-px h-3.5 w-3.5 shrink-0"
+          :stroke-width="2"
+          aria-hidden="true"
+        />
+        {{ myInviteCodeErrorMessage }}
+      </p>
+      <button
+        type="button"
+        class="shrink-0 text-[11px] font-extrabold text-btn-pk-dark underline underline-offset-2 disabled:text-dm-gray"
+        :disabled="isLoadingMyInviteCode"
+        @click="$emit('retryMyInviteCode')"
+      >
+        다시
+      </button>
+    </div>
+    <p
+      v-else-if="myInviteCodeCopyMessage"
+      class="mt-2 flex items-center gap-1 text-[11px] leading-4"
+      :class="hasMyInviteCodeCopyError ? 'text-btn-pk-dark' : 'text-btn-mt-dark'"
+      :role="hasMyInviteCodeCopyError ? 'alert' : 'status'"
+    >
+      <Check
+        v-if="!hasMyInviteCodeCopyError"
+        class="h-3.5 w-3.5"
+        :stroke-width="2"
+        aria-hidden="true"
+      />
+      <TriangleAlert
+        v-else
+        class="h-3.5 w-3.5"
+        :stroke-width="2"
+        aria-hidden="true"
+      />
+      {{ myInviteCodeCopyMessage }}
+    </p>
+    <p
+      v-else
+      class="mt-2 text-[11px] leading-4 text-dm-gray-dark"
+    >
+      파트너에게 내 코드를 공유해주세요.
+    </p>
+  </section>
+
   <form
     class="mt-5"
     aria-label="파트너 초대 코드 확인"
@@ -38,7 +144,9 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
       상대 코드
     </label>
 
-    <div class="grid grid-cols-[minmax(0,1fr)_64px] gap-2 max-[359px]:grid-cols-[minmax(0,1fr)_56px]">
+    <div
+      class="grid grid-cols-[minmax(0,1fr)_64px] gap-2 max-[359px]:grid-cols-[minmax(0,1fr)_56px]"
+    >
       <input
         id="couple-invite-code"
         v-model="inviteCode"

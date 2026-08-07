@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useCalendar } from '@/composables/useCalendar';
 import CalendarView from '@/views/CalendarView.vue';
 import TransactionEditView from '@/views/TransactionEditView.vue';
+
+useAuthCheck();
 
 const {
   mode,
@@ -14,6 +17,7 @@ const {
   expenseAnalysisLabel,
   summary,
   transactions,
+  showWeddingEmptyState,
   isLoading,
   isSubmitting,
   selectDate,
@@ -48,6 +52,7 @@ const {
     :days="calendarDays"
     :summary="summary"
     :transactions="transactions"
+    :show-wedding-empty-state="showWeddingEmptyState"
     :is-loading="isLoading"
     @update:mode="mode = $event"
     @select-date="selectDate"

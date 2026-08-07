@@ -6,10 +6,14 @@ import {
   ONBOARDING_DEFAULT_VALUES,
   ONBOARDING_ROUTE_NAMES,
 } from '@/constants/onboard';
-import { toOnboardingAccount } from '@/models/Onboarding';
+import { toOnboardingAccount, toOnboardingCompany } from '@/models/Onboarding';
 import type { OnboardingAccount } from '@/types/onboarding';
 import { getOnboardingApiErrorMessage } from '@/utils/onboardingApiError';
-import { getAccounts, selectAccounts } from '@/server/onboardingApi';
+import {
+  getOnboardingAccounts,
+  registerOnboardingAccount,
+  selectOnboardingAccounts,
+} from '@/server/onboardingApi';
 
 type ActiveOnboardingScreen = 'account' | 'account-selection' | 'couple';
 
@@ -53,8 +57,8 @@ export function useOnboardingFlow() {
   const internetBankingId = ref('');
   const internetBankingPassword = ref('');
   const accounts = ref<OnboardingAccount[]>([]);
-  const bankCode = ref('');
-  const selectedAccountIds = ref<number[]>([]);
+  const selectedAccountNumbers = ref<string[]>([]);
+  const isFinancialAccountRegistered = ref(false);
   const isAccountConnected = ref(false);
   const isConnectingAccount = ref(false);
   const isSelectingAccounts = ref(false);
@@ -67,6 +71,9 @@ export function useOnboardingFlow() {
       ONBOARDING_BANK_OPTIONS.find((bankOption) => bankOption.label === bank.value) ??
       ONBOARDING_BANK_OPTIONS[0]
   );
+
+  // 백엔드 금융기관 Enum에 맞춘 API 요청용 기관명이다.
+  const selectedCompany = computed(() => toOnboardingCompany(selectedBankOption.value.label));
 
   // URL 쿼리를 검증해 현재 온보딩 화면을 계산한다.
   const screen = computed(() => toOnboardingScreen(route.query.screen));
@@ -84,8 +91,8 @@ export function useOnboardingFlow() {
   const canContinueAccountSelection = computed(
     () =>
       isAccountConnected.value &&
-      selectedAccountIds.value.some((selectedId) =>
-        accounts.value.some((account) => account.accountId === selectedId)
+      selectedAccountNumbers.value.some((selectedNumber) =>
+        accounts.value.some((account) => account.accountNumber === selectedNumber)
       ) &&
       !isSelectingAccounts.value
   );
@@ -93,8 +100,8 @@ export function useOnboardingFlow() {
   // 계좌 연결 정보가 변경되면 이전 연결 완료 상태를 해제한다.
   watch([bank, internetBankingId, internetBankingPassword], () => {
     accounts.value = [];
-    bankCode.value = '';
-    selectedAccountIds.value = [];
+    selectedAccountNumbers.value = [];
+    isFinancialAccountRegistered.value = false;
     isAccountConnected.value = false;
     accountConnectionErrorMessage.value = '';
     accountSelectionErrorMessage.value = '';
@@ -123,14 +130,19 @@ export function useOnboardingFlow() {
     accountConnectionErrorMessage.value = '';
 
     try {
-      // API 명세에 맞춰 전달하는 인터넷뱅킹 계좌 조회 요청이다.
-      const response = await getAccounts({
-        company: selectedBankOption.value.company,
-        id: internetBankingId.value.trim(),
-        password: internetBankingPassword.value,
-      });
+      // 동일한 입력으로 목록 조회만 재시도할 때 CODEF 계정을 중복 등록하지 않는다.
+      if (!isFinancialAccountRegistered.value) {
+        await registerOnboardingAccount({
+          company: selectedCompany.value,
+          id: internetBankingId.value.trim(),
+          password: internetBankingPassword.value,
+        });
+        isFinancialAccountRegistered.value = true;
+      }
+
+      const response = await getOnboardingAccounts(selectedCompany.value);
       // 계좌 조회 DTO를 화면에서 사용하는 계좌 목록으로 변환한다.
-      const connectedAccounts = response.accounts.map(toOnboardingAccount);
+      const connectedAccounts = response.itemList.map(toOnboardingAccount);
 
       if (connectedAccounts.length === 0) {
         isAccountConnected.value = false;
@@ -139,8 +151,7 @@ export function useOnboardingFlow() {
       }
 
       accounts.value = connectedAccounts;
-      bankCode.value = response.bankCode || selectedBankOption.value.bankCode;
-      selectedAccountIds.value = [];
+      selectedAccountNumbers.value = [];
       isAccountConnected.value = true;
 
       if (isCurrentOnboardingScreen('account')) {
@@ -148,8 +159,7 @@ export function useOnboardingFlow() {
       }
     } catch (error: unknown) {
       accounts.value = [];
-      bankCode.value = '';
-      selectedAccountIds.value = [];
+      selectedAccountNumbers.value = [];
       isAccountConnected.value = false;
       accountConnectionErrorMessage.value = getOnboardingApiErrorMessage(
         error,
@@ -161,10 +171,10 @@ export function useOnboardingFlow() {
   }
 
   // 현재 계좌의 선택 여부를 반대로 변경한다.
-  function toggleAccount(accountId: number) {
-    selectedAccountIds.value = selectedAccountIds.value.includes(accountId)
-      ? selectedAccountIds.value.filter((selectedId) => selectedId !== accountId)
-      : [...selectedAccountIds.value, accountId];
+  function toggleAccount(accountNumber: string) {
+    selectedAccountNumbers.value = selectedAccountNumbers.value.includes(accountNumber)
+      ? selectedAccountNumbers.value.filter((selectedNumber) => selectedNumber !== accountNumber)
+      : [...selectedAccountNumbers.value, accountNumber];
   }
 
   // 선택한 계좌를 서버에 저장한 뒤 온보딩을 종료한다.
@@ -177,9 +187,9 @@ export function useOnboardingFlow() {
     accountSelectionErrorMessage.value = '';
 
     try {
-      await selectAccounts({
-        bankCode: bankCode.value,
-        accountIds: selectedAccountIds.value,
+      await selectOnboardingAccounts({
+        company: selectedCompany.value,
+        selectedNumbers: selectedAccountNumbers.value,
       });
 
       if (isCurrentOnboardingScreen('account-selection')) {
@@ -236,7 +246,7 @@ export function useOnboardingFlow() {
     isSelectingAccounts,
     screen,
     selectConnectedAccounts,
-    selectedAccountIds,
+    selectedAccountNumbers,
     toggleAccount,
   };
 }

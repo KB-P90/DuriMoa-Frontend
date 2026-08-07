@@ -4,8 +4,11 @@ import AuthScreen from '@/components/auth/AuthScreen.vue';
 import AccountConnectionStep from '@/components/onboarding/AccountConnectionStep.vue';
 import AccountSelectionStep from '@/components/onboarding/AccountSelectionStep.vue';
 import CoupleConnectionStep from '@/components/onboarding/CoupleConnectionStep.vue';
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useOnboardingCouple } from '@/composables/useOnboardingCouple';
 import { useOnboardingFlow } from '@/composables/useOnboardingFlow';
+
+useAuthCheck();
 
 // 온보딩 전체 단계에서 공유하는 상태와 화면 이동 동작이다.
 const {
@@ -25,7 +28,7 @@ const {
   isSelectingAccounts,
   screen,
   selectConnectedAccounts,
-  selectedAccountIds,
+  selectedAccountNumbers,
   toggleAccount,
 } = useOnboardingFlow();
 
@@ -38,14 +41,21 @@ const {
   acceptingUserIds,
   canConfirm,
   confirmInviteCode,
+  copyMyInviteCode,
   errorMessage: coupleErrorMessage,
   feedbackMessage,
+  hasMyInviteCodeCopyError,
   hasInviteCodeError,
   inviteCode,
   isConnected,
   isInviting,
+  isLoadingMyInviteCode,
   isLoadingStatus,
   loadCoupleStatus,
+  loadMyInviteCode,
+  myInviteCode,
+  myInviteCodeCopyMessage,
+  myInviteCodeErrorMessage,
   requests,
   statusErrorMessage,
 } = useOnboardingCouple(isCoupleStepActive);
@@ -64,15 +74,22 @@ const {
         :can-confirm="canConfirm"
         :error-message="coupleErrorMessage"
         :feedback-message="feedbackMessage"
+        :has-my-invite-code-copy-error="hasMyInviteCodeCopyError"
         :has-invite-code-error="hasInviteCodeError"
         :is-connected="isConnected"
         :is-inviting="isInviting"
+        :is-loading-my-invite-code="isLoadingMyInviteCode"
         :is-loading-status="isLoadingStatus"
+        :my-invite-code="myInviteCode"
+        :my-invite-code-copy-message="myInviteCodeCopyMessage"
+        :my-invite-code-error-message="myInviteCodeErrorMessage"
         :requests="requests"
         :status-error-message="statusErrorMessage"
         @accept="acceptRequest"
         @back="goBack"
         @confirm="confirmInviteCode"
+        @copy-my-invite-code="copyMyInviteCode"
+        @retry-my-invite-code="loadMyInviteCode"
         @retry-status="loadCoupleStatus"
         @skip="goHome"
         @next="continueFromCouple"
@@ -98,7 +115,7 @@ const {
         :can-continue="canContinueAccountSelection"
         :error-message="accountSelectionErrorMessage"
         :is-loading="isSelectingAccounts"
-        :selected-account-ids="selectedAccountIds"
+        :selected-account-numbers="selectedAccountNumbers"
         @back="goBack"
         @skip="goHome"
         @toggle="toggleAccount"
