@@ -1,7 +1,6 @@
 import { api } from '@/server/axios.js';
 import type { ApiResponse } from '@/types/common';
 import type {
-  MyPageAssetSummaryResponseDto,
   MyPageCoupleAcceptRequestDto,
   MyPageCoupleInviteRequestDto,
   MyPageCouplePartnerResponseDto,
@@ -29,11 +28,6 @@ export const updateMyPageProfile = async (formData: FormData) => {
 
 export const updateMyPageShare = async () => {
   const { data } = await api.patch<ApiResponse<boolean>>('/users/share');
-  return data.data;
-};
-
-export const getMyPageAssetSummary = async () => {
-  const { data } = await api.get<ApiResponse<MyPageAssetSummaryResponseDto>>('/users/account');
   return data.data;
 };
 

@@ -117,21 +117,6 @@ onMounted(() => {
               우리의 정보와 연결 설정을 관리해요
             </p>
           </div>
-          <button
-            type="button"
-            aria-label="알림"
-            class="relative grid h-[34px] w-[34px] place-items-center rounded-[11px] bg-dm-mint-light text-[#9A7A3D]"
-            @click="notificationStore.openPanel()"
-          >
-            <Heart
-              class="h-4 w-4 fill-dm-rose-light text-dm-co-darker"
-              :stroke-width="2"
-            />
-            <span
-              v-if="notificationStore.unreadCount > 0"
-              class="absolute right-[7px] top-[7px] h-2.5 w-2.5 rounded-full border-2 border-white bg-dm-co-light"
-            />
-          </button>
         </header>
 
         <article
@@ -238,21 +223,28 @@ onMounted(() => {
                 v-for="item in assetSummaries"
                 :key="item.id"
                 type="button"
-                class="flex flex-1 items-center gap-[11px] rounded-xl bg-dm-mint-light p-2.5 text-left first:bg-[#E6F2F1]"
+                class="flex flex-1 items-center gap-[10px] rounded-xl bg-dm-mint-light p-2.5 text-left first:bg-[#E6F2F1] px-5"
                 @click="goAssetConnect(item.id)"
               >
                 <component
                   :is="item.icon"
-                  class="h-6 w-6 shrink-0 text-[#585858]"
-                  :stroke-width="2"
+                  class="h-6 w-6 shrink-0 text-dm-mint-darker font-thin"
+                  :stroke-width="1.4"
                 />
                 <span class="flex min-w-0 flex-1 flex-col">
-                  <span class="text-[9px] leading-[13px] text-[#70AFB3]">{{ item.label }}</span>
-                  <strong class="text-[12.9px] font-bold leading-4">{{ item.count }}개</strong>
+                  <span class="text-[10px] leading-[13px] text-btn-mt-darker font-medium">{{
+                    item.label
+                  }}</span>
+                  <div class="flex flex-row">
+                    <strong class="text-[12.9px] font-bold leading-4 text-btn-mt-darker">{{
+                      item.count
+                    }}</strong>
+                    <span class="text-[12.9px] font-bold leading-4 text-btn-mt-darker">개</span>
+                  </div>
                 </span>
                 <ChevronRight
-                  class="h-6 w-6 shrink-0 text-black"
-                  :stroke-width="2"
+                  class="h-6 w-6 shrink-0 text-dm-mint-darker"
+                  :stroke-width="1.4"
                 />
               </button>
             </div>

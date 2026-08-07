@@ -11,6 +11,8 @@ export interface MyPageProfileResponseDto {
   phone: string | null;
   shared: boolean;
   password?: null;
+  cardCount: number;
+  accountCount: number;
   partnerName: string | null;
   partnerRole: MyPageRoleDto | null;
   coupleCreatedAt: string | null;
@@ -23,15 +25,6 @@ export interface MyPageProfileUpdateRequestDto {
   role?: MyPageRoleDto;
   phone?: string | null;
   password?: string;
-}
-
-export interface MyPageAssetSummaryDto {
-  accountCount: number;
-  cardCount: number;
-}
-
-export interface MyPageAssetSummaryResponseDto {
-  summary: MyPageAssetSummaryDto;
 }
 
 export interface MyPageLogoutResponseDto {

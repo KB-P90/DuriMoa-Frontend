@@ -36,7 +36,8 @@ export default {
         },
         'btn-mt': {
           DEFAULT: '#EBF7F7',
-          dark: '#2CAEAA',
+          dark: '#1f716e',
+          darker: '#227f7c',
         },
         'dm-gray': {
           light: '#F7F7FA',
