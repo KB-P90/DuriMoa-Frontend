@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia';
 import { BookOpenText, ChevronRight, CreditCard, Heart, UserRound } from '@lucide/vue';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useMyPageStore } from '@/stores/myPageStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 import type { ShareScope } from '@/types/myPage';
 import PageHeader from '@/components/common/PageHeader.vue';
 
@@ -20,6 +21,7 @@ useAuthCheck();
 const router = useRouter();
 const myPageStore = useMyPageStore();
 const { isUpdatingShare, myPage } = storeToRefs(myPageStore);
+const notificationStore = useNotificationStore();
 
 const roleLabels = {
   GROOM: '신랑',
@@ -97,6 +99,7 @@ async function handleLogout() {
 
 onMounted(() => {
   void myPageStore.fetchMyPage();
+  void notificationStore.fetchUnreadCount();
 });
 </script>
 
