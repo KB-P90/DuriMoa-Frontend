@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia';
 import { BookOpenText, ChevronRight, CreditCard, Heart, UserRound } from '@lucide/vue';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useMyPageStore } from '@/stores/myPageStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 import type { ShareScope } from '@/types/myPage';
 
 type AssetSummary = {
@@ -19,6 +20,7 @@ useAuthCheck();
 const router = useRouter();
 const myPageStore = useMyPageStore();
 const { isUpdatingShare, myPage } = storeToRefs(myPageStore);
+const notificationStore = useNotificationStore();
 
 const roleLabels = {
   GROOM: '신랑',
@@ -96,16 +98,17 @@ async function handleLogout() {
 
 onMounted(() => {
   void myPageStore.fetchMyPage();
+  void notificationStore.fetchUnreadCount();
 });
 </script>
 
 <template>
-  <div class="mypage-stage aspect-[390/770] w-full md:aspect-auto md:min-h-[770px]">
+  <div class="mypage-stage relative aspect-[390/770] w-full md:aspect-auto md:min-h-[770px]">
     <section
-      class="absolute inset-0 origin-top-left h-[770px] w-[390px] overflow-hidden bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--mypage-scale)] md:relative md:h-auto md:min-h-[770px] md:w-full md:scale-100 md:overflow-visible"
+      class="absolute inset-0 origin-top-left h-[770px] w-[390px] overflow-y-auto bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--mypage-scale)] md:relative md:h-auto md:min-h-[770px] md:w-full md:scale-100 md:overflow-visible"
     >
       <div
-        class="flex h-[707px] flex-col gap-3 bg-gradient-to-b from-[#FFFBFC] to-white px-[18px] pb-7 pt-5"
+        class="flex min-h-[770px] flex-col gap-3 bg-gradient-to-b from-[#FFFBFC] to-white px-[18px] pb-7 pt-5"
       >
         <header class="flex h-[54px] items-center justify-between px-px pb-1 pt-0.5">
           <div class="flex min-w-[170px] flex-col gap-[3px]">
@@ -118,12 +121,14 @@ onMounted(() => {
             type="button"
             aria-label="알림"
             class="relative grid h-[34px] w-[34px] place-items-center rounded-[11px] bg-dm-mint-light text-[#9A7A3D]"
+            @click="notificationStore.openPanel()"
           >
             <Heart
               class="h-4 w-4 fill-dm-rose-light text-dm-co-darker"
               :stroke-width="2"
             />
             <span
+              v-if="notificationStore.unreadCount > 0"
               class="absolute right-[7px] top-[7px] h-2.5 w-2.5 rounded-full border-2 border-white bg-dm-co-light"
             />
           </button>

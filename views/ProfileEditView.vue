@@ -3,18 +3,23 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { ArrowLeft, Camera, UserRound } from '@lucide/vue';
+import { toast } from 'vue-sonner';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useMyPageStore } from '@/stores/myPageStore';
 import type { CoupleRole, MyPageProfileForm } from '@/types/myPage';
+
+// 백엔드 요청 크기 제한(파일당 5MB)과 동일하게 맞춘 값
+const MAX_PROFILE_IMAGE_BYTES = 5 * 1024 * 1024;
 
 useAuthCheck();
 
 const router = useRouter();
 const myPageStore = useMyPageStore();
-const { isSavingProfile, isUploadingImage, myPage } = storeToRefs(myPageStore);
+const { isSavingProfile, myPage } = storeToRefs(myPageStore);
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const form = ref<MyPageProfileForm>(myPageStore.buildProfileForm());
+const selectedImageFile = ref<File | null>(null);
 
 const roleOptions: readonly { value: CoupleRole; label: string }[] = [
   { value: 'GROOM', label: '🤵 신랑' },
@@ -43,7 +48,7 @@ function openFilePicker() {
   fileInput.value?.click();
 }
 
-async function handleImageSelected(event: Event) {
+function handleImageSelected(event: Event) {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
 
@@ -51,11 +56,19 @@ async function handleImageSelected(event: Event) {
     return;
   }
 
-  await myPageStore.uploadProfileImage(file);
+  if (file.size > MAX_PROFILE_IMAGE_BYTES) {
+    toast.error('이미지 용량은 5MB 이하만 업로드할 수 있어요.');
+    target.value = '';
+    return;
+  }
+
+  selectedImageFile.value = file;
+  myPage.value.user.profileImage = URL.createObjectURL(file);
   target.value = '';
 }
 
 function resetDefaultImage() {
+  selectedImageFile.value = null;
   myPage.value.user.profileImage = null;
 }
 
@@ -64,7 +77,7 @@ async function saveProfile() {
     return;
   }
 
-  await myPageStore.saveProfile(form.value);
+  await myPageStore.saveProfile(form.value, selectedImageFile.value);
   router.push({ name: 'myinfo' });
 }
 
@@ -74,7 +87,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="profile-stage aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]">
+  <div class="profile-stage relative aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]">
     <section
       class="absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-hidden bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--profile-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
     >
@@ -127,7 +140,7 @@ onMounted(() => {
               type="button"
               aria-label="프로필 사진 변경"
               class="absolute bottom-1 right-0 grid h-[29px] w-[29px] place-items-center rounded-full border-[3px] border-white bg-[#98A2A4] text-white shadow-[0_2px_6px_rgba(34,34,43,0.16)]"
-              :disabled="isUploadingImage"
+              :disabled="isSavingProfile"
               @click="openFilePicker"
             >
               <Camera

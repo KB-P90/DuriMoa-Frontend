@@ -6,9 +6,7 @@ import type {
   MyPageCoupleInviteRequestDto,
   MyPageCouplePartnerResponseDto,
   MyPageLogoutResponseDto,
-  MyPageProfileImageResponseDto,
   MyPageProfileResponseDto,
-  MyPageProfileUpdateRequestDto,
 } from '@/types/dto/myPage.dto';
 
 export const getMyPageProfile = async () => {
@@ -16,8 +14,16 @@ export const getMyPageProfile = async () => {
   return data.data;
 };
 
-export const updateMyPageProfile = async (request: MyPageProfileUpdateRequestDto) => {
-  const { data } = await api.put<ApiResponse<MyPageProfileResponseDto>>('/users/profile', request);
+export const updateMyPageProfile = async (formData: FormData) => {
+  const { data } = await api.put<ApiResponse<MyPageProfileResponseDto>>(
+    '/users/profile',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
   return data.data;
 };
 
@@ -28,19 +34,6 @@ export const updateMyPageShare = async () => {
 
 export const getMyPageAssetSummary = async () => {
   const { data } = await api.get<ApiResponse<MyPageAssetSummaryResponseDto>>('/users/account');
-  return data.data;
-};
-
-export const uploadMyPageProfileImage = async (formData: FormData) => {
-  const { data } = await api.post<ApiResponse<MyPageProfileImageResponseDto>>(
-    '/users/profile/image',
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
-  );
   return data.data;
 };
 

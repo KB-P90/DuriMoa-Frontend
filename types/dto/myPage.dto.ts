@@ -38,10 +38,6 @@ export interface MyPageLogoutResponseDto {
   loggedOut: boolean;
 }
 
-export interface MyPageProfileImageResponseDto {
-  profileImage: string;
-}
-
 export interface MyPageCoupleInviteRequestDto {
   inviteCode: string;
 }
