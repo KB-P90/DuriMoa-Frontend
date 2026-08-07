@@ -3,21 +3,19 @@ import { computed, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Bell, ChevronRight, Coffee, Menu } from '@lucide/vue';
 import MenuPanel from '@/components/common/MenuPanel.vue';
-import NotificationPanel from '@/components/common/NotificationPanel.vue';
-import { getUnreadNotificationCount } from '@/server/notificationApi';
 import { useHomeStore } from '@/stores/homeStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 import { formatWon } from '@/utils/format';
 import NewUserHome from '@/components/home/NewUserHome.vue';
 
 const homeStore = useHomeStore();
 const { dashboard, missions } = storeToRefs(homeStore);
+const notificationStore = useNotificationStore();
 
 const missionCarousel = ref<HTMLElement | null>(null);
 const dragStartX = ref<number | null>(null);
 const dragStartScrollLeft = ref(0);
 const isMenuOpen = ref(false);
-const isNotificationOpen = ref(false);
-const unreadNotificationCount = ref(0);
 const isNewUser = computed(() => dashboard.value.coupleStatus === 'DISCONNECTED');
 const jointGoalGraphHeight = computed(
   () => `${Math.min(Math.max(dashboard.value.jointGoal.achievementRate, 0), 100)}%`
@@ -39,22 +37,9 @@ const endMissionDrag = () => {
   dragStartX.value = null;
 };
 
-async function fetchUnreadNotificationCount() {
-  try {
-    unreadNotificationCount.value = await getUnreadNotificationCount();
-  } catch {
-    // 무시: 배지 카운트는 실패해도 화면이 깨지지 않아야 한다.
-  }
-}
-
-function handleNotificationPanelClose() {
-  isNotificationOpen.value = false;
-  void fetchUnreadNotificationCount();
-}
-
 onMounted(() => {
   void homeStore.fetchHome();
-  void fetchUnreadNotificationCount();
+  void notificationStore.fetchUnreadCount();
 });
 </script>
 
@@ -62,7 +47,7 @@ onMounted(() => {
   <NewUserHome v-if="isNewUser" />
   <div
     v-else
-    class="home-stage aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]"
+    class="home-stage relative aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]"
   >
     <div
       class="home-canvas absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-y-auto bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--home-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
@@ -77,14 +62,14 @@ onMounted(() => {
             type="button"
             aria-label="알림"
             class="relative grid h-5 w-5 cursor-pointer place-items-center text-[#2B2B2B]"
-            @click="isNotificationOpen = true"
+            @click="notificationStore.openPanel()"
           >
             <Bell
               class="h-5 w-5"
               :stroke-width="1.6"
             />
             <span
-              v-if="unreadNotificationCount > 0"
+              v-if="notificationStore.unreadCount > 0"
               class="absolute right-0 top-0 h-2 w-2 rounded-full bg-btn-pk-dark"
             />
           </button>
@@ -288,10 +273,6 @@ onMounted(() => {
       <MenuPanel
         v-if="isMenuOpen"
         @close="isMenuOpen = false"
-      />
-      <NotificationPanel
-        v-if="isNotificationOpen"
-        @close="handleNotificationPanelClose"
       />
     </div>
   </div>
