@@ -43,9 +43,9 @@ const checklistItems = computed<ChecklistItem[]>(() =>
 <template>
   <section class="flex flex-col gap-3">
     <div class="flex items-center justify-between px-1">
-      <h2 class="text-lg font-semibold">카테고리별 계약 체크리스트</h2>
+      <h2 class="text-base font-semibold">카테고리별 계약 체크리스트</h2>
       <span
-        class="rounded-full bg-dm-mint-light px-3 py-1 text-m font-semibold text-dm-mint-darker"
+        class="rounded-full bg-dm-mint-light px-3 py-1 text-xs font-semibold text-dm-mint-darker"
       >
         {{ overallProgress.completedItemCount }} / {{ overallProgress.totalItemCount }} 완료
       </span>
@@ -55,7 +55,7 @@ const checklistItems = computed<ChecklistItem[]>(() =>
       <div
         v-for="item in checklistItems"
         :key="item.key"
-        class="flex items-center gap-3 border-b border-dm-gray-light px-7 py-5 last:border-b-0"
+        class="flex items-center gap-3 border-b border-dm-gray-light px-5 py-4 last:border-b-0"
         :class="item.targetAmount == 0 ? 'bg-dm-gray-light text-dm-gray' : ''"
       >
         <div
@@ -84,7 +84,7 @@ const checklistItems = computed<ChecklistItem[]>(() =>
         </div>
 
         <div class="ml-3 flex-1">
-          <p class="text-m font-semibold">{{ item.category }}</p>
+          <p class="text-sm font-semibold">{{ item.category }}</p>
           <p
             v-if="item.targetAmount != 0"
             class="mt-0.5 text-sm text-dm-gray-dark"

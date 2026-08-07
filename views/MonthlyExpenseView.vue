@@ -68,17 +68,17 @@ function changeMonth({ year, month }: { year: number; month: number }) {
 </script>
 
 <template>
-  <div class="px-3 sm:px-20 pt-2">
+  <div class="px-3 sm:px-20 pt-2 whitespace-nowrap">
     <header class="flex items-center justify-between px-6 py-5">
       <button
         type="button"
         @click="router.back()"
-        class="text-2xl cursor-pointer"
+        class="cursor-pointer text-lg"
       >
         <ArrowLeft class="h-6 w-6" />
       </button>
 
-      <h1 class="flex-1 ml-2 text-xl font-bold">
+      <h1 class="ml-2 flex-1 text-lg font-bold">
         {{ selectedMonth.year }}년 {{ selectedMonth.month }}월 지출 관리
       </h1>
 

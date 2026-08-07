@@ -64,12 +64,12 @@ const handleStartMission = async (mission: SavingMission & { isStarted?: boolean
 
 <template>
   <section
-    class="rounded-3xl border border-dm-mint-dark bg-white m-4 sm:m-6 shadow-md overflow-hidden"
+    class="m-4 overflow-hidden rounded-3xl border border-dm-mint-dark bg-white shadow-md sm:m-6"
   >
-    <div class="flex items-center justify-between p-4 sm:p-6">
-      <h2 class="text-lg font-bold text-gray-800">이번 달 절약 미션</h2>
+    <div class="flex items-center justify-between p-4 sm:p-5">
+      <h2 class="text-base font-bold text-gray-800">이번 달 절약 미션</h2>
 
-      <span class="text-lg font-bold text-btn-pk">
+      <span class="text-base font-bold text-btn-pk">
         +{{ savingMissions.totalExpectedSavingAmount.toLocaleString() }}원
       </span>
     </div>
@@ -77,19 +77,21 @@ const handleStartMission = async (mission: SavingMission & { isStarted?: boolean
     <div
       v-for="mission in savingMissions.missions"
       :key="mission.missionId"
-      class="flex items-center justify-between border-t border-dm-mint px-4 sm:px-6 py-4"
+      class="flex items-center justify-between border-t border-dm-mint px-4 py-4 sm:px-6"
     >
       <div class="flex items-center gap-4">
-        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-dm-cb-light text-xl">
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-2xl bg-dm-cb-light text-lg sm:h-12 sm:w-12"
+        >
           <component :is="ExpenseCategoryIcon[mission.categoryCode]" />
         </div>
 
         <div>
-          <div class="text-m font-bold text-gray-800">
+          <div class="text-sm font-bold text-gray-800">
             {{ ExpenseCategoryName[mission.categoryCode] }}
           </div>
 
-          <div class="mt-1 text-sm text-base text-gray-400">
+          <div class="mt-1 text-xs text-gray-400">
             {{ mission.title }}
           </div>
         </div>
@@ -98,13 +100,13 @@ const handleStartMission = async (mission: SavingMission & { isStarted?: boolean
       <div class="flex flex-col items-end gap-3">
         <span
           :class="missionAmountStyles[getMissionButtonType(mission)]"
-          class="text-m font-bold"
+          class="text-sm font-bold"
         >
           +{{ mission.expectedSavingAmount.toLocaleString() }}원
         </span>
 
         <button
-          class="rounded-full px-3 py-2 text-sm font-semibold transition"
+          class="rounded-full px-3 py-2 text-xs font-semibold transition"
           :class="missionButtonStyles[getMissionButtonType(mission)]"
           :disabled="getMissionButtonType(mission) !== 'available'"
           @click="handleStartMission(mission)"
@@ -114,7 +116,7 @@ const handleStartMission = async (mission: SavingMission & { isStarted?: boolean
       </div>
     </div>
 
-    <div class="bg-dm-mint-light px-6 py-6 text-m text-dm-mint-darker font-semibold">
+    <div class="bg-dm-mint-light px-5 py-5 text-xs font-semibold text-dm-mint-darker">
       <div v-if="savingMissions.missions.length">
         <p>
           추천대로 실천하면 월
@@ -127,7 +129,7 @@ const handleStartMission = async (mission: SavingMission & { isStarted?: boolean
         v-else
         class="py-10"
       >
-        <p class="text-lg text-center text-dm-gray">이번 달 추천 절약 미션이 없습니다.</p>
+        <p class="text-sm text-center text-dm-gray">이번 달 추천 절약 미션이 없습니다.</p>
       </div>
     </div>
   </section>

@@ -31,14 +31,14 @@ const progressBarWidth = computed(() =>
 </script>
 
 <template>
-  <section class="rounded-3xl border border-dm-co bg-dm-cb-light p-7 shadow-md">
+  <section class="rounded-3xl border border-dm-co bg-dm-cb-light p-5 shadow-md">
     <div class="flex items-start justify-between">
-      <p class="text-lg font-medium font-semibold">공동 예산 달성률</p>
-      <p class="text-2xl font-bold text-btn-pk">{{ progressRateLabel }}%</p>
+      <p class="text-base font-semibold">공동 예산 달성률</p>
+      <p class="text-xl font-bold text-btn-pk">{{ progressRateLabel }}%</p>
     </div>
 
     <div
-      class="mt-5 h-7 w-full overflow-hidden rounded-full bg-dm-gray-light border border-1 border-btn-pk"
+      class="mt-4 h-5 w-full overflow-hidden rounded-full border border-1 border-btn-pk bg-dm-gray-light"
     >
       <div
         class="h-full rounded-full bg-btn-pk transition-all duration-1000"
@@ -46,8 +46,8 @@ const progressBarWidth = computed(() =>
       />
     </div>
 
-    <div class="flex justify-between align-center mt-3">
-      <span class="flex text-m font-semibold gap-1">
+    <div class="mt-3 flex justify-between align-center">
+      <span class="flex gap-1 text-sm font-semibold">
         <p>{{ Math.round(overallProgress.currentAmount / 10000).toLocaleString() }}만원</p>
         <p class="text-dm-gray-dark">
           / {{ Math.round(overallProgress.targetAmount / 10000).toLocaleString() }}만원
@@ -57,7 +57,7 @@ const progressBarWidth = computed(() =>
       <button
         v-if="props.showDetail"
         type="button"
-        class="flex items-center text-m font-semibold text-btn-pk cursor-pointer"
+        class="flex cursor-pointer items-center text-sm font-semibold text-btn-pk"
         @click="handleViewMonthlyProgress"
       >
         월별 예산 달성 현황 보기 <ChevronRight :size="20" />
