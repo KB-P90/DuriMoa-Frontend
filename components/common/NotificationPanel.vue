@@ -98,57 +98,39 @@ const visualFor = visualForNotificationType;
           v-else
           class="flex flex-col"
         >
-          <template
+          <button
             v-for="notification in notifications"
             :key="notification.id"
+            type="button"
+            class="relative mb-3 flex cursor-pointer items-start gap-3 rounded-2xl p-4 text-left last:mb-0"
+            :class="notification.isRead ? 'bg-white' : 'bg-dm-rose-light'"
+            @click="handleSelect(notification)"
           >
-            <button
+            <span
+              class="grid h-10 w-10 shrink-0 place-items-center rounded-full text-lg"
+              :class="visualFor(notification.type).circleClass"
+            >
+              {{ visualFor(notification.type).icon }}
+            </span>
+            <span class="flex-1">
+              <span class="block text-sm font-bold text-[#232631]">{{ notification.title }}</span>
+              <span class="mt-1 block text-sm leading-5 text-dm-gray-dark">
+                {{ notification.content }}
+              </span>
+              <span
+                class="mt-1.5 block text-xs"
+                :class="
+                  notification.isRead ? 'text-dm-gray-dark' : 'font-semibold text-btn-pk-dark'
+                "
+              >
+                {{ formatRelativeTime(notification.createdAt) }}
+              </span>
+            </span>
+            <span
               v-if="!notification.isRead"
-              type="button"
-              class="relative mb-3 flex cursor-pointer items-start gap-3 rounded-2xl bg-dm-rose-light p-4 text-left"
-              @click="handleSelect(notification)"
-            >
-              <span
-                class="grid h-10 w-10 shrink-0 place-items-center rounded-full text-lg"
-                :class="visualFor(notification.type).circleClass"
-              >
-                {{ visualFor(notification.type).icon }}
-              </span>
-              <span class="flex-1">
-                <span class="block text-sm font-bold text-[#232631]">{{ notification.title }}</span>
-                <span class="mt-1 block text-sm leading-5 text-dm-gray-dark">
-                  {{ notification.content }}
-                </span>
-                <span class="mt-1.5 block text-xs font-semibold text-btn-pk-dark">
-                  {{ formatRelativeTime(notification.createdAt) }}
-                </span>
-              </span>
-              <span class="absolute right-4 top-4 h-2 w-2 rounded-full bg-btn-pk-dark" />
-            </button>
-
-            <button
-              v-else
-              type="button"
-              class="flex w-full cursor-pointer items-start gap-3 border-t border-dm-gray/10 py-4 text-left first:border-t-0"
-              @click="handleSelect(notification)"
-            >
-              <span
-                class="grid h-10 w-10 shrink-0 place-items-center rounded-full text-lg"
-                :class="visualFor(notification.type).circleClass"
-              >
-                {{ visualFor(notification.type).icon }}
-              </span>
-              <span class="flex-1">
-                <span class="block text-sm font-bold text-[#232631]">{{ notification.title }}</span>
-                <span class="mt-1 block text-sm leading-5 text-dm-gray-dark">
-                  {{ notification.content }}
-                </span>
-                <span class="mt-1.5 block text-xs text-dm-gray-dark">
-                  {{ formatRelativeTime(notification.createdAt) }}
-                </span>
-              </span>
-            </button>
-          </template>
+              class="absolute right-4 top-4 h-2 w-2 rounded-full bg-btn-pk-dark"
+            />
+          </button>
         </div>
       </main>
     </section>

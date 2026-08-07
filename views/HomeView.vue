@@ -65,8 +65,8 @@ onMounted(() => {
             @click="notificationStore.openPanel()"
           >
             <Bell
-              class="h-5 w-5"
-              :stroke-width="1.6"
+              class="h-5 w-5 text-dm-co-dark font-medium"
+              :stroke-width="2.5"
             />
             <span
               v-if="notificationStore.unreadCount > 0"
@@ -80,7 +80,7 @@ onMounted(() => {
             @click="isMenuOpen = true"
           >
             <Menu
-              class="h-[22px] w-[22px]"
+              class="h-[22px] w-[22px] text-dm-co-dark font-medium"
               :stroke-width="2"
             />
           </button>
