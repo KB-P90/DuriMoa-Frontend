@@ -5,7 +5,6 @@ import type {
   MyPageCoupleAcceptRequestDto,
   MyPageCoupleInviteRequestDto,
   MyPageCouplePartnerResponseDto,
-  MyPageLogoutResponseDto,
   MyPageProfileImageResponseDto,
   MyPageProfileResponseDto,
   MyPageProfileUpdateRequestDto,
@@ -41,11 +40,6 @@ export const uploadMyPageProfileImage = async (formData: FormData) => {
       },
     }
   );
-  return data.data;
-};
-
-export const logoutMyPage = async () => {
-  const { data } = await api.post<ApiResponse<MyPageLogoutResponseDto>>('/users/logout');
   return data.data;
 };
 

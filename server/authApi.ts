@@ -1,4 +1,4 @@
-import api from 'axios';
+import { api } from '@/server/axios.js';
 import type { ApiResponse } from '@/types/common';
 import type {
   LoginRequestDto,
@@ -7,7 +7,7 @@ import type {
   SignupResponseDto,
 } from '@/types/dto/auth.dto';
 
-const AUTH_ENDPOINT_PREFIX = '/api/auth';
+const AUTH_ENDPOINT_PREFIX = '/auth';
 
 export async function login(request: LoginRequestDto): Promise<LoginResponseDto> {
   const { data } = await api.post<ApiResponse<LoginResponseDto>>(
@@ -24,4 +24,8 @@ export async function signup(request: SignupRequestDto): Promise<SignupResponseD
     request
   );
   return data.data;
+}
+
+export async function logoutAuth(): Promise<void> {
+  await api.post(`${AUTH_ENDPOINT_PREFIX}/logout`);
 }
