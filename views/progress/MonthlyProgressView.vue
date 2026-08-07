@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import CoupleAchievement from '@/components/progress/CoupleAchievement.vue';
 import MonthlyTimeline from '@/components/progress/MonthlyTimeline.vue';
+import { useAuthCheck } from '@/composables/useAuthCheck';
 import { ArrowLeft } from '@lucide/vue';
 import { useRouter } from 'vue-router';
+
+useAuthCheck();
 
 const router = useRouter();
 </script>

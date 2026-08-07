@@ -3,6 +3,9 @@ import { onMounted, ref } from 'vue';
 import OverallProgress from '../../components/progress/OverallProgress.vue';
 import PersonalProgress from '../../components/progress/PersonalProgress.vue';
 import { useProgressStore } from '@/stores/progressStore';
+import { useAuthCheck } from '@/composables/useAuthCheck.js';
+
+useAuthCheck();
 
 const progressStore = useProgressStore();
 
