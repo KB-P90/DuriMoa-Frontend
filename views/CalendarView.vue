@@ -2,6 +2,7 @@
 import CalendarSummary from '@/components/calendar/CalendarSummary.vue';
 import MonthCalendar from '@/components/calendar/MonthCalendar.vue';
 import TransactionList from '@/components/calendar/TransactionList.vue';
+import WeddingCalendarEmptyState from '@/components/calendar/WeddingCalendarEmptyState.vue';
 import type { Transaction } from '@/types/calendar';
 import type { CalendarMode } from '@/types/calendar';
 
@@ -14,6 +15,7 @@ defineProps<{
   days: InstanceType<typeof MonthCalendar>['$props']['days'];
   summary: InstanceType<typeof CalendarSummary>['$props']['items'];
   transactions: readonly Transaction[];
+  showWeddingEmptyState: boolean;
   isLoading: boolean;
 }>();
 
@@ -90,6 +92,11 @@ const emit = defineEmits<{
         @select="emit('select-transaction', $event)"
       />
     </section>
+
+    <WeddingCalendarEmptyState
+      v-if="showWeddingEmptyState"
+      class="mt-4"
+    />
 
     <button
       type="button"
