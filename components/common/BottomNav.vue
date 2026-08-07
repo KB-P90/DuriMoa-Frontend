@@ -12,7 +12,7 @@ const emit = defineEmits<{
 const NAV_ITEMS = [
   { key: 'home', label: '홈', icon: Home },
   { key: 'calendar', label: '캘린더', icon: Calendar },
-  { key: 'status', label: '현황', icon: PieChart },
+  { key: 'progress', label: '현황', icon: PieChart },
   { key: 'card', label: '카드추천', icon: CreditCard },
 ] as const;
 </script>

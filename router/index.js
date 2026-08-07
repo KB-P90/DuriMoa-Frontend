@@ -23,6 +23,8 @@ import OnboardingView from '@/views/onboarding/OnboardingView.vue';
 import GoalListView from '@/views/goal/GoalListView.vue';
 import ProfileEditView from '@/views/ProfileEditView.vue';
 import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
+import ProgressView from '@/views/progress/ProgressView.vue';
+import MonthlyProgressView from '@/views/progress/MonthlyProgressView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,7 +36,18 @@ const router = createRouter({
         { path: '', redirect: { name: 'home' } },
         { path: 'home', name: 'home', component: HomeView },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
-        { path: 'status', name: 'status', component: PlaceholderView, props: { title: '현황' } },
+        {
+          path: 'progress',
+          name: 'progress',
+          component: ProgressView,
+          props: { title: '목표 달성 현황' },
+        },
+        {
+          path: 'progress/monthly',
+          name: 'monthly-progress',
+          component: MonthlyProgressView,
+          props: { title: '월별 예산 달성 현황' },
+        },
         { path: 'myinfo', name: 'myinfo', component: MyPageView },
         { path: 'card', name: 'card', component: CardStrategyView, props: { title: '카드추천' } },
         {
