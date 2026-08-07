@@ -2,7 +2,7 @@
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { BookOpenText, ChevronRight, CreditCard, Heart, UserRound } from '@lucide/vue';
+import { BookOpenText, ChevronRight, CreditCard, UserRound } from '@lucide/vue';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useMyPageStore } from '@/stores/myPageStore';
 import { useNotificationStore } from '@/stores/notificationStore';
@@ -216,21 +216,28 @@ onMounted(() => {
                 v-for="item in assetSummaries"
                 :key="item.id"
                 type="button"
-                class="flex flex-1 items-center gap-[11px] rounded-xl bg-dm-mint-light p-2.5 text-left first:bg-[#E6F2F1]"
+                class="flex flex-1 items-center gap-[10px] rounded-xl bg-dm-mint-light p-2.5 text-left first:bg-[#E6F2F1] px-5"
                 @click="goAssetConnect(item.id)"
               >
                 <component
                   :is="item.icon"
-                  class="h-6 w-6 shrink-0 text-[#585858]"
-                  :stroke-width="2"
+                  class="h-6 w-6 shrink-0 text-dm-mint-darker font-thin"
+                  :stroke-width="1.4"
                 />
                 <span class="flex min-w-0 flex-1 flex-col">
-                  <span class="text-[9px] leading-[13px] text-[#70AFB3]">{{ item.label }}</span>
-                  <strong class="text-[12.9px] font-bold leading-4">{{ item.count }}개</strong>
+                  <span class="text-[10px] leading-[13px] text-btn-mt-darker font-medium">{{
+                    item.label
+                  }}</span>
+                  <div class="flex flex-row">
+                    <strong class="text-[12.9px] font-bold leading-4 text-btn-mt-darker">{{
+                      item.count
+                    }}</strong>
+                    <span class="text-[12.9px] font-bold leading-4 text-btn-mt-darker">개</span>
+                  </div>
                 </span>
                 <ChevronRight
-                  class="h-6 w-6 shrink-0 text-black"
-                  :stroke-width="2"
+                  class="h-6 w-6 shrink-0 text-dm-mint-darker"
+                  :stroke-width="1.4"
                 />
               </button>
             </div>

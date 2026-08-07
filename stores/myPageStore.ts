@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import {
-  getMyPageAssetSummary,
   getMyPageProfile,
   updateMyPageProfile,
   updateMyPageShare,
@@ -52,20 +51,8 @@ export const useMyPageStore = defineStore('myPage', {
       this.lastErrorMessage = '';
 
       try {
-        const [profileDto, assetSummaryDto] = await Promise.all([
-          getMyPageProfile(),
-          getMyPageAssetSummary().catch(() => ({
-            summary: {
-              accountCount: MOCK_ASSET_SUMMARY.connectedAccountsCount,
-              cardCount: MOCK_ASSET_SUMMARY.connectedCardsCount,
-            },
-          })),
-        ]);
-
-        this.myPage = toMyPage(profileDto, {
-          connectedAccountsCount: assetSummaryDto.summary.accountCount,
-          connectedCardsCount: assetSummaryDto.summary.cardCount,
-        });
+        const profileDto = await getMyPageProfile();
+        this.myPage = toMyPage(profileDto);
       } catch {
         this.myPage = MOCK_MY_PAGE;
         this.lastErrorMessage = '마이페이지 정보를 불러오지 못해 임시 데이터를 표시하고 있어요.';
@@ -92,7 +79,7 @@ export const useMyPageStore = defineStore('myPage', {
 
         const updatedProfile = await updateMyPageProfile(formData);
 
-        this.myPage = toMyPage(updatedProfile, this.myPage.assetSummary);
+        this.myPage = toMyPage(updatedProfile);
         return true;
       } catch {
         this.myPage = {

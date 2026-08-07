@@ -1,11 +1,10 @@
 import { api } from '@/server/axios.js';
 import type { ApiResponse } from '@/types/common';
 import type {
-  MyPageAssetSummaryResponseDto,
   MyPageCoupleAcceptRequestDto,
   MyPageCoupleInviteRequestDto,
   MyPageCouplePartnerResponseDto,
-  MyPageProfileImageResponseDto,
+  MyPageLogoutResponseDto,
   MyPageProfileResponseDto,
 } from '@/types/dto/myPage.dto';
 
@@ -32,21 +31,8 @@ export const updateMyPageShare = async () => {
   return data.data;
 };
 
-export const getMyPageAssetSummary = async () => {
-  const { data } = await api.get<ApiResponse<MyPageAssetSummaryResponseDto>>('/users/account');
-  return data.data;
-};
-
-export const uploadMyPageProfileImage = async (formData: FormData) => {
-  const { data } = await api.post<ApiResponse<MyPageProfileImageResponseDto>>(
-    '/users/profile/image',
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
-  );
+export const logoutMyPage = async () => {
+  const { data } = await api.post<ApiResponse<MyPageLogoutResponseDto>>('/users/logout');
   return data.data;
 };
 
