@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { ArrowLeft } from '@lucide/vue';
+import { ChevronLeft } from '@lucide/vue';
 
 const props = defineProps<{
   title: string;
@@ -26,9 +26,9 @@ function handleBack() {
       class="grid h-6 w-6 shrink-0 place-items-center"
       @click="handleBack"
     >
-      <ArrowLeft
+      <ChevronLeft
         class="h-[17px] w-[17px]"
-        :stroke-width="2"
+        :stroke-width="3"
       />
     </button>
     <h1 class="flex-1 truncate text-lg font-extrabold leading-[18px]">{{ title }}</h1>
