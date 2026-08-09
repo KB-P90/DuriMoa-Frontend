@@ -14,7 +14,7 @@ const emit = defineEmits<{
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 const MARKER_COLORS = {
   income: 'bg-[#65C466]',
-  expense: 'bg-[#F09488]',
+  expense: 'bg-brand',
   saving: 'bg-[#3B86F7]',
 } as const;
 </script>
@@ -56,9 +56,9 @@ const MARKER_COLORS = {
         class="relative mx-auto flex h-10 w-10 flex-col items-center justify-center rounded-xl text-sm font-semibold sm:h-11 sm:w-11"
         :class="[
           !day.currentMonth && 'text-dm-gray/50',
-          day.currentMonth && index % 7 === 0 && 'text-[#F09488]',
+          day.currentMonth && index % 7 === 0 && 'text-brand',
           day.currentMonth && index % 7 !== 0 && 'text-gray-800',
-          day.currentMonth && day.isoDate === selectedDate && '!bg-[#F09488] !text-white',
+          day.currentMonth && day.isoDate === selectedDate && '!bg-brand !text-white',
         ]"
         :disabled="!day.currentMonth"
         @click="emit('select', day.isoDate)"

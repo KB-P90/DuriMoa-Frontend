@@ -24,7 +24,7 @@ defineEmits<{ primary: []; secondary: [] }>();
   >
     <button
       type="button"
-      class="h-[54px] w-full rounded-[13px] bg-btn-pk text-[15px] font-extrabold text-dm-gray-light transition enabled:hover:bg-btn-pk-dark disabled:cursor-not-allowed disabled:bg-dm-gray/45 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+      class="h-[54px] w-full rounded-[13px] bg-brand text-[15px] font-extrabold text-dm-gray-light transition enabled:hover:bg-brand-dark disabled:cursor-not-allowed disabled:bg-dm-gray/45 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
       :disabled="disabled"
       @click="$emit('primary')"
     >
@@ -34,7 +34,7 @@ defineEmits<{ primary: []; secondary: [] }>();
     <button
       v-if="secondaryLabel"
       type="button"
-      class="mt-2 h-10 w-full rounded-[11px] text-[13px] font-bold text-dm-gray-dark transition enabled:hover:bg-dm-gray/5 disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+      class="mt-2 h-10 w-full rounded-[11px] text-[13px] font-bold text-dm-gray-dark transition enabled:hover:bg-dm-gray/5 disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
       :disabled="secondaryDisabled"
       @click="$emit('secondary')"
     >

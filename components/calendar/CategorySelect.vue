@@ -52,7 +52,7 @@ function selectCategory(category: string) {
         @click="isOpen = false"
       />
       <div
-        class="absolute left-0 right-0 top-[calc(100%+0.75rem)] z-40 max-h-72 overflow-y-auto rounded-2xl border border-dm-gray/30 bg-dm-gray-light p-2 shadow-xl"
+        class="absolute left-0 right-0 top-[calc(100%+0.75rem)] z-40 max-h-72 overflow-y-auto scrollbar-none rounded-2xl border border-dm-gray/30 bg-dm-gray-light p-2 shadow-xl"
         role="listbox"
         aria-label="카테고리 선택"
       >
@@ -67,7 +67,7 @@ function selectCategory(category: string) {
             :class="
               group.mode === 'personal'
                 ? 'bg-dm-mint-light text-btn-mt-dark'
-                : 'bg-dm-cb-light text-dm-co-darker'
+                : 'bg-pink-01 text-brand'
             "
           >
             <span>{{ group.label }}</span>
@@ -82,7 +82,7 @@ function selectCategory(category: string) {
               modelValue === option &&
               (group.mode === 'personal'
                 ? 'bg-dm-mint-light font-semibold text-btn-mt-dark'
-                : 'bg-dm-cb-light font-semibold text-dm-co-darker')
+                : 'bg-pink-01 font-semibold text-brand')
             "
             role="option"
             :aria-selected="modelValue === option"
@@ -92,7 +92,7 @@ function selectCategory(category: string) {
             <Check
               v-if="modelValue === option"
               class="h-4 w-4"
-              :class="group.mode === 'personal' ? 'text-btn-mt-dark' : 'text-dm-co-darker'"
+              :class="group.mode === 'personal' ? 'text-btn-mt-dark' : 'text-brand'"
               :stroke-width="2.5"
             />
           </button>

@@ -6,6 +6,7 @@ import { BookOpenText, ChevronRight, CreditCard, Heart, UserRound } from '@lucid
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useMyPageStore } from '@/stores/myPageStore';
 import type { ShareScope } from '@/types/myPage';
+import PageHeader from '@/components/common/PageHeader.vue';
 
 type AssetSummary = {
   id: 'accounts' | 'cards';
@@ -100,35 +101,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mypage-stage aspect-[390/770] w-full md:aspect-auto md:min-h-[770px]">
+  <div class="mypage-stage relative aspect-[390/770] w-full md:aspect-auto min-h-full">
     <section
-      class="absolute inset-0 origin-top-left h-[770px] w-[390px] overflow-hidden bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--mypage-scale)] md:relative md:h-auto md:min-h-[770px] md:w-full md:scale-100 md:overflow-visible"
+      class="absolute inset-0 origin-top-left h-[770px] w-[390px] overflow-y-auto scrollbar-none bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--mypage-scale)] md:relative md:h-auto md:min-h-[770px] md:w-full md:scale-100 md:overflow-visible"
     >
+      <PageHeader title="마이페이지" />
       <div
-        class="flex h-[707px] flex-col gap-3 bg-gradient-to-b from-[#FFFBFC] to-white px-[18px] pb-7 pt-5"
+        class="flex min-h-[770px] flex-col gap-3 bg-gradient-to-b from-[#FFFBFC] to-white px-[18px] pb-7 pt-5"
       >
-        <header class="flex h-[54px] items-center justify-between px-px pb-1 pt-0.5">
-          <div class="flex min-w-[170px] flex-col gap-[3px]">
-            <h1 class="text-[21px] font-bold leading-[25px]">마이페이지</h1>
-            <p class="text-[10.5px] leading-[13px] text-dm-gray-dark">
-              우리의 정보와 연결 설정을 관리해요
-            </p>
-          </div>
-          <button
-            type="button"
-            aria-label="알림"
-            class="relative grid h-[34px] w-[34px] place-items-center rounded-[11px] bg-dm-mint-light text-[#9A7A3D]"
-          >
-            <Heart
-              class="h-4 w-4 fill-dm-rose-light text-dm-co-darker"
-              :stroke-width="2"
-            />
-            <span
-              class="absolute right-[7px] top-[7px] h-2.5 w-2.5 rounded-full border-2 border-white bg-dm-co-light"
-            />
-          </button>
-        </header>
-
         <article
           class="relative h-[98px] overflow-hidden rounded-2xl border border-[#F2EFEE] bg-[linear-gradient(105deg,#FFFFFF_0%,#FFFFFF_49%,#FFF1EF_100%)] p-[18px] shadow-[0_1px_2px_rgba(34,34,43,0.04),0_6px_18px_-8px_rgba(34,34,43,0.14)]"
         >
@@ -169,7 +149,7 @@ onMounted(() => {
             <div class="ml-auto">
               <button
                 type="button"
-                class="h-[31px] rounded-[10px] bg-white px-2.5 text-[10.5px] font-bold leading-[13px] text-dm-co-darker shadow-[0_0.5px_2px_rgba(0,0,0,0.25)]"
+                class="h-[31px] rounded-[10px] bg-white px-2.5 text-[10.5px] font-bold leading-[13px] text-brand shadow-[0_0.5px_2px_rgba(0,0,0,0.25)]"
                 @click="goProfileEdit"
               >
                 프로필 설정
@@ -180,7 +160,7 @@ onMounted(() => {
 
         <article
           v-if="isPartnerConnected && myPage.partner"
-          class="flex h-[66px] items-center gap-2.5 rounded-[15px] bg-dm-cb-light px-3.5 py-3"
+          class="flex h-[66px] items-center gap-2.5 rounded-[15px] bg-pink-01 px-3.5 py-3"
         >
           <div class="grid h-[39px] w-[39px] place-items-center rounded-full bg-white">
             <UserRound
@@ -192,7 +172,7 @@ onMounted(() => {
             <div class="flex items-center gap-1.5">
               <strong class="text-xs font-bold leading-[15px]">{{ myPage.partner.name }}</strong>
               <span
-                class="rounded-full bg-white px-2 py-1 text-[10px] font-extrabold leading-3 text-btn-pk shadow-[0_0.6px_3px_rgba(0,0,0,0.2)]"
+                class="rounded-full bg-white px-2 py-1 text-[10px] font-extrabold leading-3 text-brand shadow-[0_0.6px_3px_rgba(0,0,0,0.2)]"
                 >{{ roleLabels[myPage.partner.role] }}</span
               >
             </div>
@@ -275,7 +255,7 @@ onMounted(() => {
                 class="flex flex-1 items-center justify-center rounded-[9px] text-[9.5px] font-bold leading-[11px] disabled:cursor-wait"
                 :class="
                   myPage.shareSetting.selectedScope === option.value
-                    ? 'bg-white text-dm-co-darker shadow-[0_2px_8px_rgba(82,55,64,0.08)]'
+                    ? 'bg-white text-brand shadow-[0_2px_8px_rgba(82,55,64,0.08)]'
                     : 'text-dm-gray-dark'
                 "
                 :disabled="isUpdatingShare"

@@ -15,10 +15,10 @@ defineProps({
 <template>
   <!-- TODO: #292d38, #232631 진한 헤더 색상 토큰 등록 검토 -->
   <header
-    class="sticky top-0 z-10 grid h-[54px] shrink-0 grid-cols-[40px_1fr_40px] items-center border-b border-dm-gray/20 bg-dm-gray-light/95 px-3.5 backdrop-blur-md"
+    class="sticky top-0 z-10 grid h-[54px] shrink-0 grid-cols-[40px_1fr_40px] items-center border-b border-dm-gray/20 bg-white px-3.5 backdrop-blur-md"
   >
     <RouterLink
-      class="grid h-9 w-9 place-items-center rounded-[10px] text-[#292d38] transition hover:bg-dm-gray/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+      class="grid h-9 w-9 place-items-center rounded-[10px] text-[#292d38] transition hover:bg-dm-gray/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
       :to="backTo"
       :aria-label="`${title}에서 이전 화면으로 이동`"
     >

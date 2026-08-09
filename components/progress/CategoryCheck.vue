@@ -43,7 +43,7 @@ const checklistItems = computed<ChecklistItem[]>(() =>
 <template>
   <section class="flex flex-col gap-3">
     <div class="flex items-center justify-between px-1">
-      <h2 class="text-base font-semibold">카테고리별 계약 체크리스트</h2>
+      <h2 class="text-lg font-bold">카테고리별 계약 체크리스트</h2>
       <span
         class="rounded-full bg-dm-mint-light px-3 py-1 text-xs font-semibold text-dm-mint-darker"
       >
@@ -51,11 +51,11 @@ const checklistItems = computed<ChecklistItem[]>(() =>
       </span>
     </div>
 
-    <div class="overflow-hidden rounded-3xl border border-dm-mint-dark bg-white shadow-md">
+    <div class="overflow-hidden rounded-3xl border border-dm-mint-dark bg-white">
       <div
         v-for="item in checklistItems"
         :key="item.key"
-        class="flex items-center gap-3 border-b border-dm-gray-light px-5 py-4 last:border-b-0"
+        class="flex items-center gap-3 border-b border-dm-gray-light p-4 last:border-b-0"
         :class="item.targetAmount == 0 ? 'bg-dm-gray-light text-dm-gray' : ''"
       >
         <div

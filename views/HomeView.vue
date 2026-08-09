@@ -62,13 +62,13 @@ onMounted(() => {
   <NewUserHome v-if="isNewUser" />
   <div
     v-else
-    class="home-stage aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]"
+    class="home-stage relative aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]"
   >
     <div
-      class="home-canvas absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-y-auto bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--home-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
+      class="home-canvas absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-y-auto scrollbar-none bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--home-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
     >
       <section
-        class="home-hero relative h-[379px] overflow-hidden bg-gradient-to-b from-[#FDDFDD] to-white md:h-[440px]"
+        class="home-hero relative h-[379px] overflow-hidden bg-gradient-to-b from-pink-01 to-white md:h-[440px]"
       >
         <header
           class="absolute inset-x-0 top-0 flex h-[42px] items-center justify-end gap-[10px] px-5 py-[10px]"
@@ -85,7 +85,7 @@ onMounted(() => {
             />
             <span
               v-if="unreadNotificationCount > 0"
-              class="absolute right-0 top-0 h-2 w-2 rounded-full bg-btn-pk-dark"
+              class="absolute right-0 top-0 h-2 w-2 rounded-full bg-brand-dark"
             />
           </button>
           <button
@@ -106,7 +106,7 @@ onMounted(() => {
         >
           {{ dashboard.groomName }}님과 {{ dashboard.brideName }}님은<br />
           <span
-            class="text-[23.8px] leading-[37px] tracking-[-0.72px] text-[#FF6464] md:text-[31px] md:leading-[1.3]"
+            class="text-[23.8px] leading-[37px] tracking-[-0.72px] text-brand md:text-[31px] md:leading-[1.3]"
             >{{ formatWon(dashboard.totalAccumulatedAmount) }}</span
           >
           모았어요!
@@ -114,7 +114,7 @@ onMounted(() => {
 
         <button
           type="button"
-          class="hero-confirm absolute left-[44px] top-[128px] flex h-[25px] w-[62px] items-center rounded-full bg-[#FF6464] pl-3 text-[12px] font-bold leading-[14px] text-[#FBF0EF] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.28)] md:left-16 md:top-[145px] md:h-[34px] md:w-20 md:text-sm"
+          class="hero-confirm absolute left-[44px] top-[128px] flex h-[25px] w-[62px] items-center rounded-full bg-brand pl-3 text-xs font-bold leading-[14px] text-white md:left-16 md:top-[145px] md:h-[34px] md:w-20 md:text-sm"
         >
           확인
           <ChevronRight
@@ -128,8 +128,7 @@ onMounted(() => {
         >
           <div class="flex w-[58px] flex-col items-center gap-[3px]">
             <span class="whitespace-nowrap text-[9px] font-bold leading-[11px] text-[#5A5B69]"
-              ><i class="mr-[5px] inline-block h-2 w-2 rounded-[2.5px] bg-[#FF6464]" />사용한
-              돈</span
+              ><i class="mr-[5px] inline-block h-2 w-2 rounded-[2.5px] bg-brand" />사용한 돈</span
             >
             <strong
               class="text-[12.9px] font-extrabold leading-4 tracking-[-0.42px] text-[#5A5B69]"
@@ -139,7 +138,7 @@ onMounted(() => {
           <div class="flex w-[58px] flex-col items-center gap-[3px]">
             <span class="whitespace-nowrap text-[9px] font-bold leading-[11px] text-[#5A5B69]"
               ><i
-                class="mr-[5px] inline-block h-2 w-2 rounded-[2.5px] border-[0.1px] border-black bg-white/55"
+                class="mr-[5px] inline-block h-2 w-2 rounded-[2.5px] border-[0.1px] border-black bg-white"
               />남은 돈</span
             >
             <strong class="text-[12.9px] font-bold leading-4 tracking-[-0.42px] text-[#5A5B69]">{{
@@ -164,7 +163,7 @@ onMounted(() => {
         >
           <div class="relative h-full overflow-hidden rounded-lg bg-[#F1F2F5]">
             <div
-              class="absolute inset-x-0 bottom-0 rounded-lg bg-[#FF8580]"
+              class="absolute inset-x-0 bottom-0 rounded-lg bg-brand"
               :style="{ height: jointGoalGraphHeight }"
             />
             <i class="absolute right-[3px] top-[18%] h-px w-[9px] bg-[#D7D9DE]" />
@@ -180,9 +179,9 @@ onMounted(() => {
       >
         <button
           type="button"
-          class="saving-alert flex h-[39px] w-[350px] items-center gap-2 rounded-[11px] bg-dm-cb-light px-[13px] text-left md:h-11 md:w-full"
+          class="saving-alert flex h-[39px] w-[350px] items-center gap-2 rounded-[11px] bg-pink-01 px-[13px] text-left md:h-11 md:w-full"
         >
-          <span class="text-[10px] font-extrabold leading-3 text-btn-pk">알림</span>
+          <span class="text-[10px] font-extrabold leading-3 text-brand">알림</span>
           <span class="truncate text-[11.5px] font-medium leading-[14px] text-[#5A5B69]">{{
             dashboard.savingAlert.message
           }}</span>
@@ -199,7 +198,6 @@ onMounted(() => {
 
         <div
           ref="missionCarousel"
-          class="mission-carousel mt-[9px] flex h-[62px] snap-x snap-mandatory overflow-x-auto overscroll-x-contain touch-pan-y select-none [&::-webkit-scrollbar]:hidden md:h-[72px]"
           aria-label="절약 미션 목록"
           @pointerdown="startMissionDrag"
           @pointermove="moveMissionDrag"
@@ -211,7 +209,7 @@ onMounted(() => {
             v-for="mission in missions"
             :key="mission.id"
             type="button"
-            class="mission-card flex h-[62px] min-w-full snap-center items-center rounded-2xl border border-[#F0E7E5] bg-white px-[14px] py-3 text-left shadow-[0_1px_2px_rgba(60,40,38,0.03),0_6px_18px_-10px_rgba(60,40,38,0.1)] md:h-[72px]"
+            class="mission-card flex h-[62px] min-w-full snap-center items-center rounded-2xl border border-[#F0E7E5] bg-white mt-2 p-4 text-left md:h-[72px]"
           >
             <span class="grid h-8 w-8 place-items-center rounded-[11px] bg-[#FFFAFA] text-[#5A5B69]"
               ><Coffee
@@ -239,17 +237,17 @@ onMounted(() => {
 
         <div class="goal-grid mt-[10px] flex h-[144px] gap-[13px] py-[5px] md:h-auto">
           <article
-            class="goal-card h-[134px] w-[164px] rounded-2xl border border-white/90 bg-[#FFF1EF] p-4 md:h-[150px] md:w-auto md:flex-1 md:p-[18px]"
+            class="goal-card h-[134px] w-[164px] rounded-2xl border border-white/90 bg-pink-01 p-4 md:h-[150px] md:w-auto md:flex-1 md:p-[18px]"
           >
             <p class="text-[11px] font-extrabold leading-4 text-[#5A5B69]">공동 예산 달성률</p>
             <p
-              class="mt-[7px] text-[24.6px] font-bold leading-[30px] tracking-[-1.35px] text-[#FF6464]"
+              class="mt-[7px] text-[24.6px] font-bold leading-[30px] tracking-[-1.35px] text-brand"
             >
               {{ dashboard.jointGoal.achievementRate }}<span class="text-[15px]">%</span>
             </p>
             <div class="mt-[7px] h-2 w-[130px] overflow-hidden rounded-full bg-white">
               <span
-                class="block h-full rounded-full bg-[#FF6464]"
+                class="block h-full rounded-full bg-brand"
                 :style="{ width: `${dashboard.jointGoal.achievementRate}%` }"
               />
             </div>

@@ -7,7 +7,7 @@
     <section class="flex h-full min-h-0 w-full flex-col bg-dm-gray-light">
       <!-- 긴 회원가입·약관 화면도 같은 컨테이너 안에서 스크롤된다. -->
       <div
-        class="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        class="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         <slot />
       </div>

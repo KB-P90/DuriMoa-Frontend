@@ -8,7 +8,9 @@ const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
 
 <template>
   <AuthScreen>
-    <div class="flex min-h-full flex-1 flex-col px-5 pb-8 pt-10 sm:px-10 sm:pt-14 lg:px-16">
+    <div
+      class="flex min-h-full bg-white flex-1 flex-col px-5 pb-8 pt-10 sm:px-10 sm:pt-14 lg:px-16"
+    >
       <!-- 서비스 로고와 소개 문구 -->
       <BrandMark class="mb-8" />
 
@@ -30,7 +32,7 @@ const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
           <input
             id="login-phone"
             v-model="phone"
-            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
+            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
             type="tel"
             name="phone"
             inputmode="numeric"
@@ -56,7 +58,7 @@ const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
           <input
             id="login-password"
             v-model="password"
-            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
+            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
             type="password"
             name="password"
             autocomplete="current-password"
@@ -75,7 +77,7 @@ const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
         <p
           v-if="loginError"
           id="login-error"
-          class="-mt-1 text-xs font-semibold text-btn-pk-dark"
+          class="-mt-1 text-xs font-semibold text-brand-dark"
           role="alert"
           aria-live="polite"
         >
@@ -83,7 +85,7 @@ const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
         </p>
 
         <button
-          class="mt-0.5 grid min-h-[50px] w-full place-items-center rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light transition hover:bg-btn-pk-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30 disabled:cursor-not-allowed disabled:opacity-60"
+          class="mt-0.5 grid min-h-[50px] w-full place-items-center rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light transition hover:bg-brand-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 disabled:cursor-not-allowed disabled:opacity-60"
           type="submit"
           :disabled="isSubmitting"
         >
@@ -104,7 +106,7 @@ const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
       <!-- XML 계약에 카카오 endpoint가 없어 현재는 기존 퍼블리싱 링크만 유지한다. -->
       <!-- TODO: #fee500, #2d271d 카카오 브랜드 색상 토큰 등록 검토 -->
       <RouterLink
-        class="mx-auto grid h-[51px] w-[51px] place-items-center rounded-full bg-[#fee500] text-[#2d271d] transition hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+        class="mx-auto grid h-[51px] w-[51px] place-items-center rounded-full bg-[#fee500] text-[#2d271d] transition hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
         to="/auth/session"
         aria-label="카카오 계정으로 계속하기"
       >
@@ -126,7 +128,7 @@ const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
         aria-label="회원 계정 메뉴"
       >
         <RouterLink
-          class="rounded px-1 py-1 no-underline hover:text-btn-pk-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-btn-pk"
+          class="rounded px-1 py-1 no-underline hover:text-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           to="/signup"
         >
           회원가입
@@ -137,7 +139,7 @@ const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
           >·</span
         >
         <RouterLink
-          class="rounded px-1 py-1 no-underline hover:text-btn-pk-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-btn-pk"
+          class="rounded px-1 py-1 no-underline hover:text-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           to="/account-help"
         >
           계정을 잊으셨나요?

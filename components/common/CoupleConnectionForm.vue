@@ -68,7 +68,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
 
       <button
         type="button"
-        class="flex h-[52px] items-center justify-center gap-1 rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[12px] font-extrabold transition enabled:hover:border-btn-pk enabled:hover:bg-dm-cb-light disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+        class="flex h-[52px] items-center justify-center gap-1 rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[12px] font-extrabold transition enabled:hover:border-pink-03 enabled:hover:bg-pink-01 disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
         :disabled="isLoadingMyInviteCode || !myInviteCode"
         aria-label="내 초대 코드 복사"
         @click="$emit('copyMyInviteCode')"
@@ -87,7 +87,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
       class="mt-2 flex items-start justify-between gap-3"
       role="alert"
     >
-      <p class="flex items-start gap-1.5 text-[11px] leading-4 text-btn-pk-dark">
+      <p class="flex items-start gap-1.5 text-[11px] leading-4 text-brand-dark">
         <TriangleAlert
           class="mt-px h-3.5 w-3.5 shrink-0"
           :stroke-width="2"
@@ -97,7 +97,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
       </p>
       <button
         type="button"
-        class="shrink-0 text-[11px] font-extrabold text-btn-pk-dark underline underline-offset-2 disabled:text-dm-gray"
+        class="shrink-0 text-[11px] font-extrabold text-brand-dark underline underline-offset-2 disabled:text-dm-gray"
         :disabled="isLoadingMyInviteCode"
         @click="$emit('retryMyInviteCode')"
       >
@@ -107,7 +107,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
     <p
       v-else-if="myInviteCodeCopyMessage"
       class="mt-2 flex items-center gap-1 text-[11px] leading-4"
-      :class="hasMyInviteCodeCopyError ? 'text-btn-pk-dark' : 'text-btn-mt-dark'"
+      :class="hasMyInviteCodeCopyError ? 'text-brand-dark' : 'text-btn-mt-dark'"
       :role="hasMyInviteCodeCopyError ? 'alert' : 'status'"
     >
       <Check
@@ -153,8 +153,8 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
         class="h-[52px] min-w-0 rounded-[13px] border bg-dm-gray-light px-4 font-mono text-[14px] font-extrabold uppercase tracking-[0.12em] outline-none transition placeholder:font-sans placeholder:text-[12px] placeholder:font-medium placeholder:normal-case placeholder:tracking-normal placeholder:text-dm-gray"
         :class="
           hasInviteCodeError || errorMessage
-            ? 'border-btn-pk-dark focus:ring-3 focus:ring-btn-pk/15'
-            : 'border-dm-gray/35 focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10'
+            ? 'border-pink-03-dark focus:ring-3 focus:ring-brand/15'
+            : 'border-dm-gray/35 focus:border-pink-03 focus:ring-3 focus:ring-brand/10'
         "
         name="inviteCode"
         type="text"
@@ -176,7 +176,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
 
       <button
         type="submit"
-        class="grid h-[52px] place-items-center rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[13px] font-extrabold transition enabled:hover:border-btn-pk enabled:hover:bg-dm-cb-light disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+        class="grid h-[52px] place-items-center rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[13px] font-extrabold transition enabled:hover:border-pink-03 enabled:hover:bg-pink-01 disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
         :disabled="!canConfirm"
       >
         {{ isInviting ? '확인 중' : '확인' }}
@@ -186,7 +186,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
     <p
       v-if="hasInviteCodeError"
       id="couple-invite-code-error"
-      class="mt-2 text-[11px] leading-4 text-btn-pk-dark"
+      class="mt-2 text-[11px] leading-4 text-brand-dark"
       role="alert"
     >
       영문 대문자와 숫자 6자리로 입력해주세요.
@@ -194,7 +194,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
     <p
       v-else-if="errorMessage"
       id="couple-invite-code-error"
-      class="mt-2 flex items-start gap-1.5 text-[11px] leading-4 text-btn-pk-dark"
+      class="mt-2 flex items-start gap-1.5 text-[11px] leading-4 text-brand-dark"
       role="alert"
     >
       <TriangleAlert
@@ -233,15 +233,15 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
 
   <div
     v-if="statusErrorMessage"
-    class="mt-2.5 flex items-center justify-between gap-3 rounded-[13px] border border-btn-pk/30 px-3.5 py-3"
+    class="mt-2.5 flex items-center justify-between gap-3 rounded-[13px] border border-pink-03/30 px-3.5 py-3"
     role="alert"
   >
-    <p class="text-[11px] leading-4 text-btn-pk-dark">
+    <p class="text-[11px] leading-4 text-brand-dark">
       {{ statusErrorMessage }}
     </p>
     <button
       type="button"
-      class="shrink-0 rounded-[9px] px-2.5 py-1.5 text-[11px] font-extrabold text-btn-pk-dark transition hover:bg-dm-cb-light focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+      class="shrink-0 rounded-[9px] px-2.5 py-1.5 text-[11px] font-extrabold text-brand-dark transition hover:bg-pink-01 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
       :disabled="isLoadingStatus"
       @click="$emit('retryStatus')"
     >

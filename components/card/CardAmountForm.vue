@@ -49,7 +49,10 @@ function handleQuickAdd(value: number) {
 
 <template>
   <div class="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-    <label for="amount-input" class="block text-[13px] font-bold text-[#5A5B69]">
+    <label
+      for="amount-input"
+      class="block text-[13px] font-bold text-[#5A5B69]"
+    >
       결제 예정 금액
     </label>
 
@@ -75,7 +78,7 @@ function handleQuickAdd(value: number) {
         class="flex-1 cursor-pointer rounded-xl border py-2.5 text-xs font-semibold transition-all"
         :class="
           selectedQuickValue === option.value
-            ? 'border-btn-pk bg-[#FFF0EF] text-btn-pk font-bold shadow-xs'
+            ? 'border-pink-03 bg-[#FFF0EF] text-brand font-bold shadow-xs'
             : 'border-gray-200 bg-white text-[#5A5B69] hover:bg-gray-50'
         "
         @click="handleQuickAdd(option.value)"
@@ -91,11 +94,14 @@ function handleQuickAdd(value: number) {
     <button
       type="button"
       :disabled="!isValid"
-      class="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-btn-pk py-4 text-base font-bold text-white shadow-sm transition-all hover:bg-btn-pk-dark disabled:cursor-not-allowed disabled:opacity-50"
+      class="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-brand py-4 text-base font-bold text-white shadow-sm transition-all hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
       @click="emit('submit')"
     >
       <span>이 금액으로 추천받기</span>
-      <ArrowRight class="h-4 w-4" :stroke-width="2.5" />
+      <ArrowRight
+        class="h-4 w-4"
+        :stroke-width="2.5"
+      />
     </button>
   </div>
 </template>

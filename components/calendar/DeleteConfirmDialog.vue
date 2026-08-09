@@ -37,7 +37,7 @@ const emit = defineEmits<{
           </button>
           <button
             type="button"
-            class="rounded-2xl bg-btn-pk py-3 text-sm font-semibold text-white disabled:opacity-60"
+            class="rounded-2xl bg-brand py-3 text-sm font-semibold text-white disabled:opacity-60"
             :disabled="isSubmitting"
             @click="emit('confirm')"
           >

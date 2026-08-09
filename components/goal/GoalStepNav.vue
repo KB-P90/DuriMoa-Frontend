@@ -34,7 +34,7 @@ defineEmits<{
     <Button
       type="submit"
       :disabled="nextDisabled"
-      class="h-[50px] flex-[2] rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-btn-pk-dark"
+      class="h-[50px] flex-[2] rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
       @click="$emit('next')"
     >
       {{ nextLabel }}

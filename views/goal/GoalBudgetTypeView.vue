@@ -112,7 +112,7 @@ function handlePrev() {
       </TabsContent>
     </Tabs>
 
-    <div class="mt-4 flex gap-2 rounded-xl bg-dm-rose-light p-4">
+    <div class="mt-4 flex gap-2 rounded-xl bg-pink-01 p-4">
       <span aria-hidden="true">⚠️</span>
       <p class="text-xs leading-5 text-[#232631]">
         <template v-if="selectedPreview.requiredMonthly !== null">

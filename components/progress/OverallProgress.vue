@@ -4,7 +4,7 @@ import CoupleAchievement from '@/components/progress/CoupleAchievement.vue';
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 px-4 py-6">
+  <div class="flex flex-col pt-4 gap-8">
     <CoupleAchievement show-detail />
     <CategoryCheck />
   </div>

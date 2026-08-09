@@ -13,7 +13,7 @@ function goCoupleConnect() {
   <div
     class="flex h-full min-h-[500px] w-full flex-col items-center justify-center bg-white px-6 font-[Pretendard,Inter,sans-serif] text-center"
   >
-    <span class="text-[11px] font-extrabold tracking-[0.14em] text-btn-pk-dark">
+    <span class="text-[11px] font-extrabold tracking-[0.14em] text-brand-dark">
       NOT CONNECTED
     </span>
     <h2 class="mt-2 text-[19px] font-extrabold leading-[24px] text-[#292934]">
@@ -25,7 +25,7 @@ function goCoupleConnect() {
 
     <button
       type="button"
-      class="mt-6 flex h-[52px] w-full max-w-[340px] items-center justify-center gap-1.5 rounded-2xl bg-btn-pk text-[14px] font-extrabold text-white shadow-[0_10px_20px_-8px_rgba(255,110,112,0.45)]"
+      class="mt-6 flex h-[52px] w-full max-w-[340px] items-center justify-center gap-1.5 rounded-2xl bg-brand text-[14px] font-extrabold text-white shadow-[0_10px_20px_-8px_rgba(255,110,112,0.45)]"
       @click="goCoupleConnect"
     >
       연결하러 가기

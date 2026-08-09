@@ -39,9 +39,9 @@ const handleCategorySelect = (categoryId: number) => {
 </script>
 
 <template>
-  <section class="rounded-3xl border border-dm-co bg-white m-4 p-4 shadow-md sm:m-6 sm:p-5">
+  <section class="rounded-3xl border bg-pink-02 bg-white p-4 shadow-md">
     <div class="flex items-center gap-2">
-      <h2 class="text-base font-bold text-gray-800">카테고리별 지출</h2>
+      <h2 class="text-lg font-bold text-gray-800">카테고리별 지출</h2>
 
       <div class="relative group">
         <button
@@ -77,7 +77,7 @@ const handleCategorySelect = (categoryId: number) => {
 
         <!-- 카드 -->
         <div class="flex w-[40%] max-w-48 flex-col gap-4">
-          <div class="rounded-3xl border border-dm-rose bg-white p-4 sm:p-5 shadow-md">
+          <div class="rounded-3xl border border-dm-rose bg-white p-4 shadow-md">
             <div v-if="selectedCategory">
               <p class="text-sm font-semibold">
                 {{ ExpenseCategoryName[selectedCategory.categoryCode] }}
@@ -96,10 +96,10 @@ const handleCategorySelect = (categoryId: number) => {
             </div>
           </div>
 
-          <div class="rounded-3xl border border-dm-rose bg-white p-4 sm:p-5 shadow-md">
+          <div class="rounded-3xl border border-dm-rose bg-white p-4 shadow-md">
             <div v-if="selectedCategory">
               <p class="text-sm font-semibold">평균 대비</p>
-              <p class="mt-1 text-base font-bold text-btn-pk text-right sm:text-lg">
+              <p class="mt-1 text-base font-bold text-brand text-right sm:text-lg">
                 {{ selectedCategory?.comparisonRate > 0 ? '+' : '' }}
                 {{ selectedCategory?.comparisonRate }}%
               </p>
@@ -110,7 +110,7 @@ const handleCategorySelect = (categoryId: number) => {
               class="opacity-50"
             >
               <p class="text-sm font-semibold text-dm-gray">평균 대비</p>
-              <p class="mt-1 text-base font-bold text-btn-pk text-right sm:text-lg">0%</p>
+              <p class="mt-1 text-base font-bold text-brand text-right sm:text-lg">0%</p>
             </div>
           </div>
         </div>

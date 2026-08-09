@@ -11,7 +11,7 @@ import AuthScreen from '@/components/auth/AuthScreen.vue';
         aria-hidden="true"
         >💍</span
       >
-      <p class="mb-2 mt-5 text-[11px] font-extrabold text-btn-pk-dark">로그인 화면 미리보기</p>
+      <p class="mb-2 mt-5 text-[11px] font-extrabold text-brand-dark">로그인 화면 미리보기</p>
       <!-- TODO: #232631 진한 제목 색상 토큰 등록 검토 -->
       <h1 class="text-2xl font-extrabold leading-[1.45] tracking-[-0.045em] text-[#232631]">
         두리모아에 오신 걸<br />환영해요
@@ -20,7 +20,7 @@ import AuthScreen from '@/components/auth/AuthScreen.vue';
         현재는 퍼블리싱 단계로 accessToken과 사용자 정보를 저장하지 않습니다.
       </p>
       <RouterLink
-        class="mt-8 grid min-h-[50px] w-full place-items-center rounded-xl border border-dm-gray/40 bg-dm-gray-light px-5 text-[15px] font-extrabold text-dm-gray-dark no-underline transition hover:bg-dm-gray/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+        class="mt-8 grid min-h-[50px] w-full place-items-center rounded-xl border border-dm-gray/40 bg-dm-gray-light px-5 text-[15px] font-extrabold text-dm-gray-dark no-underline transition hover:bg-dm-gray/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
         to="/login"
       >
         로그인 화면으로 돌아가기
