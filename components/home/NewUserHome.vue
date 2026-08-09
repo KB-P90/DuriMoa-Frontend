@@ -32,7 +32,7 @@ const REGIONAL_BUDGETS = [
 
 <template>
   <div
-    class="new-user-page relative mx-auto min-h-full w-full bg-white pb-24 font-[Pretendard,Inter,sans-serif] text-[#222432]"
+    class="new-user-page relative mx-auto min-h-full w-full bg-white pb-24 text-[#222432]"
   >
     <section
       class="new-user-hero relative h-[390px] overflow-hidden bg-[radial-gradient(139%_109%_at_82%_12%,rgba(255,226,220,0.85)_0%,rgba(255,226,220,0)_38%),linear-gradient(180deg,#FFF7F4_0%,#FFFAF8_100%)] px-7 pt-[59px]"

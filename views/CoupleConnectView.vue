@@ -32,7 +32,7 @@ const {
 <template>
   <div class="couple-stage relative aspect-[390/560] w-full md:aspect-auto md:min-h-[560px]">
     <section
-      class="absolute inset-0 origin-top-left h-[560px] w-[390px] overflow-hidden rounded-[30px] bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] shadow-[0_20px_50px_-18px_rgba(34,34,43,0.28),0_0_0_1px_rgba(34,34,43,0.06)] scale-[var(--couple-scale)] md:relative md:h-auto md:min-h-[560px] md:w-full md:scale-100 md:overflow-visible md:rounded-none md:shadow-none"
+      class="absolute inset-0 origin-top-left h-[560px] w-[390px] overflow-hidden rounded-[30px] bg-white text-[#292934] shadow-[0_20px_50px_-18px_rgba(34,34,43,0.28),0_0_0_1px_rgba(34,34,43,0.06)] scale-[var(--couple-scale)] md:relative md:h-auto md:min-h-[560px] md:w-full md:scale-100 md:overflow-visible md:rounded-none md:shadow-none"
     >
       <PageHeader title="상대 연결" />
 

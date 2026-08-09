@@ -77,7 +77,7 @@ onMounted(() => {
 <template>
   <div class="profile-stage relative aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]">
     <section
-      class="absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-hidden bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--profile-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
+      class="absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-hidden bg-white text-[#292934] scale-[var(--profile-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
     >
       <PageHeader title="프로필 수정" />
       <div class="flex h-9 items-center justify-end px-5">

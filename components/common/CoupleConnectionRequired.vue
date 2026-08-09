@@ -11,7 +11,7 @@ function goCoupleConnect() {
 
 <template>
   <div
-    class="flex h-full min-h-[500px] w-full flex-col items-center justify-center bg-white px-6 font-[Pretendard,Inter,sans-serif] text-center"
+    class="flex h-full min-h-[500px] w-full flex-col items-center justify-center bg-white px-6 text-center"
   >
     <span class="text-[11px] font-extrabold tracking-[0.14em] text-brand-dark">
       NOT CONNECTED

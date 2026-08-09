@@ -103,7 +103,7 @@ onMounted(() => {
 <template>
   <div class="mypage-stage relative aspect-[390/770] w-full md:aspect-auto min-h-full">
     <section
-      class="absolute inset-0 origin-top-left h-[770px] w-[390px] overflow-y-auto scrollbar-none bg-white font-[Pretendard,Inter,sans-serif] text-[#292934] scale-[var(--mypage-scale)] md:relative md:h-auto md:min-h-[770px] md:w-full md:scale-100 md:overflow-visible"
+      class="absolute inset-0 origin-top-left h-[770px] w-[390px] overflow-y-auto scrollbar-none bg-white text-[#292934] scale-[var(--mypage-scale)] md:relative md:h-auto md:min-h-[770px] md:w-full md:scale-100 md:overflow-visible"
     >
       <PageHeader title="마이페이지" />
       <div
