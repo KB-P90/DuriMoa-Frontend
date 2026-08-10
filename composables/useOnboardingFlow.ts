@@ -1,5 +1,6 @@
 import { isAxiosError } from 'axios';
 import { computed, ref, watch } from 'vue';
+import type { Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   ONBOARDING_API_ERROR_MESSAGES,
@@ -65,14 +66,21 @@ export function useOnboardingFlow() {
 
   // 계좌 연결과 이후 설정 화면에서 사용하는 입력 상태다.
   const bank = ref<string>(ONBOARDING_DEFAULT_VALUES.bank);
+  const cardCompany = ref('KB카드');
+  const cardLoginId = ref('');
+  const cardLoginPassword = ref('');
   const internetBankingId = ref('');
   const internetBankingPassword = ref('');
   const accounts = ref<OnboardingAccount[]>([]);
+  const cards = ref<OnboardingAccount[]>([]);
   const selectedAccountNumbers = ref<string[]>([]);
+  const selectedCardNumbers = ref<string[]>([]);
   const isAccountConnected = ref(false);
+  const isCardConnected = ref(false);
   const isConnectingAccount = ref(false);
   const isSelectingAccounts = ref(false);
   const accountConnectionErrorMessage = ref('');
+  const cardConnectionErrorMessage = ref('');
   const accountSelectionErrorMessage = ref('');
 
   // 선택한 은행명에 대응하는 API 요청용 은행 정보다.
@@ -88,18 +96,23 @@ export function useOnboardingFlow() {
   // URL 쿼리를 검증해 현재 온보딩 화면을 계산한다.
   const screen = computed(() => toOnboardingScreen(route.query.screen));
 
-  // 계좌 연결 화면의 다음 버튼 활성화 여부다.
-  const canContinueAccount = computed(() => bank.value.length > 0 && !isConnectingAccount.value);
+  // 계좌 또는 카드 기관을 조회할 수 있을 때 연결 버튼을 활성화한다.
+  const canContinueAccount = computed(
+    () => (bank.value.length > 0 || cardCompany.value.length > 0) && !isConnectingAccount.value
+  );
 
-  // 계좌 연결이 완료되고 조회된 계좌를 하나 이상 선택했는지 나타낸다.
+  // 조회가 완료된 계좌 또는 카드 중 새 항목을 하나 이상 선택했는지 나타낸다.
   const canContinueAccountSelection = computed(
     () =>
-      isAccountConnected.value &&
-      selectedAccountNumbers.value.some((selectedNumber) =>
+      (isAccountConnected.value || isCardConnected.value) &&
+      (selectedAccountNumbers.value.some((selectedNumber) =>
         accounts.value.some(
           (account) => account.accountNumber === selectedNumber && !account.isRegistered
         )
-      ) &&
+      ) ||
+        selectedCardNumbers.value.some((selectedNumber) =>
+          cards.value.some((card) => card.accountNumber === selectedNumber && !card.isRegistered)
+        )) &&
       !isSelectingAccounts.value
   );
 
@@ -109,6 +122,15 @@ export function useOnboardingFlow() {
     selectedAccountNumbers.value = [];
     isAccountConnected.value = false;
     accountConnectionErrorMessage.value = '';
+    accountSelectionErrorMessage.value = '';
+  });
+
+  // 카드 연결 정보가 변경되면 이전 카드 조회 결과만 해제한다.
+  watch([cardCompany, cardLoginId, cardLoginPassword], () => {
+    cards.value = [];
+    selectedCardNumbers.value = [];
+    isCardConnected.value = false;
+    cardConnectionErrorMessage.value = '';
     accountSelectionErrorMessage.value = '';
   });
 
@@ -125,7 +147,54 @@ export function useOnboardingFlow() {
     return route.name === ONBOARDING_ROUTE_NAMES.ONBOARDING && screen.value === expectedScreen;
   }
 
-  // 입력 정보와 조회된 계좌를 확인한 뒤에만 계좌 선택 화면으로 이동한다.
+  // 한 금융기관을 조회하고, 필요할 때만 입력한 인증 정보로 신규 등록한다.
+  async function getConnectedAssets(
+    company: string,
+    loginId: string,
+    loginPassword: string,
+    credentialsRequiredMessage: string,
+    connectionErrorMessage: string,
+    emptyMessage: string
+  ) {
+    try {
+      let response: Awaited<ReturnType<typeof getOnboardingAccounts>>;
+
+      try {
+        response = await getOnboardingAccounts(company);
+      } catch (assetLookupError: unknown) {
+        if (!isFinancialAccountRegistrationRequired(assetLookupError)) {
+          throw assetLookupError;
+        }
+
+        if (loginId.trim().length === 0 || loginPassword.length === 0) {
+          return { errorMessage: credentialsRequiredMessage, items: [] };
+        }
+
+        await registerOnboardingAccount({
+          company,
+          id: loginId.trim(),
+          password: loginPassword,
+        });
+
+        response = await getOnboardingAccounts(company);
+      }
+
+      const connectedAssets = response.itemList.map(toOnboardingAccount);
+
+      if (connectedAssets.length === 0) {
+        return { errorMessage: emptyMessage, items: [] };
+      }
+
+      return { errorMessage: '', items: connectedAssets };
+    } catch (error: unknown) {
+      return {
+        errorMessage: getOnboardingApiErrorMessage(error, connectionErrorMessage),
+        items: [],
+      };
+    }
+  }
+
+  // 계좌와 카드를 모두 조회하고, 둘 중 하나라도 확인되면 선택 화면으로 이동한다.
   async function connectAccount() {
     if (!canContinueAccount.value) {
       return;
@@ -133,57 +202,48 @@ export function useOnboardingFlow() {
 
     isConnectingAccount.value = true;
     accountConnectionErrorMessage.value = '';
+    cardConnectionErrorMessage.value = '';
 
     try {
-      let response: Awaited<ReturnType<typeof getOnboardingAccounts>>;
+      const accountResult = await getConnectedAssets(
+        selectedCompany.value,
+        internetBankingId.value,
+        internetBankingPassword.value,
+        ONBOARDING_API_ERROR_MESSAGES.ACCOUNT_CREDENTIALS_REQUIRED,
+        ONBOARDING_API_ERROR_MESSAGES.ACCOUNT_CONNECTION,
+        '연결 가능한 계좌를 찾지 못했어요.'
+      );
+      const cardResult = await getConnectedAssets(
+        cardCompany.value,
+        cardLoginId.value,
+        cardLoginPassword.value,
+        '처음 연결하거나 새 카드사를 추가하려면 카드사 아이디와 비밀번호를 입력해주세요.',
+        '카드를 불러오지 못했어요. 입력 정보를 확인하고 다시 시도해주세요.',
+        '연결 가능한 카드를 찾지 못했어요.'
+      );
 
-      try {
-        // 이미 등록된 기관은 금융계정 등록 없이 목록만 조회한다.
-        response = await getOnboardingAccounts(selectedCompany.value);
-      } catch (accountLookupError: unknown) {
-        if (!isFinancialAccountRegistrationRequired(accountLookupError)) {
-          throw accountLookupError;
-        }
-
-        // Connected ID가 없거나 새 기관일 때만 입력받은 인증 정보로 등록한다.
-        if (
-          internetBankingId.value.trim().length === 0 ||
-          internetBankingPassword.value.length === 0
-        ) {
-          accountConnectionErrorMessage.value =
-            ONBOARDING_API_ERROR_MESSAGES.ACCOUNT_CREDENTIALS_REQUIRED;
-          return;
-        }
-
-        await registerOnboardingAccount({
-          company: selectedCompany.value,
-          id: internetBankingId.value.trim(),
-          password: internetBankingPassword.value,
-        });
-
-        response = await getOnboardingAccounts(selectedCompany.value);
-      }
-
-      // 계좌 조회 DTO를 화면에서 사용하는 계좌 목록으로 변환한다.
-      const connectedAccounts = response.itemList.map(toOnboardingAccount);
-
-      if (connectedAccounts.length === 0) {
-        isAccountConnected.value = false;
-        accountConnectionErrorMessage.value = '연결 가능한 계좌를 찾지 못했어요.';
-        return;
-      }
-
-      accounts.value = connectedAccounts;
+      accounts.value = accountResult.items;
+      cards.value = cardResult.items;
       selectedAccountNumbers.value = [];
-      isAccountConnected.value = true;
+      selectedCardNumbers.value = [];
+      isAccountConnected.value = accountResult.items.length > 0;
+      isCardConnected.value = cardResult.items.length > 0;
+      accountConnectionErrorMessage.value = accountResult.errorMessage;
+      cardConnectionErrorMessage.value = cardResult.errorMessage;
 
-      if (isCurrentOnboardingScreen('account')) {
+      if (
+        (isAccountConnected.value || isCardConnected.value) &&
+        isCurrentOnboardingScreen('account')
+      ) {
         goToScreen('account-selection');
       }
     } catch (error: unknown) {
       accounts.value = [];
+      cards.value = [];
       selectedAccountNumbers.value = [];
+      selectedCardNumbers.value = [];
       isAccountConnected.value = false;
+      isCardConnected.value = false;
       accountConnectionErrorMessage.value = getOnboardingApiErrorMessage(
         error,
         ONBOARDING_API_ERROR_MESSAGES.ACCOUNT_CONNECTION
@@ -207,7 +267,45 @@ export function useOnboardingFlow() {
       : [...selectedAccountNumbers.value, accountNumber];
   }
 
-  // 선택한 계좌를 서버에 저장한 뒤 온보딩을 종료한다.
+  // 현재 카드의 선택 여부를 반대로 변경한다.
+  function toggleCard(cardNumber: string) {
+    const card = cards.value.find((connectedCard) => connectedCard.accountNumber === cardNumber);
+    if (!card || card.isRegistered || isSelectingAccounts.value) {
+      return;
+    }
+
+    selectedCardNumbers.value = selectedCardNumbers.value.includes(cardNumber)
+      ? selectedCardNumbers.value.filter((selectedNumber) => selectedNumber !== cardNumber)
+      : [...selectedCardNumbers.value, cardNumber];
+  }
+
+  // 선택한 한 기관의 신규 자산을 저장하고 저장 완료 항목을 비활성화한다.
+  async function saveSelectedAssets(
+    company: string,
+    assets: Ref<OnboardingAccount[]>,
+    selectedNumbers: Ref<string[]>
+  ) {
+    const selectedItems = assets.value
+      .filter((asset) => !asset.isRegistered && selectedNumbers.value.includes(asset.accountNumber))
+      .map((asset) => ({
+        name: asset.accountName,
+        number: asset.accountNumber,
+      }));
+
+    if (selectedItems.length === 0) {
+      return;
+    }
+
+    await selectOnboardingAccounts({ company, selectedItems });
+
+    const savedNumbers = new Set(selectedItems.map((item) => item.number));
+    assets.value = assets.value.map((asset) =>
+      savedNumbers.has(asset.accountNumber) ? { ...asset, isRegistered: true } : asset
+    );
+    selectedNumbers.value = [];
+  }
+
+  // 선택한 신규 계좌와 카드를 기관별로 저장한 뒤 온보딩을 종료한다.
   async function selectConnectedAccounts() {
     if (!canContinueAccountSelection.value) {
       return;
@@ -217,20 +315,8 @@ export function useOnboardingFlow() {
     accountSelectionErrorMessage.value = '';
 
     try {
-      const selectedItems = accounts.value
-        .filter(
-          (account) =>
-            !account.isRegistered && selectedAccountNumbers.value.includes(account.accountNumber)
-        )
-        .map((account) => ({
-          name: account.accountName,
-          number: account.accountNumber,
-        }));
-
-      await selectOnboardingAccounts({
-        company: selectedCompany.value,
-        selectedItems,
-      });
+      await saveSelectedAssets(selectedCompany.value, accounts, selectedAccountNumbers);
+      await saveSelectedAssets(cardCompany.value, cards, selectedCardNumbers);
 
       if (isCurrentOnboardingScreen('account-selection')) {
         goHome();
@@ -238,7 +324,7 @@ export function useOnboardingFlow() {
     } catch (error: unknown) {
       accountSelectionErrorMessage.value = getOnboardingApiErrorMessage(
         error,
-        ONBOARDING_API_ERROR_MESSAGES.ACCOUNT_SELECTION
+        '선택한 계좌와 카드를 저장하지 못했어요. 다시 시도해주세요.'
       );
     } finally {
       isSelectingAccounts.value = false;
@@ -274,6 +360,11 @@ export function useOnboardingFlow() {
     accountSelectionErrorMessage,
     accounts,
     bank,
+    cardCompany,
+    cardConnectionErrorMessage,
+    cardLoginId,
+    cardLoginPassword,
+    cards,
     canContinueAccount,
     canContinueAccountSelection,
     connectAccount,
@@ -287,6 +378,8 @@ export function useOnboardingFlow() {
     screen,
     selectConnectedAccounts,
     selectedAccountNumbers,
+    selectedCardNumbers,
     toggleAccount,
+    toggleCard,
   };
 }

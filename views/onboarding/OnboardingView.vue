@@ -16,6 +16,11 @@ const {
   accountSelectionErrorMessage,
   accounts,
   bank,
+  cardCompany,
+  cardConnectionErrorMessage,
+  cardLoginId,
+  cardLoginPassword,
+  cards,
   canContinueAccount,
   canContinueAccountSelection,
   connectAccount,
@@ -29,7 +34,9 @@ const {
   screen,
   selectConnectedAccounts,
   selectedAccountNumbers,
+  selectedCardNumbers,
   toggleAccount,
+  toggleCard,
 } = useOnboardingFlow();
 
 // 현재 커플 연결 단계가 화면에 표시되고 있는지 나타낸다.
@@ -98,8 +105,12 @@ const {
       <AccountConnectionStep
         v-else-if="screen === 'account'"
         v-model:bank="bank"
+        v-model:card-company="cardCompany"
+        v-model:card-login-id="cardLoginId"
+        v-model:card-login-password="cardLoginPassword"
         v-model:internet-banking-id="internetBankingId"
         v-model:internet-banking-password="internetBankingPassword"
+        :card-connection-error-message="cardConnectionErrorMessage"
         :can-continue="canContinueAccount"
         :connection-error-message="accountConnectionErrorMessage"
         :is-loading="isConnectingAccount"
@@ -113,12 +124,16 @@ const {
         :accounts="accounts"
         :bank="bank"
         :can-continue="canContinueAccountSelection"
+        :card-company="cardCompany"
+        :cards="cards"
         :error-message="accountSelectionErrorMessage"
         :is-loading="isSelectingAccounts"
         :selected-account-numbers="selectedAccountNumbers"
+        :selected-card-numbers="selectedCardNumbers"
         @back="goBack"
         @skip="goHome"
         @toggle="toggleAccount"
+        @toggle-card="toggleCard"
         @next="selectConnectedAccounts"
       />
     </div>
