@@ -32,7 +32,7 @@ defineEmits<{
     />
 
     <div
-      class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:px-3 sm:px-5"
+      class="min-h-0 flex-1 overflow-y-auto scrollbar-none overscroll-y-contain px-4 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:px-3 sm:px-5"
     >
       <h1 class="text-[21px] font-extrabold tracking-[-0.055em] min-[360px]:text-[23px]">
         사용할 계좌를 선택해주세요
@@ -45,7 +45,7 @@ defineEmits<{
         class="mt-5 flex h-[52px] items-center gap-3 rounded-[13px] border border-dm-gray/35 px-4"
       >
         <Landmark
-          class="h-5 w-5 text-btn-pk"
+          class="h-5 w-5 text-brand"
           :stroke-width="1.8"
           aria-hidden="true"
         />
@@ -54,7 +54,7 @@ defineEmits<{
 
       <fieldset
         v-if="accounts.length > 0"
-        class="mt-3 overflow-hidden rounded-[14px] border border-dm-rose-dark/55"
+        class="mt-3 overflow-hidden rounded-[14px] border border-brand-dark/55"
       >
         <legend class="sr-only">연결할 계좌 선택</legend>
         <label
@@ -108,7 +108,7 @@ defineEmits<{
 
       <p
         v-if="errorMessage"
-        class="mt-3 text-[11px] leading-4 text-btn-pk-dark"
+        class="mt-3 text-[11px] leading-4 text-brand-dark"
         role="alert"
       >
         {{ errorMessage }}

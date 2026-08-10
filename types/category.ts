@@ -55,7 +55,7 @@ export const ExpenseCategoryName: Record<ExpenseCategoryCode, string> = {
 };
 
 export const ExpenseCategoryColors: Record<ExpenseCategoryCode, string> = {
-  FOOD: '#FF8F84',
+  FOOD: '#ff9ebf',
   CAFE: '#7DD3C7',
   SHOPPING: '#8B5CF6',
   TRANSPORT: '#FBBF24',
@@ -64,11 +64,11 @@ export const ExpenseCategoryColors: Record<ExpenseCategoryCode, string> = {
   CULTURE: '#A78BFA',
   BEAUTY: '#EC4899',
 
-  WEDDINGHALL: '#F2A390',
-  STUDIO: '#D79A95',
-  MAKEUP: '#FFBFA1',
-  DRESS: '#FFA28C',
-  JEWELRY: '#D17C69',
+  WEDDINGHALL: '#ffdfea',
+  STUDIO: '#ffbed4',
+  MAKEUP: '#ff9ebf',
+  DRESS: '#ff5d94',
+  JEWELRY: '#ff4081',
 
   EMERGENCY: '#EF4444',
   ETC: '#9CA3AF',

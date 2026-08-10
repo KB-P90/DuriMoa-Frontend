@@ -7,14 +7,14 @@ defineProps<{ items: readonly SummaryItem[] }>();
 const DOT_COLORS = {
   goal: 'bg-[#65C466]',
   income: 'bg-[#65C466]',
-  expense: 'bg-[#F09488]',
+  expense: 'bg-brand',
   saving: 'bg-[#3B86F7]',
 } as const;
 
 const LABEL_COLORS = {
   goal: 'text-[#65C466]',
   income: 'text-[#65C466]',
-  expense: 'text-[#F09488]',
+  expense: 'text-brand',
   saving: 'text-[#3B86F7]',
 } as const;
 </script>

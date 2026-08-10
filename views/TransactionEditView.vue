@@ -97,7 +97,7 @@ function save() {
       <button
         v-if="isEditMode"
         type="button"
-        class="justify-self-end text-sm font-semibold text-dm-co-darker"
+        class="justify-self-end text-sm font-semibold text-brand"
         :disabled="isSubmitting"
         @click="deleteConfirmationVisible = true"
       >
@@ -192,7 +192,7 @@ function save() {
 
       <button
         type="submit"
-        class="w-full rounded-2xl bg-btn-pk py-3.5 text-base font-semibold text-white disabled:opacity-60"
+        class="w-full rounded-2xl bg-brand py-3.5 text-base font-semibold text-white disabled:opacity-60"
         :disabled="isSubmitting"
       >
         {{ isSubmitting ? '처리 중...' : isEditMode ? '수정하기' : '등록하기' }}

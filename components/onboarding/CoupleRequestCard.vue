@@ -61,10 +61,10 @@ function handleAccept() {
 
 <template>
   <li
-    class="flex min-w-0 items-center gap-3 rounded-[16px] border border-btn-pk/45 bg-dm-cb-light px-3.5 py-3 shadow-sm"
+    class="flex min-w-0 items-center gap-3 rounded-[16px] border border-pink-03/45 bg-pink-01 px-3.5 py-3 shadow-sm"
   >
     <span
-      class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-dm-gray-light text-btn-pk-dark"
+      class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-dm-gray-light text-brand-dark"
       aria-hidden="true"
     >
       <UserRound
@@ -84,7 +84,7 @@ function handleAccept() {
 
     <button
       type="button"
-      class="shrink-0 rounded-full bg-dm-rose px-3 py-1.5 text-[11px] font-extrabold text-btn-pk-dark transition enabled:hover:bg-dm-rose-dark disabled:cursor-default disabled:opacity-80 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+      class="shrink-0 rounded-full bg-brand px-3 py-1.5 text-[11px] font-extrabold text-brand-dark transition enabled:hover:bg-brand disabled:cursor-default disabled:opacity-80 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
       :disabled="acceptDisabled || isLoading || request.status !== 'REQUESTED'"
       :aria-label="`${request.name}님의 연결 요청 ${statusLabel}`"
       @click="handleAccept"

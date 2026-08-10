@@ -35,7 +35,7 @@ function handleSubmit() {
     />
 
     <div
-      class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:px-3 sm:px-5"
+      class="min-h-0 flex-1 overflow-y-auto scrollbar-none overscroll-y-contain px-4 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:px-3 sm:px-5"
     >
       <h1 class="text-[21px] font-extrabold tracking-[-0.055em] min-[360px]:text-[23px]">
         계좌를 연결해주세요

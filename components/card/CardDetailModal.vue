@@ -20,7 +20,7 @@ const imageError = ref(false);
     @click.self="emit('close')"
   >
     <div
-      class="relative max-h-[85vh] w-full max-w-[768px] cursor-default overflow-y-auto rounded-t-[32px] bg-white px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-3 shadow-2xl animate-in slide-in-from-bottom duration-300 ease-out"
+      class="relative max-h-[85vh] w-full max-w-[768px] cursor-default overflow-y-auto scrollbar-none rounded-t-[32px] bg-white px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-3 shadow-2xl animate-in slide-in-from-bottom duration-300 ease-out"
     >
       <!-- Bottom Sheet Drag Handle Bar -->
       <div class="mx-auto mb-4 h-1.5 w-12 rounded-full bg-gray-200" />
@@ -32,7 +32,10 @@ const imageError = ref(false);
         class="absolute right-5 top-5 grid h-8 w-8 cursor-pointer place-items-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700"
         @click="emit('close')"
       >
-        <X class="h-5 w-5" :stroke-width="2.2" />
+        <X
+          class="h-5 w-5"
+          :stroke-width="2.2"
+        />
       </button>
 
       <!-- Top Card Visual & Basic Info -->
@@ -55,15 +58,21 @@ const imageError = ref(false);
               <div class="h-3.5 w-5 rounded-sm bg-white/70" />
             </div>
             <div class="flex flex-col items-center gap-0.5">
-              <span class="text-xs font-bold tracking-widest text-white/80">{{ detail.cardCompany }}</span>
-              <span class="text-[11px] font-extrabold tracking-wider text-white line-clamp-1">{{ detail.cardName }}</span>
+              <span class="text-xs font-bold tracking-widest text-white/80">{{
+                detail.cardCompany
+              }}</span>
+              <span class="text-[11px] font-extrabold tracking-wider text-white line-clamp-1">{{
+                detail.cardName
+              }}</span>
             </div>
           </template>
         </div>
 
         <!-- Card Company, Name, Annual Fee -->
         <div class="flex flex-1 flex-col pt-1">
-          <span class="self-start rounded-full border border-pink-300 px-3 py-0.5 text-xs font-semibold text-btn-pk">
+          <span
+            class="self-start rounded-full border border-pink-300 px-3 py-0.5 text-xs font-semibold text-brand"
+          >
             {{ detail.cardCompany }}
           </span>
           <h2 class="mt-2 text-xl font-extrabold text-gray-900">
@@ -78,7 +87,12 @@ const imageError = ref(false);
                 <p>해외겸용 {{ detail.annualFeeObj.foreign }}</p>
               </template>
               <template v-else>
-                <p>{{ detail.annualFeeFormatted || (detail.annualFee ? `${detail.annualFee.toLocaleString()}원` : '없음') }}</p>
+                <p>
+                  {{
+                    detail.annualFeeFormatted ||
+                    (detail.annualFee ? `${detail.annualFee.toLocaleString()}원` : '없음')
+                  }}
+                </p>
               </template>
             </div>
           </div>
@@ -89,17 +103,38 @@ const imageError = ref(false);
       <section class="mt-7">
         <h3 class="text-base font-bold text-gray-900">주요 혜택</h3>
 
-        <div v-if="detail.benefits && detail.benefits.length > 0" class="mt-3 flex flex-col gap-2.5">
+        <div
+          v-if="detail.benefits && detail.benefits.length > 0"
+          class="mt-3 flex flex-col gap-2.5"
+        >
           <div
             v-for="(benefit, index) in detail.benefits"
             :key="index"
             class="flex items-center gap-3.5 rounded-2xl border border-gray-100 bg-white p-3.5 shadow-2xs"
           >
-            <div class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#FFF0EF] text-btn-pk">
-              <ShoppingBag v-if="benefit.iconType === 'shopping'" class="h-5 w-5" :stroke-width="1.8" />
-              <Bus v-else-if="benefit.iconType === 'transport'" class="h-5 w-5" :stroke-width="1.8" />
-              <Coffee v-else-if="benefit.iconType === 'coffee'" class="h-5 w-5" :stroke-width="1.8" />
-              <CreditCard v-else class="h-5 w-5" :stroke-width="1.8" />
+            <div
+              class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#FFF0EF] text-brand"
+            >
+              <ShoppingBag
+                v-if="benefit.iconType === 'shopping'"
+                class="h-5 w-5"
+                :stroke-width="1.8"
+              />
+              <Bus
+                v-else-if="benefit.iconType === 'transport'"
+                class="h-5 w-5"
+                :stroke-width="1.8"
+              />
+              <Coffee
+                v-else-if="benefit.iconType === 'coffee'"
+                class="h-5 w-5"
+                :stroke-width="1.8"
+              />
+              <CreditCard
+                v-else
+                class="h-5 w-5"
+                :stroke-width="1.8"
+              />
             </div>
 
             <div class="flex flex-col">
@@ -116,17 +151,27 @@ const imageError = ref(false);
           </div>
         </div>
 
-        <p v-else class="mt-2 text-xs text-gray-400">
+        <p
+          v-else
+          class="mt-2 text-xs text-gray-400"
+        >
           등록된 주요 혜택 정보가 없습니다.
         </p>
       </section>
 
       <!-- Terms and Conditions Section -->
-      <section v-if="detail.terms && detail.terms.length > 0" class="mt-6">
+      <section
+        v-if="detail.terms && detail.terms.length > 0"
+        class="mt-6"
+      >
         <h3 class="text-base font-bold text-gray-900">이용 조건</h3>
 
         <ul class="mt-2.5 space-y-1.5 text-xs text-[#606170]">
-          <li v-for="(term, index) in detail.terms" :key="index" class="flex items-start gap-1.5">
+          <li
+            v-for="(term, index) in detail.terms"
+            :key="index"
+            class="flex items-start gap-1.5"
+          >
             <span class="shrink-0 text-gray-400">·</span>
             <span>{{ term }}</span>
           </li>

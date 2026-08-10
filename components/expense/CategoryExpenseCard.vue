@@ -39,7 +39,7 @@ const handleCategorySelect = (categoryId: number) => {
 </script>
 
 <template>
-  <section class="rounded-3xl border border-dm-rose-light bg-white m-4 sm:m-6 p-4 sm:p-6 shadow-md">
+  <section class="rounded-3xl border bg-pink-02 bg-white p-4 shadow-md">
     <div class="flex items-center gap-2">
       <h2 class="text-lg font-bold text-gray-800">카테고리별 지출</h2>
 
@@ -67,23 +67,22 @@ const handleCategorySelect = (categoryId: number) => {
       <div class="flex w-full max-w-xl items-center justify-around">
         <!-- 차트 -->
         <div class="aspect-square w-[45%] max-w-56">
-          <!-- TODO totalAmount가 아직 api에 추가되지 않아서 임시로 데이터 처리: 추후 expenseStore.monthlyExpense.totalAmount로 변경 -->
           <DoughnutChart
             :month="month"
             :categories="expenseStore.monthlyExpense.expenseCategories"
-            :total-amount="0"
+            :total-amount="expenseStore.monthlyExpense.totalAmount"
             @select-category="handleCategorySelect"
           />
         </div>
 
         <!-- 카드 -->
         <div class="flex w-[40%] max-w-48 flex-col gap-4">
-          <div class="rounded-3xl border border-dm-rose bg-white p-4 sm:p-5 shadow-md">
+          <div class="rounded-3xl border border-dm-rose bg-white p-4 shadow-md">
             <div v-if="selectedCategory">
-              <p class="text-m font-semibold">
+              <p class="text-sm font-semibold">
                 {{ ExpenseCategoryName[selectedCategory.categoryCode] }}
               </p>
-              <p class="mt-1 text-lg sm:text-xl font-bold text-right">
+              <p class="mt-1 text-base font-bold text-right sm:text-lg">
                 {{ selectedCategory?.amount.toLocaleString() }}원
               </p>
             </div>
@@ -92,15 +91,15 @@ const handleCategorySelect = (categoryId: number) => {
               v-else
               class="opacity-50"
             >
-              <p class="text-m font-semibold text-dm-gray">카테고리</p>
-              <p class="mt-1 text-lg sm:text-xl font-bold text-dm-gray text-right">0원</p>
+              <p class="text-sm font-semibold text-dm-gray">카테고리</p>
+              <p class="mt-1 text-base font-bold text-dm-gray text-right sm:text-lg">0원</p>
             </div>
           </div>
 
-          <div class="rounded-3xl border border-dm-rose bg-white p-4 sm:p-5 shadow-md">
+          <div class="rounded-3xl border border-dm-rose bg-white p-4 shadow-md">
             <div v-if="selectedCategory">
-              <p class="text-m font-semibold">평균 대비</p>
-              <p class="mt-1 text-lg sm:text-xl font-bold text-btn-pk text-right">
+              <p class="text-sm font-semibold">평균 대비</p>
+              <p class="mt-1 text-base font-bold text-brand text-right sm:text-lg">
                 {{ selectedCategory?.comparisonRate > 0 ? '+' : '' }}
                 {{ selectedCategory?.comparisonRate }}%
               </p>
@@ -110,8 +109,8 @@ const handleCategorySelect = (categoryId: number) => {
               v-else
               class="opacity-50"
             >
-              <p class="text-m font-semibold text-dm-gray">평균 대비</p>
-              <p class="mt-1 text-lg sm:text-xl font-bold text-btn-pk text-right">0%</p>
+              <p class="text-sm font-semibold text-dm-gray">평균 대비</p>
+              <p class="mt-1 text-base font-bold text-brand text-right sm:text-lg">0%</p>
             </div>
           </div>
         </div>
@@ -130,7 +129,7 @@ const handleCategorySelect = (categoryId: number) => {
           :style="{ backgroundColor: ExpenseCategoryColors[category.categoryCode] }"
         />
 
-        <span class="text-sm text-dm-gray">
+        <span class="text-xs text-dm-gray">
           {{ ExpenseCategoryName[category.categoryCode] }}
         </span>
       </div>
@@ -139,7 +138,7 @@ const handleCategorySelect = (categoryId: number) => {
         v-else
         class="py-7"
       >
-        <p class="text-lg font-semibold text-dm-gray">{{ month }}월 지출 내역이 없습니다.</p>
+        <p class="text-sm font-semibold text-dm-gray">{{ month }}월 지출 내역이 없습니다.</p>
       </div>
     </div>
   </section>

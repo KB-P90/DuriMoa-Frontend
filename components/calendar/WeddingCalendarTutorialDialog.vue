@@ -22,7 +22,7 @@ const open = defineModel<boolean>('open', { default: false });
       <ol class="mt-5">
         <li class="grid grid-cols-[1.75rem_4rem_1fr] items-center gap-2.5 py-3.5">
           <span
-            class="flex h-7 w-7 items-center justify-center rounded-full bg-dm-cb text-sm font-medium text-btn-pk-dark"
+            class="flex h-7 w-7 items-center justify-center rounded-full bg-dm-cb text-sm font-medium text-brand-dark"
           >
             1
           </span>
@@ -44,12 +44,12 @@ const open = defineModel<boolean>('open', { default: false });
           class="grid grid-cols-[1.75rem_4rem_1fr] items-center gap-2.5 border-t border-dm-gray/30 py-3.5"
         >
           <span
-            class="flex h-7 w-7 items-center justify-center rounded-full bg-dm-cb text-sm font-medium text-btn-pk-dark"
+            class="flex h-7 w-7 items-center justify-center rounded-full bg-dm-cb text-sm font-medium text-brand-dark"
           >
             2
           </span>
           <span
-            class="flex h-16 w-16 items-center justify-center rounded-full bg-dm-cb text-btn-pk-dark"
+            class="flex h-16 w-16 items-center justify-center rounded-full bg-dm-cb text-brand-dark"
             aria-hidden="true"
           >
             <CalendarHeart
@@ -76,7 +76,7 @@ const open = defineModel<boolean>('open', { default: false });
                 >→</span
               >
               <span
-                class="inline-flex min-w-16 items-center justify-center rounded-full border border-btn-pk-dark bg-dm-cb-light px-3 py-1.5 text-xs font-medium text-btn-pk-dark"
+                class="inline-flex min-w-16 items-center justify-center rounded-full border border-pink-03-dark bg-pink-01 px-3 py-1.5 text-xs font-medium text-brand-dark"
               >
                 예식장
               </span>
@@ -87,7 +87,7 @@ const open = defineModel<boolean>('open', { default: false });
 
       <AlertDialogFooter class="mt-5">
         <AlertDialogAction
-          class="h-12 w-full rounded-2xl bg-btn-pk text-sm font-semibold text-white hover:bg-btn-pk-dark"
+          class="h-12 w-full rounded-2xl bg-brand text-sm font-semibold text-white hover:bg-brand-dark"
         >
           확인했어요
         </AlertDialogAction>

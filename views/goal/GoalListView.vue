@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { ArrowLeft } from 'lucide-vue-next';
 import { toast } from 'vue-sonner';
 import { useRouter } from 'vue-router';
 
 import BudgetProposalCard from '@/components/goal/BudgetProposalCard.vue';
 import MainProposalDialog from '@/components/goal/MainProposalDialog.vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 import { Separator } from '@/components/ui/separator';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import {
@@ -161,10 +161,6 @@ function openProposalDetail(goalId: number) {
   router.push({ name: 'goal-summary', params: { goalId: String(goalId) } });
 }
 
-function handleBack() {
-  router.back();
-}
-
 function handleNewProposal() {
   goalStore.reset();
   router.push({ name: 'goal-schedule' });
@@ -173,29 +169,19 @@ function handleNewProposal() {
 
 <template>
   <div>
-    <header class="flex items-center justify-between px-4 py-3">
-      <div class="flex items-center gap-3">
-        <button
-          type="button"
-          aria-label="뒤로 가기"
-          class="cursor-pointer"
-          @click="handleBack"
-        >
-          <ArrowLeft class="h-5 w-5 text-[#232631]" />
-        </button>
-        <h1 class="text-lg font-bold text-[#232631]">예산 시안</h1>
-      </div>
+    <PageHeader title="예산 시안" />
+    <div class="flex items-center justify-end p-4">
       <button
         type="button"
-        class="cursor-pointer text-sm font-semibold text-dm-co-darker transition-colors hover:text-btn-pk-dark"
+        class="cursor-pointer text-sm font-semibold text-brand transition-colors hover:text-brand-dark"
         @click="handleNewProposal"
       >
         + 새 시안
       </button>
-    </header>
+    </div>
     <Separator />
 
-    <div class="px-4 py-5">
+    <div class="p-4">
       <h2 class="text-2xl font-extrabold text-[#232631]">우리의 예산 시안</h2>
       <p class="mt-2 text-sm leading-5 text-dm-gray-dark">
         신청 버튼을 누르면 메인 시안 요청이 상대에게 전송돼요.<br />

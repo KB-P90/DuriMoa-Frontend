@@ -12,7 +12,7 @@ const emit = defineEmits<{
 const NAV_ITEMS = [
   { key: 'home', label: '홈', icon: Home },
   { key: 'calendar', label: '캘린더', icon: Calendar },
-  { key: 'status', label: '현황', icon: PieChart },
+  { key: 'progress', label: '현황', icon: PieChart },
   { key: 'card', label: '카드추천', icon: CreditCard },
 ] as const;
 </script>
@@ -26,7 +26,7 @@ const NAV_ITEMS = [
       :key="item.key"
       type="button"
       class="flex flex-1 flex-col items-center justify-center gap-1 text-xs"
-      :class="active === item.key ? 'text-btn-pk-dark' : 'text-dm-gray'"
+      :class="active === item.key ? 'text-brand-dark' : 'text-dm-gray'"
       @click="emit('select', item.key)"
     >
       <component

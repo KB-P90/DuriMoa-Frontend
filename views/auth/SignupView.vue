@@ -30,7 +30,7 @@ const {
     />
 
     <form
-      class="flex flex-1 flex-col gap-4 px-5 pt-3 sm:px-10 lg:px-16"
+      class="flex flex-1 flex-col bg-white gap-4 px-5 pt-3 sm:px-10 lg:px-16"
       aria-label="회원가입"
       data-endpoint="/api/auth/signup"
       @submit.prevent="submitSignup"
@@ -47,7 +47,7 @@ const {
           <input
             id="signup-name"
             v-model="name"
-            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
+            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
             type="text"
             name="name"
             autocomplete="name"
@@ -73,7 +73,7 @@ const {
           <input
             id="signup-phone"
             v-model="phone"
-            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
+            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
             type="tel"
             name="phone"
             inputmode="numeric"
@@ -101,7 +101,7 @@ const {
                 required
               />
               <span
-                class="grid h-[46px] place-items-center rounded-xl border border-dm-gray/40 bg-dm-gray-light text-sm font-bold text-dm-gray-dark transition peer-checked:border-btn-pk peer-checked:bg-dm-cb-light peer-checked:text-btn-pk-dark"
+                class="grid h-[46px] place-items-center rounded-xl border border-dm-gray/40 bg-dm-gray-light text-sm font-bold text-dm-gray-dark transition peer-checked:border-pink-03 peer-checked:bg-pink-01 peer-checked:text-brand-dark"
               >
                 신부
               </span>
@@ -115,7 +115,7 @@ const {
                 value="G"
               />
               <span
-                class="grid h-[46px] place-items-center rounded-xl border border-dm-gray/40 bg-dm-gray-light text-sm font-bold text-dm-gray-dark transition peer-checked:border-btn-pk peer-checked:bg-dm-cb-light peer-checked:text-btn-pk-dark"
+                class="grid h-[46px] place-items-center rounded-xl border border-dm-gray/40 bg-dm-gray-light text-sm font-bold text-dm-gray-dark transition peer-checked:border-pink-03 peer-checked:bg-pink-01 peer-checked:text-brand-dark"
               >
                 신랑
               </span>
@@ -136,7 +136,7 @@ const {
           <input
             id="signup-password"
             v-model="password"
-            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
+            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
             type="password"
             name="password"
             autocomplete="new-password"
@@ -160,7 +160,7 @@ const {
           <input
             id="signup-password-confirmation"
             v-model="passwordConfirm"
-            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
+            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
             type="password"
             name="passwordConfirm"
             autocomplete="new-password"
@@ -178,7 +178,7 @@ const {
             class="mt-1.5 text-[11px] leading-4"
             :class="
               passwordConfirm.length > 0 && !passwordsMatch
-                ? 'text-btn-pk-dark'
+                ? 'text-brand-dark'
                 : 'text-dm-gray-dark'
             "
           >
@@ -204,7 +204,7 @@ const {
       >
         <p
           v-if="signupError"
-          class="mb-2 text-xs font-semibold text-btn-pk-dark"
+          class="mb-2 text-xs font-semibold text-brand-dark"
           role="alert"
           aria-live="polite"
         >
@@ -212,7 +212,7 @@ const {
         </p>
 
         <button
-          class="grid min-h-[50px] w-full place-items-center rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light transition hover:bg-btn-pk-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30 disabled:cursor-not-allowed disabled:opacity-60"
+          class="grid min-h-[50px] w-full place-items-center rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light transition hover:bg-brand focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 disabled:cursor-not-allowed disabled:opacity-60"
           type="submit"
           :disabled="isSubmitting"
         >

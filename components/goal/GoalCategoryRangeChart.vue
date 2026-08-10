@@ -44,13 +44,13 @@ const ticks = computed(() => [0, 1, 2, 3, 4].map((i) => Math.round((trackMax.val
 
       <!-- 현재 값까지 채워진 부분 -->
       <div
-        class="absolute inset-y-0 left-0 rounded-full bg-dm-rose-dark"
+        class="absolute inset-y-0 left-0 rounded-full bg-brand"
         :style="{ width: `${fillPercent}%` }"
       />
 
       <!-- 중앙값 마커 -->
       <div
-        class="absolute inset-y-0 border-l border-dashed border-btn-pk"
+        class="absolute inset-y-0 border-l border-dashed border-pink-03"
         :style="{ left: `${medianPercent}%` }"
       />
       <span
@@ -62,7 +62,7 @@ const ticks = computed(() => [0, 1, 2, 3, 4].map((i) => Math.round((trackMax.val
 
       <!-- 현재 값 라벨 -->
       <span
-        class="absolute -bottom-5 -translate-x-1/2 text-[10px] font-bold text-dm-rose-dark"
+        class="absolute -bottom-5 -translate-x-1/2 text-[10px] font-bold text-brand-dark"
         :style="{ left: `${fillPercent}%` }"
       >
         {{ formatAmount(value / 10_000) }}
