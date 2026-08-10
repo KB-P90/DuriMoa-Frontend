@@ -23,7 +23,7 @@ import AuthScreen from '@/components/auth/AuthScreen.vue';
         현재 전달받은 인증 계약에 포함되어 있지 않아요.
       </p>
       <RouterLink
-        class="mt-7 grid min-h-[50px] w-full place-items-center rounded-xl bg-btn-pk px-5 text-[15px] font-extrabold text-dm-gray-light no-underline transition hover:bg-btn-pk-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+        class="mt-7 grid min-h-[50px] w-full place-items-center rounded-xl bg-brand px-5 text-[15px] font-extrabold text-dm-gray-light no-underline transition hover:bg-brand-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
         to="/login"
       >
         로그인으로 돌아가기

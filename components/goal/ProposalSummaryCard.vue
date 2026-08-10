@@ -10,11 +10,9 @@ defineProps<{
 </script>
 
 <template>
-  <div class="rounded-2xl border border-dm-co/30 bg-dm-cb-light p-4">
+  <div class="rounded-2xl border bg-pink-01/30 bg-pink-01 p-4">
     <div class="flex items-center justify-between gap-3">
-      <span
-        class="truncate rounded-full bg-dm-cb px-3 py-1.5 text-sm font-semibold text-dm-co-darker"
-      >
+      <span class="truncate rounded-full bg-dm-cb px-3 py-1.5 text-sm font-semibold text-brand">
         {{ proposal.title }}
       </span>
       <p class="whitespace-nowrap">
@@ -25,12 +23,12 @@ defineProps<{
       </p>
     </div>
 
-    <Separator class="my-3 bg-dm-co/20" />
+    <Separator class="my-3 bg-brand/20" />
 
     <dl class="space-y-2 text-sm">
       <div class="flex items-center justify-between">
         <dt class="text-dm-gray-dark">현재 메인과 차이</dt>
-        <dd class="font-bold text-dm-co-darker">
+        <dd class="font-bold text-brand">
           {{ formatSignedAmount(diffFromCurrentMain, '만원') }}
         </dd>
       </div>

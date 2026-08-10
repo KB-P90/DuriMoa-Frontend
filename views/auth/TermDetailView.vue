@@ -32,7 +32,7 @@ defineProps({
         class="flex items-center gap-3.5 rounded-[18px] border border-dm-gray/40 bg-dm-gray-light p-5 shadow-lg shadow-dm-gray/20"
       >
         <span
-          class="grid h-[50px] w-[50px] shrink-0 place-items-center rounded-full bg-dm-cb-light text-btn-pk"
+          class="grid h-[50px] w-[50px] shrink-0 place-items-center rounded-full bg-pink-01 text-brand"
           aria-hidden="true"
         >
           <svg

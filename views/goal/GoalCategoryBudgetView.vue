@@ -225,7 +225,7 @@ function handleExclude() {
             :id="`goal-amount-${categoryCode}`"
             :model-value="amountInManwon"
             aria-label="목표 금액"
-            class="h-[56px] w-full rounded-xl border-dm-gray/40 pr-16 text-center text-2xl font-extrabold text-[#232631] shadow-none outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus-visible:border-btn-pk focus-visible:ring-3 focus-visible:ring-btn-pk/10"
+            class="h-[56px] w-full rounded-xl border-dm-gray/40 pr-16 text-center text-2xl font-extrabold text-[#232631] shadow-none outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus-visible:border-pink-03 focus-visible:ring-3 focus-visible:ring-brand/10"
             type="number"
             min="0"
             inputmode="numeric"
@@ -239,16 +239,16 @@ function handleExclude() {
         </div>
       </div>
 
-      <div class="rounded-2xl bg-dm-rose-light p-4 text-center">
-        <p class="text-xs font-bold text-dm-btn-pk">누적 결혼 예산</p>
-        <p class="mt-1 text-2xl font-extrabold text-btn-pk-dark">
+      <div class="rounded-2xl bg-pink-01 p-4 text-center">
+        <p class="text-xs font-bold text-dm-brand">누적 결혼 예산</p>
+        <p class="mt-1 text-2xl font-extrabold text-brand-dark">
           {{ formatAmount(cumulativeBudget / 10_000) }} 만원
         </p>
       </div>
 
       <Button
         type="submit"
-        class="h-[52px] w-full rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-btn-pk-dark"
+        class="h-[52px] w-full rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
       >
         {{ nextLabel }}
       </Button>

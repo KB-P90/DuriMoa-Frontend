@@ -41,7 +41,7 @@ const PRIVACY_OPTIONS = [
     />
 
     <div
-      class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-4 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:px-3 sm:px-5"
+      class="min-h-0 flex-1 overflow-y-auto scrollbar-none overscroll-y-contain px-4 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:px-3 sm:px-5"
     >
       <h1
         class="text-[21px] font-extrabold leading-tight tracking-[-0.055em] min-[360px]:text-[23px]"
@@ -60,8 +60,8 @@ const PRIVACY_OPTIONS = [
           class="flex min-h-[82px] cursor-pointer items-center gap-3 rounded-[16px] border px-4 py-3 shadow-sm transition"
           :class="
             selection === option.value
-              ? 'border-btn-pk bg-dm-cb-light'
-              : 'border-dm-gray/30 bg-dm-gray-light hover:border-dm-rose-dark'
+              ? 'border-pink-03 bg-pink-01'
+              : 'border-dm-gray/30 bg-dm-gray-light hover:border-brand-dark'
           "
         >
           <input
@@ -73,7 +73,7 @@ const PRIVACY_OPTIONS = [
             :disabled="isLoading"
           />
           <span
-            class="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-dm-gray-light text-btn-pk-dark"
+            class="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-dm-gray-light text-brand-dark"
             aria-hidden="true"
           >
             <component
@@ -90,12 +90,12 @@ const PRIVACY_OPTIONS = [
           </span>
           <span
             class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-full border"
-            :class="selection === option.value ? 'border-btn-pk' : 'border-dm-gray/35'"
+            :class="selection === option.value ? 'border-pink-03' : 'border-dm-gray/35'"
             aria-hidden="true"
           >
             <span
               v-if="selection === option.value"
-              class="h-[9px] w-[9px] rounded-full bg-btn-pk"
+              class="h-[9px] w-[9px] rounded-full bg-brand"
             ></span>
           </span>
         </label>
@@ -103,7 +103,7 @@ const PRIVACY_OPTIONS = [
 
       <p
         v-if="errorMessage"
-        class="mt-3 text-[11px] leading-4 text-btn-pk-dark"
+        class="mt-3 text-[11px] leading-4 text-brand-dark"
         role="alert"
       >
         {{ errorMessage }}

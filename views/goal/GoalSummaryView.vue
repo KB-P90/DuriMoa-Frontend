@@ -54,10 +54,10 @@ const AVAILABLE_MONTHLY = 180;
 
 // 예식장 / 스튜디오·드레스·메이크업 / 예물 / 예비비 4개 그룹으로 묶어서 예산 비중 막대를 그린다.
 const CATEGORY_BUDGET_GROUPS: { codes: GoalCategoryCode[]; colorClass: string }[] = [
-  { codes: ['venue'], colorClass: 'bg-dm-co-light' },
-  { codes: ['studio', 'dress', 'makeup'], colorClass: 'bg-dm-co-dark' },
-  { codes: ['jewelry'], colorClass: 'bg-dm-rose' },
-  { codes: ['reserve'], colorClass: 'bg-dm-rose-dark' },
+  { codes: ['venue'], colorClass: 'bg-pink-03' },
+  { codes: ['studio', 'dress', 'makeup'], colorClass: 'bg-brand-dark' },
+  { codes: ['jewelry'], colorClass: 'bg-brand' },
+  { codes: ['reserve'], colorClass: 'bg-pink-04' },
 ];
 
 const totalManwon = computed(() => Math.round(goalStore.totalBudget / 10_000));
@@ -252,7 +252,7 @@ async function confirmDelete() {
           v-model="goalName"
           maxlength="12"
           placeholder="시안 이름을 입력하세요"
-          class="h-9 rounded-lg border-dm-gray/40 text-center text-sm font-medium text-[#232631] shadow-none focus-visible:border-btn-pk focus-visible:ring-3 focus-visible:ring-btn-pk/10"
+          class="h-9 rounded-lg border-dm-gray/40 text-center text-sm font-medium text-[#232631] shadow-none focus-visible:border-pink-03 focus-visible:ring-3 focus-visible:ring-brand/10"
         />
         <p
           v-if="goalName.length >= 12"
@@ -263,13 +263,13 @@ async function confirmDelete() {
       </div>
     </div>
 
-    <div class="rounded-2xl bg-dm-cb-light p-5 text-center">
-      <p class="text-xs font-bold text-btn-pk-dark">우리의 결혼 예산</p>
+    <div class="rounded-2xl bg-pink-01 p-5 text-center">
+      <p class="text-xs font-bold text-brand-dark">우리의 결혼 예산</p>
       <p class="mt-2 flex items-end justify-center gap-1">
-        <span class="text-4xl font-extrabold text-btn-pk-dark">{{
+        <span class="text-4xl font-extrabold text-brand-dark">{{
           totalManwon.toLocaleString()
         }}</span>
-        <span class="mb-1 text-sm font-bold text-btn-pk-dark">만원</span>
+        <span class="mb-1 text-sm font-bold text-brand-dark">만원</span>
       </p>
       <p class="mt-2 text-xs text-dm-gray-dark">
         전국 평균 {{ nationalAverage.toLocaleString() }}만원보다 {{ Math.abs(totalDiff) }}만원
@@ -324,7 +324,7 @@ async function confirmDelete() {
 
       <div class="flex items-center justify-between py-3">
         <span class="text-sm font-bold text-dm-gray-dark">합계</span>
-        <span class="text-base font-extrabold text-btn-pk-dark">{{
+        <span class="text-base font-extrabold text-brand-dark">{{
           formatWon(goalStore.totalBudget)
         }}</span>
       </div>
@@ -338,7 +338,7 @@ async function confirmDelete() {
 
       <div class="mt-4 flex items-center justify-between text-xs font-bold">
         <span class="text-dm-mint-darker">🤵 신랑 {{ goalStore.draft.groomRatio }}%</span>
-        <span class="text-btn-pk-dark">{{ brideRatio }}% 신부 👰</span>
+        <span class="text-brand-dark">{{ brideRatio }}% 신부 👰</span>
       </div>
 
       <!--
@@ -366,9 +366,9 @@ async function confirmDelete() {
             {{ formatWon(groomAmount) }}
           </p>
         </div>
-        <div class="rounded-xl bg-dm-rose-light p-3 text-center">
+        <div class="rounded-xl bg-pink-01 p-3 text-center">
           <p class="text-[11px] text-dm-gray-dark">신부 분담금</p>
-          <p class="mt-1 text-base font-extrabold text-btn-pk-dark">{{ formatWon(brideAmount) }}</p>
+          <p class="mt-1 text-base font-extrabold text-brand-dark">{{ formatWon(brideAmount) }}</p>
         </div>
       </div>
 
@@ -397,7 +397,7 @@ async function confirmDelete() {
     <Button
       type="button"
       :disabled="submitting"
-      class="mt-6 h-[52px] w-full rounded-xl bg-btn-pk text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-btn-pk-dark"
+      class="mt-6 h-[52px] w-full rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
       @click="handleShare"
     >
       {{ submitLabel }}
@@ -423,7 +423,7 @@ async function confirmDelete() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter class="flex-row">
-            <AlertDialogAction class="h-12 w-full rounded-xl bg-btn-pk hover:bg-btn-pk-dark">
+            <AlertDialogAction class="h-12 w-full rounded-xl bg-brand hover:bg-brand-dark">
               확인
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -437,7 +437,7 @@ async function confirmDelete() {
           <AlertDialogFooter class="flex-row gap-2">
             <AlertDialogCancel class="h-12 flex-1 rounded-xl"> 취소 </AlertDialogCancel>
             <AlertDialogAction
-              class="h-12 flex-1 rounded-xl bg-btn-pk text-white hover:bg-btn-pk-dark"
+              class="h-12 flex-1 rounded-xl bg-brand text-white hover:bg-brand-dark"
               @click="confirmDelete"
             >
               삭제

@@ -26,15 +26,11 @@ function toggleExpand() {
 </script>
 
 <template>
-  <div class="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+  <div class="rounded-3xl border border-gray-100 bg-white p-4">
     <!-- Header -->
     <div class="flex items-center justify-between">
-      <h3 class="text-base font-bold text-gray-900">
-        {{ group.userName }} 님의 카드
-      </h3>
-      <span class="text-xs font-semibold text-btn-pk">
-        보유 카드 {{ group.ownedCardCount }}개
-      </span>
+      <h3 class="text-base font-bold text-gray-900">{{ group.userName }} 님의 카드</h3>
+      <span class="text-xs font-semibold text-brand"> 보유 카드 {{ group.ownedCardCount }}개 </span>
     </div>
 
     <!-- Cards List -->
@@ -61,7 +57,9 @@ function toggleExpand() {
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2">
               <strong class="text-sm font-bold text-gray-900">{{ card.name }}</strong>
-              <span class="rounded-full bg-dm-mint-light px-2 py-0.5 text-[11px] font-bold text-btn-mt-dark">
+              <span
+                class="rounded-full bg-dm-mint-light px-2 py-0.5 text-[11px] font-bold text-btn-mt-dark"
+              >
                 {{ card.rankLabel }}
               </span>
             </div>
@@ -82,8 +80,14 @@ function toggleExpand() {
       @click="toggleExpand"
     >
       <span>{{ group.userName }}님 카드 {{ isExpanded ? '접기' : '더보기' }}</span>
-      <ChevronUp v-if="isExpanded" class="h-3.5 w-3.5" />
-      <ChevronDown v-else class="h-3.5 w-3.5" />
+      <ChevronUp
+        v-if="isExpanded"
+        class="h-3.5 w-3.5"
+      />
+      <ChevronDown
+        v-else
+        class="h-3.5 w-3.5"
+      />
     </button>
   </div>
 </template>

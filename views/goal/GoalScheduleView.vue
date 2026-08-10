@@ -53,7 +53,7 @@ function handleNext() {
         <input
           id="goal-wedding-date"
           v-model="weddingDate"
-          class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
+          class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
           type="date"
           required
         />
@@ -69,7 +69,7 @@ function handleNext() {
         <Select v-model="region">
           <SelectTrigger
             id="goal-region"
-            class="h-[46px] w-full rounded-xl border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] shadow-none hover:border-dm-gray/60 focus:border-btn-pk focus:ring-3 focus:ring-btn-pk/10"
+            class="h-[46px] w-full rounded-xl border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] shadow-none hover:border-dm-gray/60 focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
           >
             <SelectValue placeholder="지역을 선택해주세요" />
           </SelectTrigger>

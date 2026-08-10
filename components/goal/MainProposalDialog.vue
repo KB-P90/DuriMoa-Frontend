@@ -50,7 +50,7 @@ defineEmits<{
             취소
           </AlertDialogCancel>
           <AlertDialogAction
-            class="h-12 flex-1 rounded-xl hover:bg-btn-pk"
+            class="h-12 flex-1 rounded-xl hover:bg-brand"
             @click="$emit('confirm')"
           >
             신청하기
@@ -86,7 +86,7 @@ defineEmits<{
             거절
           </AlertDialogCancel>
           <AlertDialogAction
-            class="h-12 flex-[1.6] rounded-xl hover:bg-btn-pk"
+            class="h-12 flex-[1.6] rounded-xl hover:bg-brand"
             @click="$emit('confirm')"
           >
             수락하기

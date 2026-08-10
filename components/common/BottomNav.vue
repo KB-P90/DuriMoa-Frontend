@@ -26,7 +26,7 @@ const NAV_ITEMS = [
       :key="item.key"
       type="button"
       class="flex flex-1 flex-col items-center justify-center gap-1 text-xs"
-      :class="active === item.key ? 'text-btn-pk-dark' : 'text-dm-gray'"
+      :class="active === item.key ? 'text-brand-dark' : 'text-dm-gray'"
       @click="emit('select', item.key)"
     >
       <component

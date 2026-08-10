@@ -94,7 +94,9 @@ function visualFor(type: string) {
         </button>
       </header>
 
-      <main class="flex-1 overflow-y-auto px-4 pb-[calc(4rem+env(safe-area-inset-bottom))] pt-4">
+      <main
+        class="flex-1 overflow-y-auto scrollbar-none px-4 pb-[calc(4rem+env(safe-area-inset-bottom))] pt-4"
+      >
         <p
           v-if="!isLoading && notifications.length === 0"
           class="py-16 text-center text-sm text-dm-gray-dark"
@@ -113,7 +115,7 @@ function visualFor(type: string) {
             <button
               v-if="!notification.isRead"
               type="button"
-              class="relative mb-3 flex cursor-pointer items-start gap-3 rounded-2xl bg-dm-rose-light p-4 text-left"
+              class="relative mb-3 flex cursor-pointer items-start gap-3 rounded-2xl bg-pink-01 p-4 text-left"
               @click="handleSelect(notification)"
             >
               <span
@@ -127,11 +129,11 @@ function visualFor(type: string) {
                 <span class="mt-1 block text-sm leading-5 text-dm-gray-dark">
                   {{ notification.content }}
                 </span>
-                <span class="mt-1.5 block text-xs font-semibold text-btn-pk-dark">
+                <span class="mt-1.5 block text-xs font-semibold text-brand-dark">
                   {{ formatRelativeTime(notification.createdAt) }}
                 </span>
               </span>
-              <span class="absolute right-4 top-4 h-2 w-2 rounded-full bg-btn-pk-dark" />
+              <span class="absolute right-4 top-4 h-2 w-2 rounded-full bg-brand-dark" />
             </button>
 
             <button

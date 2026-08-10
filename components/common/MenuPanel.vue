@@ -18,7 +18,7 @@ const emit = defineEmits<{
 const router = useRouter();
 
 const quickLinks = [
-  { label: '마이페이지', icon: UserRound, color: 'text-[#517CA6]', path: '/my' },
+  { label: '마이페이지', icon: UserRound, color: 'text-[#517CA6]', path: '/myinfo' },
   { label: '목표 설정', icon: Target, color: 'text-[#E45B62]', path: '/goal/schedule' },
   { label: '시안 목록', icon: TextAlignJustify, color: 'text-dm-mint-dark', path: '/goal' },
   { label: '월별 지출 관리', icon: BarChart3, color: 'text-[#19A786]', path: '/status' },
@@ -40,7 +40,7 @@ const notifications = ref([
 
 <template>
   <section
-    class="absolute inset-0 z-[60] bg-gray-100 font-[Pretendard,Inter,sans-serif] text-[#292934]"
+    class="absolute inset-0 z-[60] bg-gray-100 text-[#292934]"
   >
     <div
       class="h-[553px] overflow-hidden rounded-b-[30px] bg-white shadow-[0_16px_44px_-18px_rgba(60,40,38,0.2),0_0_0_1px_rgba(60,40,38,0.07)]"
@@ -68,13 +68,13 @@ const notifications = ref([
             바로가기
           </h2>
           <div
-            class="overflow-hidden rounded-2xl border border-[#F0E7E5] bg-white shadow-[0_1px_2px_rgba(60,40,38,0.03),0_6px_18px_-10px_rgba(60,40,38,0.1)]"
+            class="overflow-hidden rounded-2xl border border-pink-02 bg-white shadow-[0_1px_2px_rgba(60,40,38,0.03),0_6px_18px_-10px_rgba(60,40,38,0.1)]"
           >
             <button
               v-for="(link, index) in quickLinks"
               :key="link.label"
               type="button"
-              class="flex h-[48px] w-full items-center justify-between px-[14px] text-left cursor-pointer hover:bg-dm-cb-light"
+              class="flex h-[48px] w-full items-center justify-between px-[14px] text-left cursor-pointer hover:bg-pink-01"
               :class="index > 0 ? 'border-t border-[#F9F3F2]' : ''"
               @click="goTo(link.path)"
             >
@@ -102,7 +102,7 @@ const notifications = ref([
             알림 설정
           </h2>
           <div
-            class="overflow-hidden rounded-2xl border border-[#F0E7E5] bg-white pt-[2px] shadow-[0_1px_2px_rgba(60,40,38,0.03),0_6px_18px_-10px_rgba(60,40,38,0.1)]"
+            class="overflow-hidden rounded-2xl border border-pink-02 bg-white pt-[2px] shadow-[0_1px_2px_rgba(60,40,38,0.03),0_6px_18px_-10px_rgba(60,40,38,0.1)]"
           >
             <label
               v-for="(notification, index) in notifications"
@@ -119,7 +119,7 @@ const notifications = ref([
                 class="peer sr-only"
               />
               <span
-                class="flex h-[22px] w-[38px] items-center rounded-full bg-[#F0E7E5] p-[3px] transition peer-checked:justify-end peer-checked:bg-[#D0634E]"
+                class="flex h-[22px] w-[38px] items-center rounded-full bg-[#F0E7E5] p-[3px] transition peer-checked:justify-end peer-checked:bg-brand"
               >
                 <span class="h-4 w-4 rounded-full bg-white" />
               </span>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ArrowLeft } from '@lucide/vue';
 import CategoryExpenseCard from '@/components/expense/CategoryExpenseCard.vue';
 import MonthPicker from '@/components/expense/MonthPicker.vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 import SavingMissionCard from '@/components/expense/SavingMissionCard.vue';
-import { computed, onMounted, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useExpenseStore } from '@/stores/expenseStore';
@@ -71,28 +71,17 @@ function changeMonth({ year, month }: { year: number; month: number }) {
 </script>
 
 <template>
-  <div class="px-3 sm:px-20 pt-2 whitespace-nowrap">
-    <header class="flex items-center justify-between px-6 py-5">
-      <button
-        type="button"
-        @click="router.back()"
-        class="cursor-pointer text-lg"
-      >
-        <ArrowLeft class="h-6 w-6" />
-      </button>
-
-      <h1 class="ml-2 flex-1 text-lg font-bold">
-        {{ selectedMonth.year }}년 {{ selectedMonth.month }}월 지출 관리
-      </h1>
-
+  <div class="whitespace-nowrap">
+    <PageHeader :title="`${selectedMonth.year}년 ${selectedMonth.month}월 지출 관리`" />
+    <div class="flex items-center justify-end p-4">
       <MonthPicker
         :year="selectedMonth.year"
         :month="selectedMonth.month"
         @change="changeMonth"
       />
-    </header>
+    </div>
 
-    <div class="px-2">
+    <div class="p-4 pt-0">
       <CategoryExpenseCard :month="selectedMonth.month" />
 
       <SavingMissionCard

@@ -31,7 +31,7 @@ function handleBack() {
     <div class="mb-2 flex min-h-10 items-center justify-between">
       <button
         type="button"
-        class="-ml-2 grid h-10 w-10 shrink-0 place-items-center rounded-[10px] text-dm-gray-dark transition hover:bg-dm-gray/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-btn-pk/30"
+        class="-ml-2 grid h-10 w-10 shrink-0 place-items-center rounded-[10px] text-dm-gray-dark transition hover:bg-dm-gray/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
         aria-label="이전 온보딩 단계로 이동"
         @click="handleBack"
       >
@@ -54,7 +54,7 @@ function handleBack() {
       :aria-valuemax="totalSteps"
     >
       <span
-        class="block h-full rounded-full bg-btn-pk transition-[width] duration-300 motion-reduce:transition-none"
+        class="block h-full rounded-full bg-brand transition-[width] duration-300 motion-reduce:transition-none"
         :style="{ width: getProgressWidth() }"
       ></span>
     </div>

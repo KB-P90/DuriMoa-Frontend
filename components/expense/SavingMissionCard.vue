@@ -18,12 +18,12 @@ const savingMissions = computed(() => expenseStore.savingMissions);
 const missionAmountStyles = {
   available: 'text-btn-mt-dark',
   started: 'text-dm-gray',
-  challenging: 'text-btn-pk',
+  challenging: 'text-brand',
 };
 const missionButtonStyles = {
   available: 'bg-btn-mt text-btn-mt-dark hover:bg-btn-mt-dark hover:text-white cursor-pointer',
   started: 'bg-dm-gray text-white',
-  challenging: 'bg-btn-pk text-white',
+  challenging: 'bg-brand text-white',
 };
 
 const getMissionButtonType = (mission: any) => {
@@ -63,13 +63,11 @@ const handleStartMission = async (mission: SavingMission & { isStarted?: boolean
 </script>
 
 <template>
-  <section
-    class="m-4 overflow-hidden rounded-3xl border border-dm-mint-dark bg-white shadow-md sm:m-6"
-  >
-    <div class="flex items-center justify-between p-4 sm:p-5">
-      <h2 class="text-base font-bold text-gray-800">이번 달 절약 미션</h2>
+  <section class="overflow-hidden rounded-3xl border border-dm-mint-dark bg-white shadow-md">
+    <div class="flex items-center justify-between p-4">
+      <h2 class="text-lg font-bold text-gray-800">이번 달 절약 미션</h2>
 
-      <span class="text-base font-bold text-btn-pk">
+      <span class="text-base font-bold text-brand">
         +{{ savingMissions.totalExpectedSavingAmount.toLocaleString() }}원
       </span>
     </div>
@@ -77,11 +75,11 @@ const handleStartMission = async (mission: SavingMission & { isStarted?: boolean
     <div
       v-for="mission in savingMissions.missions"
       :key="mission.missionId"
-      class="flex items-center justify-between border-t border-dm-mint px-4 py-4 sm:px-6"
+      class="flex items-center justify-between border-t border-dm-mint p-4"
     >
       <div class="flex items-center gap-4">
         <div
-          class="flex h-10 w-10 items-center justify-center rounded-2xl bg-dm-cb-light text-lg sm:h-12 sm:w-12"
+          class="flex h-10 w-10 items-center justify-center rounded-2xl bg-pink-01 text-lg sm:h-12 sm:w-12"
         >
           <component :is="ExpenseCategoryIcon[mission.categoryCode]" />
         </div>
@@ -116,7 +114,7 @@ const handleStartMission = async (mission: SavingMission & { isStarted?: boolean
       </div>
     </div>
 
-    <div class="bg-dm-mint-light px-5 py-5 text-xs font-semibold text-dm-mint-darker">
+    <div class="bg-dm-mint-light p-4 text-xs font-semibold text-dm-mint-darker">
       <div v-if="savingMissions.missions.length">
         <p>
           추천대로 실천하면 월

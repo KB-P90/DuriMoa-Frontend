@@ -34,11 +34,11 @@ const STATUS_META: Record<
   main: {
     label: '메인 시안',
     icon: Heart,
-    badgeClass: 'bg-dm-co text-white',
-    badgeHoverClass: 'group-hover:bg-white group-hover:text-dm-co',
-    cardBorderClass: 'border-dm-co/50',
-    cardHoverClass: 'hover:border-dm-co hover:bg-dm-co',
-    amountClass: 'text-dm-co',
+    badgeClass: 'bg-brand text-white',
+    badgeHoverClass: 'group-hover:bg-white group-hover:text-brand',
+    cardBorderClass: 'bg-pink-01/50',
+    cardHoverClass: 'hover:bg-pink-01 hover:bg-brand',
+    amountClass: 'text-brand',
     textHoverClass: 'group-hover:text-white',
   },
   pending: {
@@ -64,10 +64,10 @@ const STATUS_META: Record<
   incoming: {
     label: '수락 요청',
     icon: BellRing,
-    badgeClass: 'bg-btn-pk/15 text-btn-pk-dark',
-    badgeHoverClass: 'group-hover:bg-white group-hover:text-btn-pk-dark',
-    cardBorderClass: 'border-btn-pk/50',
-    cardHoverClass: 'hover:border-btn-pk-dark hover:bg-btn-pk-dark',
+    badgeClass: 'bg-brand/15 text-brand-dark',
+    badgeHoverClass: 'group-hover:bg-white group-hover:text-brand-dark',
+    cardBorderClass: 'border-pink-03/50',
+    cardHoverClass: 'hover:border-pink-03-dark hover:bg-brand-dark',
     amountClass: 'text-[#232631]',
     textHoverClass: 'group-hover:text-white',
   },
@@ -76,7 +76,7 @@ const STATUS_META: Record<
 
 <template>
   <article
-    class="group cursor-pointer rounded-2xl border-2 bg-white p-5 transition-colors"
+    class="group cursor-pointer rounded-2xl border-2 bg-white p-4 transition-colors"
     :class="[
       STATUS_META[proposal.status].cardBorderClass,
       STATUS_META[proposal.status].cardHoverClass,
@@ -128,7 +128,7 @@ const STATUS_META: Record<
       <Button
         v-else-if="proposal.status === 'incoming'"
         type="button"
-        class="h-8 shrink-0 cursor-pointer rounded-full px-4 text-xs font-semibold shadow-none transition-colors hover:bg-white hover:text-btn-pk-dark group-hover:bg-white group-hover:text-btn-pk-dark"
+        class="h-8 shrink-0 cursor-pointer rounded-full px-4 text-xs font-semibold shadow-none transition-colors hover:bg-white hover:text-brand-dark group-hover:bg-white group-hover:text-brand-dark"
         @click.stop="$emit('review', proposal.id)"
       >
         확인하기

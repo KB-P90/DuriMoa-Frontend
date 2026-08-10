@@ -10,9 +10,9 @@ const members = computed(() => progressStore.personalProgress.members);
 </script>
 
 <template>
-  <div class="flex flex-col gap-8 px-4 py-6">
-    <section class="overflow-hidden rounded-3xl border border-dm-co bg-white p-5 shadow-md">
-      <h2 class="mb-4 text-base font-bold">자산 현황 공유</h2>
+  <div class="flex flex-col gap-8">
+    <section class="overflow-hidden rounded-3xl bg-white border border-brand p-4">
+      <h2 class="mb-4 text-lg font-bold">자산 현황 공유</h2>
 
       <div
         v-for="member in members"
@@ -32,11 +32,7 @@ const members = computed(() => progressStore.personalProgress.members);
 
           <span
             class="rounded-full px-2 py-1 text-xs"
-            :class="
-              member.assetShared
-                ? 'bg-dm-rose-light text-dm-co-darker'
-                : 'bg-dm-gray text-dm-gray-light'
-            "
+            :class="member.assetShared ? 'bg-pink-01 text-brand' : 'bg-dm-gray text-dm-gray-light'"
           >
             {{ member.assetShared ? '전체 공개' : '결혼 자금만 공개' }}
           </span>
@@ -58,8 +54,8 @@ const members = computed(() => progressStore.personalProgress.members);
       <p class="mt-3 text-xs text-dm-gray">선택한 공개 범위에 따라 자산 실 금액이 공유돼요.</p>
     </section>
 
-    <section class="overflow-hidden rounded-3xl border border-dm-mint-dark bg-white p-5 shadow-md">
-      <h2 class="mb-4 text-base font-bold">개인별 달성률</h2>
+    <section class="overflow-hidden rounded-3xl border border-dm-mint-dark bg-white p-4">
+      <h2 class="mb-4 text-lg font-bold">개인별 달성률</h2>
 
       <div
         v-for="member in members"
@@ -81,7 +77,9 @@ const members = computed(() => progressStore.personalProgress.members);
           </div>
 
           <div class="my-2 flex justify-between">
-            <span class="text-base font-bold text-dm-mint-darker"> {{ member.progressRate }}% </span>
+            <span class="text-base font-bold text-dm-mint-darker">
+              {{ member.progressRate }}%
+            </span>
           </div>
         </div>
 

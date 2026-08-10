@@ -36,7 +36,7 @@ const allAgreed = computed<boolean>({
         name="agreeAll"
       />
       <span
-        class="grid h-[22px] w-[22px] place-items-center rounded-[7px] border border-dm-gray/50 bg-dm-gray-light text-[13px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
+        class="grid h-[22px] w-[22px] place-items-center rounded-[7px] border border-dm-gray/50 bg-dm-gray-light text-[13px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
         aria-hidden="true"
       >
         ✓
@@ -58,20 +58,20 @@ const allAgreed = computed<boolean>({
           required
         />
         <span
-          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
+          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
           aria-hidden="true"
         >
           ✓
         </span>
         <span>이용약관</span>
         <em
-          class="rounded-full bg-dm-rose-light px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-dm-co-darker"
+          class="rounded-full bg-pink-01 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-brand"
         >
           필수
         </em>
       </label>
       <RouterLink
-        class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-btn-pk-dark"
+        class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
         to="/signup/terms/service"
         aria-label="이용약관 전문 보기"
       >
@@ -95,20 +95,20 @@ const allAgreed = computed<boolean>({
           required
         />
         <span
-          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
+          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
           aria-hidden="true"
         >
           ✓
         </span>
         <span>개인정보 처리방침</span>
         <em
-          class="rounded-full bg-dm-rose-light px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-dm-co-darker"
+          class="rounded-full bg-pink-01 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-brand"
         >
           필수
         </em>
       </label>
       <RouterLink
-        class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-btn-pk-dark"
+        class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
         to="/signup/terms/privacy"
         aria-label="개인정보 처리방침 전문 보기"
       >
@@ -131,7 +131,7 @@ const allAgreed = computed<boolean>({
           name="marketingTermsAgreed"
         />
         <span
-          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
+          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
           aria-hidden="true"
         >
           ✓
@@ -155,7 +155,7 @@ const allAgreed = computed<boolean>({
           name="financeTermsAgreed"
         />
         <span
-          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-btn-pk peer-checked:bg-btn-pk peer-checked:text-dm-gray-light"
+          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
           aria-hidden="true"
         >
           ✓
@@ -168,7 +168,7 @@ const allAgreed = computed<boolean>({
         </em>
       </label>
       <RouterLink
-        class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-btn-pk-dark"
+        class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
         to="/signup/terms/finance"
         aria-label="금융정보 연동 약관 전문 보기"
       >
