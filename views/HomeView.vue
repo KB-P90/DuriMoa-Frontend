@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import { RouterLink } from 'vue-router';
 import { Bell, ChevronRight, Coffee, Menu } from '@lucide/vue';
 import MenuPanel from '@/components/common/MenuPanel.vue';
 import { useHomeStore } from '@/stores/homeStore';
@@ -160,12 +161,13 @@ onMounted(() => {
       class="home-content relative -mt-[14px] rounded-t-[24px] bg-white px-4 pb-8 pt-[18px] md:min-h-[359px] md:px-10 md:pb-9 md:pt-5"
     >
       <button
+        v-if="dashboard.savingAlert"
         type="button"
         class="saving-alert flex h-[39px] w-full items-center gap-2 rounded-[11px] bg-pink-01 px-[13px] text-left md:h-11"
       >
         <span class="text-[10px] font-extrabold leading-3 text-brand">알림</span>
         <span class="truncate text-[11.5px] font-medium leading-[14px] text-[#5A5B69]">{{
-          dashboard.savingAlert.message
+          dashboard.savingAlert?.message
         }}</span>
       </button>
 
@@ -173,12 +175,15 @@ onMounted(() => {
 
       <div class="flex h-[19px] items-center justify-between">
         <h2 class="text-[13.5px] font-bold leading-4 tracking-[-0.27px]">이번 달 절약 미션</h2>
-        <span class="text-[11px] leading-4 text-dm-gray-dark"
+        <span
+          v-if="missions.length > 0"
+          class="text-[11px] leading-4 text-dm-gray-dark"
           >{{ dashboard.inProgressMissionCount }} / {{ dashboard.totalMissionCount }} 진행</span
         >
       </div>
 
       <div
+        v-if="missions.length > 0"
         ref="missionCarousel"
         aria-label="절약 미션 목록"
         @pointerdown="startMissionDrag"
@@ -210,6 +215,27 @@ onMounted(() => {
           >
         </button>
       </div>
+
+      <RouterLink
+        v-else
+        :to="{ name: 'expense' }"
+        class="mission-empty mt-2 flex h-[62px] items-center gap-2 rounded-2xl border border-[#F0E7E5] bg-white px-4 text-left md:h-[72px]"
+      >
+        <span class="grid h-8 w-8 shrink-0 place-items-center rounded-[11px] bg-pink-01 text-brand"
+          ><Coffee
+            class="h-3 w-3"
+            :stroke-width="1.6"
+        /></span>
+        <span
+          class="ml-[10px] flex-1 text-[12.5px] font-bold leading-[15px] tracking-[-0.25px] text-[#292934]"
+        >
+          지출을 기록하면 우리 맞춤 절약 미션이 생겨요
+        </span>
+        <ChevronRight
+          class="h-4 w-4 shrink-0 text-dm-gray-dark"
+          :stroke-width="2"
+        />
+      </RouterLink>
 
       <h2 class="mt-[20px] text-[13.5px] font-bold leading-4 tracking-[-0.27px] text-[#5A5B69]">
         우리의 목표

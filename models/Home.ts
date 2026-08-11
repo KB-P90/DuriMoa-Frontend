@@ -2,18 +2,22 @@ import type { HomeDashboardResponseDto, SavingMissionDto } from '@/types/dto/hom
 import type { HomeDashboard, SavingMission } from '@/types/home';
 
 export const toHomeDashboard = (dto: HomeDashboardResponseDto): HomeDashboard => ({
-  coupleStatus: dto.couple.status,
-  groomName: dto.couple.groom.name,
-  brideName: dto.couple.bride.name,
-  totalAccumulatedAmount: dto.asset_summary.total_accumulated_amount,
-  usedAmount: dto.asset_summary.used_amount,
-  remainingAmount: dto.asset_summary.remaining_amount,
-  savingAlert: {
-    isShortage: dto.saving_alert.is_shortage,
-    message: dto.saving_alert.message,
-  },
-  totalMissionCount: dto.saving_mission_summary.total_count,
-  inProgressMissionCount: dto.saving_mission_summary.in_progress_count,
+  coupleStatus: dto.couple.couple_status,
+  groomName: dto.couple.user_role === 'G' ? dto.couple.user_name : dto.couple.partner_name,
+  brideName: dto.couple.user_role === 'B' ? dto.couple.user_name : dto.couple.partner_name,
+  totalAccumulatedAmount: dto.asset_summary.total_saved_amount,
+  usedAmount: dto.asset_summary.wedding_expense_amount,
+  remainingAmount: dto.asset_summary.remaining_wedding_fund_amount,
+  savingAlert: dto.saving_alert
+    ? {
+        isShortage: dto.saving_alert.is_shortage,
+        message: dto.saving_alert.message,
+      }
+    : null,
+  totalMissionCount:
+    dto.saving_mission_summary.in_progress_mission_count +
+    dto.saving_mission_summary.completed_mission_count,
+  inProgressMissionCount: dto.saving_mission_summary.in_progress_mission_count,
   jointGoal: {
     targetAmount: dto.goal_summary.joint_goal.target_amount,
     currentAmount: dto.goal_summary.joint_goal.current_amount,
@@ -23,6 +27,18 @@ export const toHomeDashboard = (dto: HomeDashboardResponseDto): HomeDashboard =>
     targetAmount: dto.goal_summary.personal_goal.target_amount,
     currentAmount: dto.goal_summary.personal_goal.current_amount,
     achievementRate: dto.goal_summary.personal_goal.achievement_rate,
+  },
+  setupCompleted: dto.setup_completed,
+  setupChecklist: {
+    totalCount: dto.setup_checklist.total_count,
+    completedCount: dto.setup_checklist.completed_count,
+    currentStep: dto.setup_checklist.current_step,
+    steps: dto.setup_checklist.steps.map((step) => ({
+      step: step.step,
+      code: step.code,
+      title: step.title,
+      completed: step.completed,
+    })),
   },
 });
 
