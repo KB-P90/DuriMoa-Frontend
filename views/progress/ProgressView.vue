@@ -31,7 +31,7 @@ const activeTab = ref('overall');
     <CoupleConnectionRequired v-if="progressStore.unavailableReason === 'NO_COUPLE'" />
     <CoupleConnectionRequired
       v-else-if="progressStore.unavailableReason === 'NO_GOAL'"
-      :message="'공동 목표를 설정하면'"
+      :message="'메인 시안을 설정하면'"
       :route-name="'goal-list'"
       :button-message="'설정하러 가기'"
     />
