@@ -95,34 +95,26 @@ const { authorizationError, startKakaoLogin } = useKakaoAuthorization();
         </button>
       </form>
 
-      <!-- 일반 로그인과 소셜 로그인을 구분하는 영역 -->
-      <div
-        class="my-5 flex items-center gap-3"
-        aria-hidden="true"
-      >
-        <span class="h-px flex-1 bg-dm-gray/20"></span>
-        <span class="text-[11px] text-dm-gray-dark">또는</span>
-        <span class="h-px flex-1 bg-dm-gray/20"></span>
-      </div>
-
-      <!-- TODO: #fee500, #2d271d 카카오 브랜드 색상 토큰 등록 검토 -->
+      <!-- TODO: 카카오 브랜드 색상 #FEE500 공통 토큰 등록 검토 -->
       <button
-        class="mx-auto grid h-[51px] w-[51px] place-items-center rounded-full bg-[#fee500] text-[#2d271d] transition hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
+        class="mt-3 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl border-0 bg-[#FEE500] p-0 transition hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
         type="button"
         aria-label="카카오 계정으로 계속하기"
         @click="startKakaoLogin"
       >
         <svg
-          class="w-6 fill-current"
+          class="h-5 w-5 shrink-0 fill-black"
           viewBox="0 0 24 24"
           aria-hidden="true"
         >
           <path
-            d="M12 4C6.8 4 3 7.1 3 10.9c0 2.5 1.7 4.7 4.3 5.9l-.9 3.1c-.1.3.2.5.5.3l3.8-2.5c.4.1.9.1 1.3.1 5.2 0 9-3.1 9-6.9S17.2 4 12 4Z"
+            d="M12 3C6.48 3 2 6.48 2 10.77c0 2.73 1.82 5.14 4.56 6.52L5.4 21.53c-.1.38.33.68.65.45l5.07-3.35c.29.03.58.04.88.04 5.52 0 10-3.48 10-7.9C22 6.48 17.52 3 12 3Z"
           />
         </svg>
+        <span class="text-[15px] font-extrabold leading-none text-black/[0.85]">
+          카카오 로그인
+        </span>
       </button>
-      <p class="mt-2 text-center text-[10px] text-dm-gray-dark">카카오 계정으로 계속하기</p>
       <p
         v-if="authorizationError"
         class="mt-2 text-center text-xs font-semibold text-brand-dark"
