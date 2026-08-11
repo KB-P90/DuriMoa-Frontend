@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import AuthScreen from '@/components/auth/AuthScreen.vue';
 import BrandMark from '@/components/auth/BrandMark.vue';
+import { useKakaoAuthorization } from '@/composables/useKakaoLogin';
 import { useLogin } from '@/composables/useLogin';
 
 const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
+const { authorizationError, startKakaoLogin } = useKakaoAuthorization();
 </script>
 
 <template>
@@ -103,12 +105,12 @@ const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
         <span class="h-px flex-1 bg-dm-gray/20"></span>
       </div>
 
-      <!-- XML 계약에 카카오 endpoint가 없어 현재는 기존 퍼블리싱 링크만 유지한다. -->
       <!-- TODO: #fee500, #2d271d 카카오 브랜드 색상 토큰 등록 검토 -->
-      <RouterLink
+      <button
         class="mx-auto grid h-[51px] w-[51px] place-items-center rounded-full bg-[#fee500] text-[#2d271d] transition hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
-        to="/auth/session"
+        type="button"
         aria-label="카카오 계정으로 계속하기"
+        @click="startKakaoLogin"
       >
         <svg
           class="w-6 fill-current"
@@ -119,8 +121,15 @@ const { phone, password, loginError, isSubmitting, submitLogin } = useLogin();
             d="M12 4C6.8 4 3 7.1 3 10.9c0 2.5 1.7 4.7 4.3 5.9l-.9 3.1c-.1.3.2.5.5.3l3.8-2.5c.4.1.9.1 1.3.1 5.2 0 9-3.1 9-6.9S17.2 4 12 4Z"
           />
         </svg>
-      </RouterLink>
+      </button>
       <p class="mt-2 text-center text-[10px] text-dm-gray-dark">카카오 계정으로 계속하기</p>
+      <p
+        v-if="authorizationError"
+        class="mt-2 text-center text-xs font-semibold text-brand-dark"
+        role="alert"
+      >
+        {{ authorizationError }}
+      </p>
 
       <!-- 회원가입 및 계정 찾기 화면 이동 -->
       <nav
