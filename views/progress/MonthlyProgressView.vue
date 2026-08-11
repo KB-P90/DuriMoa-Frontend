@@ -2,6 +2,7 @@
 import CoupleAchievement from '@/components/progress/CoupleAchievement.vue';
 import MonthlyTimeline from '@/components/progress/MonthlyTimeline.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
+import CoupleConnectionRequired from '@/components/common/CoupleConnectionRequired.vue';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { computed, onMounted } from 'vue';
 import { useProgressStore } from '@/stores/progressStore';
@@ -22,7 +23,18 @@ const progressRate = computed(() => progressStore.monthlyProgress?.overallProgre
   <div class="whitespace-nowrap">
     <PageHeader title="월별 예산 달성 현황" />
 
-    <div class="flex flex-col gap-8 p-4">
+    <CoupleConnectionRequired v-if="progressStore.unavailableReason === 'NO_COUPLE'" />
+    <CoupleConnectionRequired
+      v-else-if="progressStore.unavailableReason === 'NO_GOAL'"
+      :message="'공동 목표를 설정하면'"
+      :route-name="'goal-list'"
+      :button-message="'설정하러 가기'"
+    />
+
+    <div
+      v-else
+      class="flex flex-col gap-8 p-4"
+    >
       <CoupleAchievement :progress-rate="progressRate" />
       <MonthlyTimeline />
     </div>

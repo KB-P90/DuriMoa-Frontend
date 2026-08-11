@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
+import axios from 'axios';
 
 import { getMonthlyProgress, getProgress, patchProgressCompletion } from '@/server/progressApi';
 import type {
@@ -8,6 +9,7 @@ import type {
   PersonalProgress,
   ProgressResponse,
 } from '@/types/progress';
+import { ApiErrorResponse } from '@/types/common';
 
 const EMPTY_OVERALL_PROGRESS: OverallProgress = {
   targetAmount: 0,
@@ -24,9 +26,13 @@ const EMPTY_PERSONAL_PROGRESS: PersonalProgress = {
 
 export const useProgressStore = defineStore('progress', () => {
   const progress = ref<ProgressResponse | null>(null);
+  const monthlyProgress = ref<MonthlyProgressResponse | null>(null);
+
   const loading = ref(false);
   const completingGoalItemId = ref<number | null>(null);
+
   const error = ref<unknown>(null);
+  const unavailableReason = ref<'NO_COUPLE' | 'NO_GOAL' | null>(null);
 
   const overallProgress = computed<OverallProgress>(
     () => progress.value?.overall ?? EMPTY_OVERALL_PROGRESS
@@ -36,8 +42,6 @@ export const useProgressStore = defineStore('progress', () => {
     () => progress.value?.personal ?? EMPTY_PERSONAL_PROGRESS
   );
 
-  const monthlyProgress = ref<MonthlyProgressResponse | null>(null);
-
   async function fetchProgress() {
     loading.value = true;
 
@@ -45,8 +49,21 @@ export const useProgressStore = defineStore('progress', () => {
       const data = await getProgress();
       progress.value = data;
     } catch (err) {
-      console.error('진행 현황 조회 실패: ', err);
-      error.value = err;
+      if (axios.isAxiosError<ApiErrorResponse>(err)) {
+        if (err.response?.status === 404) {
+          const message = err.response.data.message;
+
+          if (message === '활성 결혼 목표를 찾을 수 없습니다.') {
+            unavailableReason.value = 'NO_GOAL';
+          } else if (message === '연결된 커플을 찾을 수 없습니다.') {
+            unavailableReason.value = 'NO_COUPLE';
+          }
+        } else {
+          error.value = err.message;
+        }
+      } else {
+        error.value = '진행 현황을 불러오지 못했습니다.';
+      }
     } finally {
       loading.value = false;
     }
@@ -59,8 +76,21 @@ export const useProgressStore = defineStore('progress', () => {
       const data = await getMonthlyProgress();
       monthlyProgress.value = data;
     } catch (err) {
-      console.error('월별 예산 달성 현황 조회 실패: ', err);
-      error.value = err;
+      if (axios.isAxiosError<ApiErrorResponse>(err)) {
+        if (err.response?.status === 404) {
+          const message = err.response.data.message;
+
+          if (message === '활성 결혼 목표를 찾을 수 없습니다.') {
+            unavailableReason.value = 'NO_GOAL';
+          } else if (message === '연결된 커플을 찾을 수 없습니다.') {
+            unavailableReason.value = 'NO_COUPLE';
+          }
+        } else {
+          error.value = err.message;
+        }
+      } else {
+        error.value = '월별 예산 달성 현황을 불러오지 못했습니다.';
+      }
     } finally {
       loading.value = false;
     }
@@ -100,6 +130,7 @@ export const useProgressStore = defineStore('progress', () => {
   return {
     loading,
     error,
+    unavailableReason,
     overallProgress,
     personalProgress,
     monthlyProgress,
