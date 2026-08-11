@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
+defineProps({
+  returnTo: {
+    type: String,
+    default: '/signup',
+  },
+});
+
 // 백엔드 회원가입 요청에 전달할 약관 동의 상태다.
 const serviceAgreed = defineModel<boolean>('serviceTermsAgreed', { default: false });
 const privacyAgreed = defineModel<boolean>('privacyTermsAgreed', { default: false });
@@ -12,7 +19,10 @@ const financeAgreed = ref(false);
 // 전체 동의 선택 시 모든 약관을 같은 값으로 변경하고, 개별 상태도 전체 동의에 반영한다.
 const allAgreed = computed<boolean>({
   get: () =>
-    serviceAgreed.value && privacyAgreed.value && marketingAgreed.value && financeAgreed.value,
+    serviceAgreed.value &&
+    privacyAgreed.value &&
+    marketingAgreed.value &&
+    financeAgreed.value,
   set: (checked) => {
     serviceAgreed.value = checked;
     privacyAgreed.value = checked;
@@ -72,7 +82,7 @@ const allAgreed = computed<boolean>({
       </label>
       <RouterLink
         class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
-        to="/signup/terms/service"
+        :to="{ path: '/signup/terms/service', query: { returnTo } }"
         aria-label="이용약관 전문 보기"
       >
         보기
@@ -109,7 +119,7 @@ const allAgreed = computed<boolean>({
       </label>
       <RouterLink
         class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
-        to="/signup/terms/privacy"
+        :to="{ path: '/signup/terms/privacy', query: { returnTo } }"
         aria-label="개인정보 처리방침 전문 보기"
       >
         보기
@@ -169,7 +179,7 @@ const allAgreed = computed<boolean>({
       </label>
       <RouterLink
         class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
-        to="/signup/terms/finance"
+        :to="{ path: '/signup/terms/finance', query: { returnTo } }"
         aria-label="금융정보 연동 약관 전문 보기"
       >
         보기

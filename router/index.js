@@ -5,6 +5,8 @@ import { authTermRoutes } from '@/router/routes/authTermRoutes';
 import AccountConnectView from '@/views/AccountConnectView.vue';
 import AccountHelpView from '@/views/auth/AccountHelpView.vue';
 import AuthSessionView from '@/views/auth/AuthSessionView.vue';
+import KakaoCallbackView from '@/views/auth/KakaoCallbackView.vue';
+import KakaoSignupView from '@/views/auth/KakaoSignupView.vue';
 import LoginView from '@/views/auth/LoginView.vue';
 import SignupView from '@/views/auth/SignupView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
@@ -86,6 +88,8 @@ const router = createRouter({
     ...authTermRoutes,
     { path: '/account-help', name: 'account-help', component: AccountHelpView },
     { path: '/auth/session', name: 'session', component: AuthSessionView },
+    { path: '/auth/kakao/callback', name: 'kakao-callback', component: KakaoCallbackView },
+    { path: '/auth/kakao/signup', name: 'kakao-signup', component: KakaoSignupView },
     { path: '/onboarding', name: 'onboarding', component: OnboardingView },
     { path: '/:pathMatch(.*)*', redirect: '/login' },
   ],

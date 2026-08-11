@@ -5,7 +5,7 @@ export interface LoginRequestDto {
 
 export interface LoginUserResponseDto {
   userId: number;
-  phone: string;
+  phone: string | null;
   name: string;
   role: string;
   profileImage: string | null;
@@ -38,4 +38,25 @@ export interface SignupResponseDto {
   provider: string;
   profileImage: string | null;
   createdAt: string;
+}
+
+export interface KakaoLoginRequestDto {
+  code: string;
+}
+
+export interface KakaoLoginResponseDto {
+  signupRequired: boolean;
+  signupToken: string | null;
+  accessToken: string | null;
+  user: LoginUserResponseDto | null;
+  name: string | null;
+  profileImage: string | null;
+}
+
+export interface KakaoSignupRequestDto {
+  signupToken: string;
+  role: SignupRoleDto;
+  serviceTermsAgreed: boolean;
+  privacyTermsAgreed: boolean;
+  marketingTermsAgreed: boolean;
 }

@@ -3,7 +3,13 @@ import axios from 'axios';
 export const ACCESS_TOKEN_KEY = 'accessToken';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api';
 const LOGIN_ROUTE_NAME = 'login';
-const PUBLIC_API_PATHS = new Set(['/auth/login', '/auth/signup', '/auth/refresh']);
+const PUBLIC_API_PATHS = new Set([
+  '/auth/login',
+  '/auth/signup',
+  '/auth/kakao/login',
+  '/auth/kakao/signup',
+  '/auth/refresh',
+]);
 
 let refreshRequest = null;
 
