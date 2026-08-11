@@ -48,6 +48,11 @@ export const getMyPageCoupleStatus = async () => {
   return data.data;
 };
 
+export const getMyPageInviteCode = async () => {
+  const { data } = await api.get<ApiResponse<string>>('/users/invite');
+  return data.data;
+};
+
 export const inviteMyPageCouple = async (inviteCode: string) => {
   const request: MyPageCoupleInviteRequestDto = { inviteCode };
   const { data } = await api.post<ApiResponse<MyPageCouplePartnerResponseDto>>(

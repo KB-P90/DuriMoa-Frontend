@@ -2,10 +2,10 @@ import type { OnboardingScreen } from '@/types/onboarding';
 
 // 계좌 연결 화면에서 선택할 수 있는 은행과 API 전달값이다.
 export const ONBOARDING_BANK_OPTIONS = [
-  { bankCode: '004', company: '국민', label: '국민은행' },
-  { bankCode: '088', company: '신한', label: '신한은행' },
-  { bankCode: '081', company: '하나', label: '하나은행' },
-  { bankCode: '020', company: '우리', label: '우리은행' },
+  { bankCode: '0004', company: '국민은행', label: '국민은행' },
+  { bankCode: '0088', company: '신한은행', label: '신한은행' },
+  { bankCode: '0081', company: 'KEB하나은행', label: '하나은행' },
+  { bankCode: '0020', company: '우리은행', label: '우리은행' },
 ] as const;
 
 // URL에서 사용할 수 있는 온보딩 화면 이름이다.
@@ -60,6 +60,8 @@ export const ONBOARDING_COUPLE_MESSAGES = {
 // 온보딩 API 요청 실패 시 사용할 기본 안내 문구다.
 export const ONBOARDING_API_ERROR_MESSAGES = {
   ACCOUNT_CONNECTION: '계좌를 불러오지 못했어요. 입력 정보를 확인하고 다시 시도해주세요.',
+  ACCOUNT_CREDENTIALS_REQUIRED:
+    '처음 연결하거나 새 은행을 추가하려면 인터넷뱅킹 아이디와 비밀번호를 입력해주세요.',
   ACCOUNT_SELECTION: '사용할 계좌를 저장하지 못했어요. 다시 시도해주세요.',
   COUPLE_ACCEPT: '연결 요청을 수락하지 못했어요. 다시 시도해주세요.',
   COUPLE_INVITE: '초대 코드를 확인하지 못했어요. 다시 시도해주세요.',
