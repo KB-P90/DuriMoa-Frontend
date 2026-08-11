@@ -33,7 +33,7 @@ const progressBarWidth = computed(() =>
 <template>
   <section class="rounded-2xl bg-pink-01 p-4">
     <div class="flex items-start justify-between">
-      <p class="text-base font-semibold">공동 예산 달성률</p>
+      <p class="text-base font-bold">공동 예산 달성률</p>
       <p class="text-xl font-bold text-brand">{{ progressRateLabel }}%</p>
     </div>
 
