@@ -49,7 +49,7 @@ const activeTab = ref('overall');
         </button>
       </nav>
 
-      <div class="pt-4">
+      <div class="pt-5">
         <OverallProgress v-if="activeTab === 'overall'" />
         <PersonalProgress v-if="activeTab === 'personal'" />
       </div>

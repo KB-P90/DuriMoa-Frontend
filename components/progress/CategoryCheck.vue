@@ -4,14 +4,7 @@ import { computed } from 'vue';
 import { useProgressStore } from '@/stores/progressStore';
 import type { CategoryProgress } from '@/types/progress';
 
-const WEDDING_CATEGORY_NAMES = [
-  '예식장',
-  '스튜디오',
-  '드레스',
-  '메이크업',
-  '예물',
-  '예비비',
-] as const;
+const WEDDING_CATEGORY_NAMES = ['예식장', '스튜디오', '드레스', '메이크업', '예비비'] as const;
 
 interface ChecklistItem extends CategoryProgress {
   key: string;

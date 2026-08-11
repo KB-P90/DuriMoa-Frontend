@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import { getProgress } from '@/server/progressApi';
+import { getMonthlyProgress, getProgress } from '@/server/progressApi';
 import type {
-  MonthlyProgress,
+  MonthlyProgressResponse,
   OverallProgress,
   PersonalProgress,
   ProgressResponse,
@@ -22,11 +22,6 @@ const EMPTY_PERSONAL_PROGRESS: PersonalProgress = {
   members: [],
 };
 
-const EMPTY_MONTHLY_PROGRESS: MonthlyProgress = {
-  overallProgressRate: 0,
-  months: [],
-};
-
 export const useProgressStore = defineStore('progress', () => {
   const progress = ref<ProgressResponse | null>(null);
   const loading = ref(false);
@@ -40,11 +35,7 @@ export const useProgressStore = defineStore('progress', () => {
     () => progress.value?.personal ?? EMPTY_PERSONAL_PROGRESS
   );
 
-  const monthlyProgress = computed<MonthlyProgress>(
-    () => progress.value?.monthlyProgress ?? EMPTY_MONTHLY_PROGRESS
-  );
-
-  const isLoaded = computed(() => progress.value !== null);
+  const monthlyProgress = ref<MonthlyProgressResponse | null>(null);
 
   async function fetchProgress() {
     loading.value = true;
@@ -54,6 +45,20 @@ export const useProgressStore = defineStore('progress', () => {
       progress.value = data;
     } catch (err) {
       console.error('진행 현황 조회 실패: ', err);
+      error.value = err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchMonthlyProgress() {
+    loading.value = true;
+
+    try {
+      const data = await getMonthlyProgress();
+      monthlyProgress.value = data;
+    } catch (err) {
+      console.error('월별 예산 달성 현황 조회 실패: ', err);
       error.value = err;
     } finally {
       loading.value = false;
@@ -71,8 +76,8 @@ export const useProgressStore = defineStore('progress', () => {
     overallProgress,
     personalProgress,
     monthlyProgress,
-    isLoaded,
     fetchProgress,
+    fetchMonthlyProgress,
     reset,
   };
 });
