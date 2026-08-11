@@ -18,9 +18,10 @@ export const getMonthlyProgress = async () => {
   return data.data;
 };
 
-export const patchProgressCompletion = async (goalItemId: number) => {
+export const patchProgressCompletion = async (goalItemId: number, completed: boolean) => {
   const { data } = await api.patch<ApiResponse<ProgressCompletionResponse>>(
-    `/progress/items/${goalItemId}/completion`
+    `/progress/items/${goalItemId}/completion`,
+    { completed }
   );
 
   return data.data;

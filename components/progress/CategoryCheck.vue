@@ -31,34 +31,46 @@ const checklistItems = computed<ChecklistItem[]>(() =>
     };
   })
 );
+
+async function handleToggleCompletion(item: ChecklistItem) {
+  if (item.targetAmount === 0 || progressStore.completingGoalItemId === item.goalItemId) return;
+
+  await progressStore.toggleProgressCompletion(item.goalItemId, !item.completed);
+}
 </script>
 
 <template>
   <section class="flex flex-col gap-3">
     <div class="flex items-center justify-between px-1">
-      <h2 class="text-lg font-bold">카테고리별 계약 체크리스트</h2>
+      <h2 class="text-lg font-bold">카테고리별 현황 및 체크리스트</h2>
       <span
         class="rounded-full bg-dm-mint-light px-3 py-1 text-xs font-semibold text-dm-mint-darker"
       >
         {{ overallProgress.completedItemCount }} / {{ overallProgress.totalItemCount }} 완료
       </span>
     </div>
+    <p class="text-sm text-dm-gray-dark px-2">
+      모든 계약이 완료된 카테고리를 체크해 진행 상황을 확인하세요.
+    </p>
 
     <div class="overflow-hidden rounded-3xl border border-dm-mint-dark bg-white">
       <div
         v-for="item in checklistItems"
         :key="item.key"
         class="flex items-center gap-3 border-b border-dm-gray-light p-4 last:border-b-0"
-        :class="item.targetAmount == 0 ? 'bg-dm-gray-light text-dm-gray' : ''"
+        :class="{
+          'bg-dm-gray-light text-dm-gray': item.targetAmount === 0,
+          'bg-dm-mint-light': item.targetAmount !== 0 && item.completed,
+        }"
       >
         <div
           class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md"
           :class="{
             'border-2': item.targetAmount == 0,
             'bg-dm-mint-darker': item.targetAmount != 0 && item.completed,
-            'border-2 border-dm-mint-dark cursor-pointer':
-              item.targetAmount != 0 && !item.completed,
+            'border-2 border-dm-mint-darker cursor-pointer': item.targetAmount != 0,
           }"
+          @click="handleToggleCompletion(item)"
         >
           <svg
             v-if="item.completed"
@@ -77,7 +89,12 @@ const checklistItems = computed<ChecklistItem[]>(() =>
         </div>
 
         <div class="ml-3 flex-1">
-          <p class="text-sm font-semibold">{{ item.category }}</p>
+          <p
+            class="text-sm font-semibold"
+            :class="item.completed ? 'line-through text-dm-gray-dark' : ''"
+          >
+            {{ item.category }}
+          </p>
           <p
             v-if="item.targetAmount != 0"
             class="mt-0.5 text-sm text-dm-gray-dark"

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
-import { getMonthlyProgress, getProgress } from '@/server/progressApi';
+import { getMonthlyProgress, getProgress, patchProgressCompletion } from '@/server/progressApi';
 import type {
   MonthlyProgressResponse,
   OverallProgress,
@@ -25,6 +25,7 @@ const EMPTY_PERSONAL_PROGRESS: PersonalProgress = {
 export const useProgressStore = defineStore('progress', () => {
   const progress = ref<ProgressResponse | null>(null);
   const loading = ref(false);
+  const completingGoalItemId = ref<number | null>(null);
   const error = ref<unknown>(null);
 
   const overallProgress = computed<OverallProgress>(
@@ -65,6 +66,32 @@ export const useProgressStore = defineStore('progress', () => {
     }
   }
 
+  async function toggleProgressCompletion(goalItemId: number, completed: boolean) {
+    completingGoalItemId.value = goalItemId;
+
+    try {
+      const data = await patchProgressCompletion(goalItemId, completed);
+
+      if (!progress.value?.overall) return;
+
+      const item = progress.value.overall.items.find((item) => item.goalItemId === data.goalItemId);
+
+      if (item) {
+        item.completed = data.completed;
+      }
+
+      progress.value.overall.completedItemCount = data.completedItemCount;
+      progress.value.overall.totalItemCount = data.totalItemCount;
+
+      return data;
+    } catch (err) {
+      console.error('계약 완료 상태 변경 실패: ', err);
+      error.value = err;
+    } finally {
+      completingGoalItemId.value = null;
+    }
+  }
+
   function reset() {
     progress.value = null;
     error.value = null;
@@ -78,6 +105,8 @@ export const useProgressStore = defineStore('progress', () => {
     monthlyProgress,
     fetchProgress,
     fetchMonthlyProgress,
+    completingGoalItemId,
+    toggleProgressCompletion,
     reset,
   };
 });
