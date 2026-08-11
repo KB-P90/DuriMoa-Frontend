@@ -52,11 +52,10 @@ const NATIONAL_AVERAGE: Record<BudgetTypeCode, number> = {
 const CURRENT_ASSET = 3119;
 const AVAILABLE_MONTHLY = 180;
 
-// 예식장 / 스튜디오·드레스·메이크업 / 예물 / 예비비 4개 그룹으로 묶어서 예산 비중 막대를 그린다.
+// 예식장 / 스튜디오·드레스·메이크업 / 예비비 3개 그룹으로 묶어서 예산 비중 막대를 그린다.
 const CATEGORY_BUDGET_GROUPS: { codes: GoalCategoryCode[]; colorClass: string }[] = [
   { codes: ['venue'], colorClass: 'bg-pink-03' },
   { codes: ['studio', 'dress', 'makeup'], colorClass: 'bg-brand-dark' },
-  { codes: ['jewelry'], colorClass: 'bg-brand' },
   { codes: ['reserve'], colorClass: 'bg-pink-04' },
 ];
 
@@ -206,7 +205,8 @@ async function handleShare() {
   try {
     await goalStore.submitGoal(categoryTypeLabels);
     toast.success(isEditing.value ? '시안을 수정했어요.' : '예산 시안을 저장했어요.');
-    router.push({ name: isEditing.value ? 'goal-list' : 'home' });
+    goalStore.reset();
+    router.push({ name: 'goal-list' });
   } catch {
     toast.error('저장에 실패했어요. 다시 시도해주세요.');
   } finally {
