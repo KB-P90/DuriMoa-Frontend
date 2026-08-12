@@ -1,10 +1,8 @@
 import { defineStore } from 'pinia';
 import {
-  getMyPageAssetSummary,
   getMyPageProfile,
   updateMyPageProfile,
   updateMyPageShare,
-  uploadMyPageProfileImage,
 } from '@/server/myPageApi';
 import { logoutAuth } from '@/server/authApi';
 import { ACCESS_TOKEN_KEY } from '@/server/axios.js';
@@ -45,7 +43,6 @@ export const useMyPageStore = defineStore('myPage', {
     isLoading: false,
     isSavingProfile: false,
     isUpdatingShare: false,
-    isUploadingImage: false,
     lastErrorMessage: '',
   }),
   actions: {
@@ -54,20 +51,8 @@ export const useMyPageStore = defineStore('myPage', {
       this.lastErrorMessage = '';
 
       try {
-        const [profileDto, assetSummaryDto] = await Promise.all([
-          getMyPageProfile(),
-          getMyPageAssetSummary().catch(() => ({
-            summary: {
-              accountCount: MOCK_ASSET_SUMMARY.connectedAccountsCount,
-              cardCount: MOCK_ASSET_SUMMARY.connectedCardsCount,
-            },
-          })),
-        ]);
-
-        this.myPage = toMyPage(profileDto, {
-          connectedAccountsCount: assetSummaryDto.summary.accountCount,
-          connectedCardsCount: assetSummaryDto.summary.cardCount,
-        });
+        const profileDto = await getMyPageProfile();
+        this.myPage = toMyPage(profileDto);
       } catch {
         this.myPage = MOCK_MY_PAGE;
         this.lastErrorMessage = '마이페이지 정보를 불러오지 못해 임시 데이터를 표시하고 있어요.';
@@ -75,20 +60,26 @@ export const useMyPageStore = defineStore('myPage', {
         this.isLoading = false;
       }
     },
-    async saveProfile(form: MyPageProfileForm) {
+    async saveProfile(form: MyPageProfileForm, imageFile: File | null = null) {
       this.isSavingProfile = true;
       this.lastErrorMessage = '';
 
       try {
-        const updatedProfile = await updateMyPageProfile({
-          id: this.myPage.user.id,
-          name: form.name,
-          role: form.role === 'GROOM' ? 'G' : 'B',
-          phone: form.phoneNumber,
-          ...(form.newPassword ? { password: form.newPassword } : {}),
-        });
+        const formData = new FormData();
+        formData.append('id', String(this.myPage.user.id));
+        formData.append('name', form.name);
+        formData.append('role', form.role === 'GROOM' ? 'G' : 'B');
+        formData.append('phone', form.phoneNumber);
+        if (form.newPassword) {
+          formData.append('password', form.newPassword);
+        }
+        if (imageFile) {
+          formData.append('profileImage', imageFile);
+        }
 
-        this.myPage = toMyPage(updatedProfile, this.myPage.assetSummary);
+        const updatedProfile = await updateMyPageProfile(formData);
+
+        this.myPage = toMyPage(updatedProfile);
         return true;
       } catch {
         this.myPage = {
@@ -133,30 +124,6 @@ export const useMyPageStore = defineStore('myPage', {
         this.lastErrorMessage = '공유범위 API 연결 전이라 화면에만 임시 반영했어요.';
       } finally {
         this.isUpdatingShare = false;
-      }
-    },
-    async uploadProfileImage(file: File) {
-      this.isUploadingImage = true;
-      this.lastErrorMessage = '';
-
-      const previewUrl = URL.createObjectURL(file);
-      this.myPage = {
-        ...this.myPage,
-        user: {
-          ...this.myPage.user,
-          profileImage: previewUrl,
-        },
-      };
-
-      try {
-        const formData = new FormData();
-        formData.append('image', file);
-        const response = await uploadMyPageProfileImage(formData);
-        this.myPage.user.profileImage = response.profileImage;
-      } catch {
-        this.lastErrorMessage = '이미지 업로드 API 연결 전이라 미리보기만 표시하고 있어요.';
-      } finally {
-        this.isUploadingImage = false;
       }
     },
     async logout() {

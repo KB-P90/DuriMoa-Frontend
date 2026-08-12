@@ -73,7 +73,7 @@ const emit = defineEmits<{
 
       <section class="mt-5">
         <div class="mb-3 flex items-center justify-between">
-          <h2 class="text-base font-semibold text-gray-800">{{ selectedDateLabel }}</h2>
+          <h2 class="text-base font-bold text-gray-800">{{ selectedDateLabel }}</h2>
           <div class="flex items-center gap-2">
             <span class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-dm-gray-dark">
               {{ isLoading ? '조회 중' : `${transactions.length}건` }}

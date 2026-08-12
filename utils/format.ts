@@ -45,3 +45,9 @@ export function formatRelativeTime(dateTime: string): string {
 
   return `${Math.floor(diffDays / 365)}년 전`;
 }
+
+// 'YYYY-MM-DD HH:mm:ss' 형식의 날짜를 '오전 12:16' 같은 시각으로 표시합니다.
+export function formatClockTime(dateTime: string): string {
+  const target = new Date(dateTime.includes('T') ? dateTime : dateTime.replace(' ', 'T'));
+  return new Intl.DateTimeFormat('ko-KR', { hour: 'numeric', minute: '2-digit' }).format(target);
+}

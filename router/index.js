@@ -27,6 +27,7 @@ import ProfileEditView from '@/views/ProfileEditView.vue';
 import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
 import ProgressView from '@/views/progress/ProgressView.vue';
 import MonthlyProgressView from '@/views/progress/MonthlyProgressView.vue';
+import MainView from '@/views/MainView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,8 +36,7 @@ const router = createRouter({
       path: '/',
       component: MainLayout,
       children: [
-        { path: '', redirect: { name: 'home' } },
-        { path: 'home', name: 'home', component: HomeView },
+        { path: '', name: 'home', component: MainView },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         {
           path: 'progress',

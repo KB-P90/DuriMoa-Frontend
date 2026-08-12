@@ -30,6 +30,11 @@ export interface PersonalProgress {
   members: MemberProgress[];
 }
 
+export interface ProgressResponse {
+  overall: OverallProgress;
+  personal: PersonalProgress;
+}
+
 export interface MonthlyProgressItem {
   yearMonth: string;
   expenseAmount: number;
@@ -37,13 +42,14 @@ export interface MonthlyProgressItem {
   progressRate: number;
 }
 
-export interface MonthlyProgress {
+export interface MonthlyProgressResponse {
   overallProgressRate: number;
   months: MonthlyProgressItem[];
 }
 
-export interface ProgressResponse {
-  overall: OverallProgress;
-  personal: PersonalProgress;
-  monthlyProgress: MonthlyProgress;
+export interface ProgressCompletionResponse {
+  goalItemId: number;
+  completed: boolean;
+  completedItemCount: number;
+  totalItemCount: number;
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Home, Calendar, PieChart, CreditCard } from '@lucide/vue';
+import { Home, Calendar, PieChart, User } from '@lucide/vue';
 
 defineProps<{
   active: string;
@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { key: 'home', label: '홈', icon: Home },
   { key: 'calendar', label: '캘린더', icon: Calendar },
   { key: 'progress', label: '현황', icon: PieChart },
-  { key: 'card', label: '카드추천', icon: CreditCard },
+  { key: 'myinfo', label: '마이', icon: User },
 ] as const;
 </script>
 
