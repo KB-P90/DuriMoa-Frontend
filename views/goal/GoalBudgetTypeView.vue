@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 
 import GoalStepHeader from '@/components/goal/GoalStepHeader.vue';
 import GoalStepNav from '@/components/goal/GoalStepNav.vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
 import { useAuthCheck } from '@/composables/useAuthCheck';
@@ -68,7 +69,8 @@ function handlePrev() {
 </script>
 
 <template>
-  <div class="p-4">
+  <PageHeader title="결혼 목표 설정" />
+  <div class="p-4 pb-[calc(6rem+env(safe-area-inset-bottom))]">
     <GoalStepHeader
       step="2/8"
       title="유형별 평균 예산을 보여드려요"
