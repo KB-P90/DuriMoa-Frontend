@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import OverallProgress from '../../components/progress/OverallProgress.vue';
 import PersonalProgress from '../../components/progress/PersonalProgress.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
+import CoupleConnectionRequired from '@/components/common/CoupleConnectionRequired.vue';
 import { useProgressStore } from '@/stores/progressStore';
 import { useAuthCheck } from '@/composables/useAuthCheck.js';
 
@@ -27,7 +28,18 @@ const activeTab = ref('overall');
   <div class="whitespace-nowrap">
     <PageHeader title="목표 달성 현황" />
 
-    <div class="p-4">
+    <CoupleConnectionRequired v-if="progressStore.unavailableReason === 'NO_COUPLE'" />
+    <CoupleConnectionRequired
+      v-else-if="progressStore.unavailableReason === 'NO_GOAL'"
+      :message="'메인 시안을 설정하면'"
+      :route-name="'goal-list'"
+      :button-message="'설정하러 가기'"
+    />
+
+    <div
+      v-else
+      class="p-4"
+    >
       <nav
         class="flex border-b border-dm-gray"
         role="tablist"
@@ -49,7 +61,7 @@ const activeTab = ref('overall');
         </button>
       </nav>
 
-      <div class="pt-4">
+      <div class="pt-5">
         <OverallProgress v-if="activeTab === 'overall'" />
         <PersonalProgress v-if="activeTab === 'personal'" />
       </div>

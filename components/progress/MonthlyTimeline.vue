@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
 import { Check } from 'lucide-vue-next';
 import { useProgressStore } from '@/stores/progressStore';
 
 const progressStore = useProgressStore();
 
-const months = computed(() => progressStore.monthlyProgress.months);
-
-// 페이지 진입 시 현황 데이터 로드
-onMounted(() => {
-  if (!progressStore.isLoaded) {
-    progressStore.fetchProgress();
-  }
-});
+const months = computed(() => progressStore.monthlyProgress?.months ?? []);
 </script>
 
 <template>
