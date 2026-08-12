@@ -24,7 +24,6 @@ defineEmits<{
   <div
     class="fixed inset-x-0 bottom-0 z-40 mx-auto flex w-full max-w-[768px] gap-2 border-t border-dm-gray/15 bg-white px-4 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))]"
   >
-    ㅇ
     <Button
       v-if="showPrev"
       type="button"
