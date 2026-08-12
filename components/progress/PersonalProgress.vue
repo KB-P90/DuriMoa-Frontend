@@ -12,7 +12,7 @@ const members = computed(() => progressStore.personalProgress.members);
 <template>
   <div class="flex flex-col gap-8">
     <section class="overflow-hidden rounded-3xl bg-white border border-brand p-4">
-      <h2 class="mb-4 text-lg font-bold">자산 현황 공유</h2>
+      <h2 class="mb-4 text-base font-bold">자산 현황 공유</h2>
 
       <div
         v-for="member in members"
@@ -26,7 +26,7 @@ const members = computed(() => progressStore.personalProgress.members);
             class="h-9"
           />
 
-          <span class="text-base font-semibold">
+          <span class="text-sm font-semibold">
             {{ member.name }}
           </span>
 
@@ -40,7 +40,7 @@ const members = computed(() => progressStore.personalProgress.members);
 
         <span
           v-if="member.assetShared && member.currentAmount != null"
-          class="text-base font-bold"
+          class="text-sm font-bold"
         >
           {{ Math.round(member.currentAmount / 10000).toLocaleString() }}만원
         </span>
@@ -55,7 +55,7 @@ const members = computed(() => progressStore.personalProgress.members);
     </section>
 
     <section class="overflow-hidden rounded-3xl border border-dm-mint-dark bg-white p-4">
-      <h2 class="mb-4 text-lg font-bold">개인별 달성률</h2>
+      <h2 class="mb-4 text-base font-bold">개인별 달성률</h2>
 
       <div
         v-for="member in members"
@@ -71,7 +71,7 @@ const members = computed(() => progressStore.personalProgress.members);
               class="h-9"
             />
 
-            <span class="text-base font-semibold">
+            <span class="text-sm font-semibold">
               {{ member.name }}
             </span>
           </div>
