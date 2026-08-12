@@ -32,7 +32,7 @@ const { canSend, draft, isOpen, openChat, sendMessage, updateOpen } = useAiChat(
 
 <template>
   <div
-    class="pointer-events-none fixed inset-x-0 bottom-[calc(7rem+env(safe-area-inset-bottom))] z-[70] mx-auto h-16 w-full max-w-[768px]"
+    class="pointer-events-none fixed inset-x-0 bottom-[calc(7rem+env(safe-area-inset-bottom))] z-[70] mx-auto h-20 w-full max-w-[768px]"
   >
     <button
       type="button"
@@ -40,7 +40,7 @@ const { canSend, draft, isOpen, openChat, sendMessage, updateOpen } = useAiChat(
       aria-haspopup="dialog"
       :aria-expanded="isOpen"
       title="AI 채팅 열기"
-      class="group pointer-events-auto absolute bottom-0 right-[max(1.5rem,env(safe-area-inset-right))] grid h-16 w-16 cursor-pointer select-none place-items-center overflow-hidden rounded-full bg-brand text-white shadow-xl ring-2 ring-white transition-[background-color,box-shadow,transform] hover:bg-brand-dark hover:shadow-2xl active:scale-95 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand/35"
+      class="group pointer-events-auto absolute bottom-0 right-[max(1.25rem,env(safe-area-inset-right))] grid h-20 w-20 cursor-pointer select-none place-items-center rounded-full bg-transparent text-white transition-[filter,transform] hover:drop-shadow-[0_8px_12px_rgb(234_48_111_/_0.3)] active:scale-95 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand/35"
       @click="openChat"
     >
       <img
@@ -49,7 +49,7 @@ const { canSend, draft, isOpen, openChat, sendMessage, updateOpen } = useAiChat(
         alt=""
         aria-hidden="true"
         draggable="false"
-        class="h-full w-full object-cover object-top transition duration-200 group-hover:scale-105 group-hover:brightness-95"
+        class="h-full w-full object-contain transition duration-200 group-hover:scale-105"
       />
       <MessageCircleMore
         v-else

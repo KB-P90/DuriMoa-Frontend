@@ -44,7 +44,7 @@ function handleComposerKeydown(event: KeyboardEvent) {
       />
 
       <DialogContent
-        class="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[90] mx-auto flex h-[36rem] max-h-[calc(100dvh-1.5rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] max-w-[25rem] flex-col overflow-hidden rounded-3xl border border-dm-gray/30 bg-white shadow-2xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-bottom-4 sm:left-auto sm:right-[max(1rem,env(safe-area-inset-right))] sm:mx-0"
+        class="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] top-[max(0.75rem,env(safe-area-inset-top))] z-[90] mx-auto flex max-w-[46.5rem] flex-col overflow-hidden rounded-3xl border border-dm-gray/30 bg-white shadow-2xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:animate-in data-[state=open]:fade-in data-[state=open]:slide-in-from-bottom-4"
       >
         <header class="flex shrink-0 items-center gap-3 border-b border-dm-gray/25 px-4 py-3.5">
           <span

@@ -21,7 +21,7 @@ const isAiChatVisible = computed(() => {
     <RouterView />
     <AiChatFloatingWidget
       v-if="isAiChatVisible"
-      button-image-src="/characters/ai-chat-neon.png?v=1"
+      button-image-src="/characters/ai.png?v=1"
     />
     <Toaster position="top-center" />
   </ConfigProvider>
