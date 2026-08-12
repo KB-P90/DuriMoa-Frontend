@@ -43,7 +43,7 @@ const checklistItems = computed<ChecklistItem[]>(() =>
 <template>
   <section class="flex flex-col gap-3">
     <div class="flex items-center justify-between px-1">
-      <h2 class="text-lg font-bold">카테고리별 계약 체크리스트</h2>
+      <h2 class="text-base font-bold">카테고리별 계약 체크리스트</h2>
       <span
         class="rounded-full bg-dm-mint-light px-3 py-1 text-xs font-semibold text-dm-mint-darker"
       >

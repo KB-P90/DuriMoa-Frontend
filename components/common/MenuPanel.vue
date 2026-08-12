@@ -39,9 +39,7 @@ const notifications = ref([
 </script>
 
 <template>
-  <section
-    class="absolute inset-0 z-[60] bg-gray-100 text-[#292934]"
-  >
+  <section class="absolute inset-0 z-[60] bg-gray-100 text-[#292934]">
     <div
       class="h-[553px] overflow-hidden rounded-b-[30px] bg-white shadow-[0_16px_44px_-18px_rgba(60,40,38,0.2),0_0_0_1px_rgba(60,40,38,0.07)]"
     >

@@ -16,6 +16,7 @@ export default {
         'pink-03': '#ffbed4',
         'pink-04': '#ff9ebf',
         'pink-05': '#ff5d94',
+        'pink-06': '#ff4f8b',
         brand: '#ff4081',
         'brand-dark': '#ea306f',
         red: '#f33f46',
@@ -38,7 +39,8 @@ export default {
         },
         'btn-mt': {
           DEFAULT: '#EBF7F7',
-          dark: '#2CAEAA',
+          dark: '#1f716e',
+          darker: '#227f7c',
         },
         'dm-gray': {
           light: '#F7F7FA',

@@ -28,13 +28,6 @@ export const GOAL_CATEGORIES = [
     tip: '리허설 메이크업은 별도 비용이에요',
   },
   {
-    code: 'jewelry',
-    label: '예물',
-    icon: '💍',
-    description: '결혼반지 및 예물',
-    tip: '커플링 각인은 추가 비용이 생길 수 있어요',
-  },
-  {
     code: 'reserve',
     label: '예비비',
     icon: '💰',

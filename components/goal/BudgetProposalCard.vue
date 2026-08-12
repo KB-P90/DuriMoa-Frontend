@@ -26,6 +26,9 @@ const STATUS_META: Record<
     cardBorderClass: string;
     cardHoverClass: string;
     amountClass: string;
+    cardClass: string;
+    textClass: string;
+    subTextClass: string;
     // 카드 hover 시 제목/날짜/금액 텍스트가 흰색으로 반전될지 여부. general은 hover 배경이
     // 옅은 색이라 반전시키면 안 보이므로 텍스트 색을 그대로 둔다.
     textHoverClass: string;
@@ -34,41 +37,53 @@ const STATUS_META: Record<
   main: {
     label: '메인 시안',
     icon: Heart,
-    badgeClass: 'bg-brand text-white',
-    badgeHoverClass: 'group-hover:bg-white group-hover:text-brand',
-    cardBorderClass: 'bg-pink-01/50',
-    cardHoverClass: 'hover:bg-pink-01 hover:bg-brand',
-    amountClass: 'text-brand',
+    badgeClass: 'bg-white/30 text-white',
+    badgeHoverClass: '',
+    textClass: 'text-white',
+    subTextClass: 'text-white/80',
+    cardClass: 'bg-brand-dark',
+    cardBorderClass: '',
+    cardHoverClass: 'hover:bg-brand/80',
+    amountClass: 'text-white',
     textHoverClass: 'group-hover:text-white',
   },
   pending: {
     label: '수락 대기',
     icon: Hourglass,
-    badgeClass: 'bg-dm-mint-dark text-white',
-    badgeHoverClass: 'group-hover:bg-white group-hover:text-dm-mint-dark',
+    badgeClass: 'bg-white/30 text-white',
+    badgeHoverClass: '',
     cardBorderClass: 'border-dm-mint-dark/70',
-    cardHoverClass: 'hover:border-dm-mint-dark hover:bg-dm-mint-dark',
-    amountClass: 'text-[#232631]',
+    cardClass: 'bg-dm-mint-darker',
+    cardHoverClass: 'hover:bg-dm-mint-darker/80',
+    amountClass: 'text-white',
+    textClass: 'text-white',
+    subTextClass: 'text-white/80',
     textHoverClass: 'group-hover:text-white',
   },
   general: {
     label: '일반',
     icon: null,
     badgeClass: 'bg-dm-gray-dark text-white',
+    cardClass: 'bg-white',
     badgeHoverClass: '',
     cardBorderClass: 'border-dm-gray/25',
     cardHoverClass: 'hover:border-dm-gray-light hover:bg-dm-gray-light',
     amountClass: 'text-[#232631]',
+    textClass: 'text-[#232631]',
+    subTextClass: 'text-dm-gray-dark',
     textHoverClass: '',
   },
   incoming: {
     label: '수락 요청',
     icon: BellRing,
-    badgeClass: 'bg-brand/15 text-brand-dark',
-    badgeHoverClass: 'group-hover:bg-white group-hover:text-brand-dark',
+    badgeClass: 'bg-white/30 text-brand-dark',
+    badgeHoverClass: 'group-hover:text-white',
     cardBorderClass: 'border-pink-03/50',
+    cardClass: 'bg-pink-03/70',
     cardHoverClass: 'hover:border-pink-03-dark hover:bg-brand-dark',
     amountClass: 'text-[#232631]',
+    textClass: 'text-[#232631]',
+    subTextClass: 'text-dm-gray-dark',
     textHoverClass: 'group-hover:text-white',
   },
 };
@@ -76,9 +91,10 @@ const STATUS_META: Record<
 
 <template>
   <article
-    class="group cursor-pointer rounded-2xl border-2 bg-white p-4 transition-colors"
+    class="group cursor-pointer rounded-2xl border-2 p-4 transition-colors shadow-md"
     :class="[
       STATUS_META[proposal.status].cardBorderClass,
+      STATUS_META[proposal.status].cardClass,
       STATUS_META[proposal.status].cardHoverClass,
     ]"
     @click="$emit('open', proposal.id)"
@@ -101,8 +117,11 @@ const STATUS_META: Record<
 
     <div class="mt-3 flex items-center justify-between gap-3">
       <h3
-        class="text-lg font-bold text-[#232631] transition-colors"
-        :class="STATUS_META[proposal.status].textHoverClass"
+        class="text-lg font-bold transition-colors"
+        :class="[
+          STATUS_META[proposal.status].textClass,
+          STATUS_META[proposal.status].textHoverClass,
+        ]"
       >
         {{ proposal.title }}
       </h3>
@@ -111,7 +130,7 @@ const STATUS_META: Record<
         v-if="proposal.status === 'pending'"
         type="button"
         variant="outline"
-        class="h-8 shrink-0 cursor-pointer rounded-full border-dm-mint-dark/60 px-4 text-xs font-semibold text-dm-mint-darker shadow-none transition-colors hover:border-white hover:bg-white hover:text-dm-mint-dark group-hover:border-white group-hover:bg-white group-hover:text-dm-mint-dark"
+        class="h-8 shrink-0 cursor-pointer rounded-full border-white/60 px-4 text-xs font-semibold text-dm-mint-darker shadow-none transition-colors hover:border-white hover:bg-white hover:text-dm-mint-dark group-hover:border-white group-hover:bg-white group-hover:text-dm-mint-dark"
         @click.stop="$emit('cancel', proposal.id)"
       >
         취소
@@ -128,7 +147,7 @@ const STATUS_META: Record<
       <Button
         v-else-if="proposal.status === 'incoming'"
         type="button"
-        class="h-8 shrink-0 cursor-pointer rounded-full px-4 text-xs font-semibold shadow-none transition-colors hover:bg-white hover:text-brand-dark group-hover:bg-white group-hover:text-brand-dark"
+        class="h-8 shrink-0 cursor-pointer rounded-full bg-white px-4 text-xs font-semibold text-brand-dark shadow-none transition-colors"
         @click.stop="$emit('review', proposal.id)"
       >
         확인하기
@@ -137,8 +156,11 @@ const STATUS_META: Record<
 
     <div class="mt-2 flex items-center justify-between">
       <p
-        class="text-sm text-dm-gray-dark transition-colors"
-        :class="STATUS_META[proposal.status].textHoverClass"
+        class="text-sm transition-colors"
+        :class="[
+          STATUS_META[proposal.status].subTextClass,
+          STATUS_META[proposal.status].textHoverClass,
+        ]"
       >
         생성일 · {{ proposal.createdAt }}
       </p>
@@ -153,8 +175,11 @@ const STATUS_META: Record<
           {{ formatAmount(proposal.amount) }}
         </span>
         <span
-          class="ml-0.5 text-xs font-medium text-dm-gray-dark transition-colors"
-          :class="STATUS_META[proposal.status].textHoverClass"
+          class="ml-0.5 text-xs font-medium transition-colors"
+          :class="[
+            STATUS_META[proposal.status].subTextClass,
+            STATUS_META[proposal.status].textHoverClass,
+          ]"
         >
           만원
         </span>
@@ -163,7 +188,7 @@ const STATUS_META: Record<
 
     <template v-if="proposal.status === 'pending'">
       <Separator class="my-3 transition-colors group-hover:bg-white/40" />
-      <p class="text-sm font-semibold text-dm-mint-darker transition-colors group-hover:text-white">
+      <p class="text-sm font-semibold text-white transition-colors group-hover:text-white">
         상대방의 수락을 기다리고 있어요
       </p>
     </template>

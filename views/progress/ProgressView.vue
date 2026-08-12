@@ -38,7 +38,7 @@ const activeTab = ref('overall');
           role="tab"
           :aria-selected="activeTab === tab.key"
           @click="activeTab = tab.key"
-          class="relative flex-1 cursor-pointer whitespace-nowrap pb-5 text-sm font-semibold"
+          class="relative flex-1 cursor-pointer whitespace-nowrap pb-5 text-base font-bold"
           :class="[
             activeTab === tab.key
               ? `text-brand after:content-[''] after:absolute after:w-full after:left-0 after:-bottom-px after:h-[4px] after:bg-brand`

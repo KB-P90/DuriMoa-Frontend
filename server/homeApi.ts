@@ -7,6 +7,10 @@ import type {
 
 export const getHomeDashboard = async () => {
   const { data } = await api.get<ApiResponse<HomeDashboardResponseDto>>('/home');
+  if (data.success === false) {
+    return null;
+  }
+
   return data.data;
 };
 
