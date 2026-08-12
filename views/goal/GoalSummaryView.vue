@@ -18,6 +18,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
+import PageHeader from '@/components/common/PageHeader.vue';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useGoalStore } from '@/stores/goalStore';
@@ -234,7 +235,8 @@ async function confirmDelete() {
 </script>
 
 <template>
-  <div class="p-4">
+  <PageHeader title="결혼 예상 시안" />
+  <div class="p-4 pb-[calc(9rem+env(safe-area-inset-bottom))]">
     <div class="mt-6 mb-6 text-center">
       <h1 class="text-lg font-extrabold text-[#232631]">
         {{ isEditing ? '예산 시안을 수정하고 있어요' : '예산 시안이 완성됐어요' }}
@@ -394,24 +396,28 @@ async function confirmDelete() {
       지역 평균 출처 · 2025년 결혼 비용 통계 (기준연도 2025 · 갱신 2026.06.30)
     </p>
 
-    <Button
-      type="button"
-      :disabled="submitting"
-      class="mt-6 h-[52px] w-full rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
-      @click="handleShare"
+    <div
+      class="fixed inset-x-0 bottom-0 z-40 mx-auto flex w-full max-w-[768px] flex-col gap-2 border-t border-dm-gray/15 bg-white px-4 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))]"
     >
-      {{ submitLabel }}
-    </Button>
+      <Button
+        type="button"
+        :disabled="submitting"
+        class="h-[52px] w-full rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
+        @click="handleShare"
+      >
+        {{ submitLabel }}
+      </Button>
 
-    <Button
-      v-if="isEditing"
-      type="button"
-      variant="outline"
-      class="mt-3 h-[52px] w-full rounded-xl border-dm-mint-dark/60 bg-dm-mint-dark text-[15px] font-extrabold text-white shadow-none hover:bg-dm-mint-darker hover:text-white"
-      @click="openDeleteDialog"
-    >
-      시안 삭제
-    </Button>
+      <Button
+        v-if="isEditing"
+        type="button"
+        variant="outline"
+        class="h-[52px] w-full rounded-xl border-dm-mint-dark/60 bg-dm-mint-dark text-[15px] font-extrabold text-white shadow-none hover:bg-dm-mint-darker hover:text-white"
+        @click="openDeleteDialog"
+      >
+        시안 삭제
+      </Button>
+    </div>
 
     <AlertDialog v-model:open="deleteDialogOpen">
       <AlertDialogContent>

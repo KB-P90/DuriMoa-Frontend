@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { getGoalCategoryStat } from '@/server/goalApi';
 import GoalCategoryRangeChart from '@/components/goal/GoalCategoryRangeChart.vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -147,17 +148,16 @@ function handleExclude() {
 </script>
 
 <template>
-  <div class="p-4">
+  <PageHeader title="결혼 목표 설정" />
+  <div class="p-4 pb-[calc(9rem+env(safe-area-inset-bottom))]">
     <div class="mb-4 flex items-center justify-between">
-      <p class="text-xs font-bold text-dm-mint-darker">{{ step }}</p>
-      <Button
-        type="button"
-        variant="outline"
-        class="h-7 rounded-full border-dm-gray/40 bg-dm-gray-light px-3 text-[11px] font-bold text-dm-gray-dark shadow-none hover:bg-dm-gray-light"
-        @click="handleExclude"
+      <p class="text-base font-bold text-dm-mint-darker">{{ step }}</p>
+      <button
+        class="text-sm font-semibold text-brand"
+        @click="router.push({ name: 'home' })"
       >
-        이 항목 제외하기
-      </Button>
+        나가기
+      </button>
     </div>
 
     <Tabs
@@ -191,6 +191,7 @@ function handleExclude() {
     >
       <div class="rounded-2xl border border-dm-gray/40 p-4">
         <Tabs
+          v-if="categoryCode !== 'reserve'"
           :model-value="activeBudgetType"
           class="w-full"
           @update:model-value="selectBudgetType($event as BudgetTypeCode)"
@@ -246,12 +247,24 @@ function handleExclude() {
         </p>
       </div>
 
-      <Button
-        type="submit"
-        class="h-[52px] w-full rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
+      <div
+        class="fixed inset-x-0 bottom-0 z-40 mx-auto flex w-full max-w-[768px] flex-col gap-2 border-t border-dm-gray/15 bg-white px-4 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))]"
       >
-        {{ nextLabel }}
-      </Button>
+        <Button
+          type="submit"
+          class="h-[52px] w-full rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
+        >
+          {{ nextLabel }}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          class="h-[52px] w-full rounded-xl bg-dm-gray-light text-[15px] font-extrabold text-dm-gray-darker/70 shadow-none hover:bg-dm-gray/50 hover:text-white"
+          @click="handleExclude"
+        >
+          이 항목 제외하기
+        </Button>
+      </div>
     </form>
 
     <div
