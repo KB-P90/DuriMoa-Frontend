@@ -1,9 +1,26 @@
 <script setup lang="ts">
-import { ArrowLeft, Banknote, Landmark, Utensils } from '@lucide/vue';
-import { computed, ref, watch } from 'vue';
+import {
+  Banknote,
+  Brush,
+  Building2,
+  Camera,
+  CircleDollarSign,
+  Gift,
+  HandHeart,
+  House,
+  Package,
+  PiggyBank,
+  ShieldAlert,
+  Shirt,
+  ShoppingBag,
+  Ticket,
+  Utensils,
+} from '@lucide/vue';
+import { computed, ref } from 'vue';
 import type { Component } from 'vue';
-import CategorySelect from '@/components/calendar/CategorySelect.vue';
 import DeleteConfirmDialog from '@/components/calendar/DeleteConfirmDialog.vue';
+import PageHeader from '@/components/common/PageHeader.vue';
+import { Button } from '@/components/ui/button';
 import { CALENDAR_CATEGORIES, TRANSACTION_TYPES } from '@/constants/calendar';
 import type { CalendarMode, Transaction, TransactionForm, TransactionType } from '@/types/calendar';
 import { formatAmount, parseFormattedAmount } from '@/utils/format';
@@ -27,49 +44,82 @@ const recordDate = ref(props.transaction?.date ?? props.defaultDate);
 const memo = ref(props.transaction?.memo ?? '');
 const deleteConfirmationVisible = ref(false);
 const isEditMode = computed(() => props.transaction !== null);
-const categoryGroups = computed(() => {
-  const otherMode: CalendarMode = props.mode === 'personal' ? 'wedding' : 'personal';
-  const modeLabels: Record<CalendarMode, string> = {
-    personal: '개인 카테고리',
-    wedding: '결혼 카테고리',
-  };
+const isFormValid = computed(() => {
+  const parsedAmount = parseFormattedAmount(amount.value);
 
-  return [
-    {
-      mode: props.mode,
-      label: modeLabels[props.mode],
-      options: CALENDAR_CATEGORIES[props.mode][selectedType.value],
-    },
-    {
-      mode: otherMode,
-      label: modeLabels[otherMode],
-      options: CALENDAR_CATEGORIES[otherMode][selectedType.value],
-    },
-  ];
+  return (
+    Boolean(selectedType.value) &&
+    Boolean(category.value) &&
+    Number.isFinite(parsedAmount) &&
+    parsedAmount > 0 &&
+    Boolean(recordDate.value)
+  );
 });
-const categoryOptions = computed(() => categoryGroups.value.flatMap((group) => group.options));
-
-const TRANSACTION_ICONS: Record<TransactionType, Component> = {
-  income: Banknote,
-  expense: Utensils,
-  saving: Landmark,
-};
-
-const TYPE_COLORS: Record<TransactionType, string> = {
-  income: 'text-[#65C466]',
-  expense: 'text-[#F09488]',
-  saving: 'text-[#3B86F7]',
-};
-
-watch(
-  categoryOptions,
-  (options) => {
-    if (!options.some((option) => option === category.value)) category.value = options[0];
+const categoryGroups = computed(() => [
+  {
+    mode: 'personal' as const,
+    label: '개인 카테고리',
+    options: CALENDAR_CATEGORIES.personal[selectedType.value],
   },
-  { immediate: true }
-);
+  {
+    mode: 'wedding' as const,
+    label: '결혼 카테고리',
+    options: CALENDAR_CATEGORIES.wedding[selectedType.value],
+  },
+]);
+
+const CATEGORY_ICONS: Record<string, Component> = {
+  급여: Banknote,
+  부수입: CircleDollarSign,
+  기타: Package,
+  축의금: Gift,
+  식비: Utensils,
+  생활: House,
+  쇼핑: ShoppingBag,
+  '문화/여가': Ticket,
+  예식장: Building2,
+  스튜디오: Camera,
+  메이크업: Brush,
+  드레스: Shirt,
+  예비비: ShieldAlert,
+  저축: PiggyBank,
+  '결혼 저축': HandHeart,
+};
+
+const CATEGORY_ICON_COLORS: Record<string, string> = {
+  '급여': 'text-deep-blue',
+  '부수입': 'text-dm-mint-darker',
+  '기타': 'text-dm-gray-dark',
+  '축의금': 'text-brand',
+  '식비': 'text-pink-05',
+  '생활': 'text-deep-green',
+  '쇼핑': 'text-blue',
+  '문화/여가': 'text-sky-09',
+  '예식장': 'text-brand-dark',
+  '스튜디오': 'text-deep-blue',
+  '메이크업': 'text-pink-06',
+  '드레스': 'text-pink-05',
+  '예비비': 'text-red',
+  '저축': 'text-dm-mint-darker',
+  '결혼 저축': 'text-brand',
+};
+
+// TODO: 수입·저축 색상 토큰 등록 검토
+const TRANSACTION_TYPE_STYLES: Record<TransactionType, string> = {
+  income: 'border-[#65C466] bg-[#65C466]/10 text-[#65C466]',
+  expense: 'border-brand bg-pink-01 text-brand',
+  saving: 'border-[#3B86F7] bg-[#3B86F7]/10 text-[#3B86F7]',
+};
+
+function selectType(type: TransactionType) {
+  if (selectedType.value === type) return;
+  selectedType.value = type;
+  category.value = '';
+}
 
 function save() {
+  if (!isFormValid.value) return;
+
   emit('save', {
     type: selectedType.value,
     category: category.value,
@@ -81,32 +131,25 @@ function save() {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-xl px-4 pb-6 pt-5 sm:px-5">
-    <header class="mb-5 grid grid-cols-3 items-center">
-      <button
-        type="button"
-        class="justify-self-start"
-        aria-label="뒤로 가기"
-        @click="emit('close')"
-      >
-        <ArrowLeft class="h-6 w-6" />
-      </button>
-      <h1 class="whitespace-nowrap text-center text-xl font-semibold text-gray-800">
-        {{ isEditMode ? '내역 수정' : '내역 생성' }}
-      </h1>
+  <div class="mx-auto w-full max-w-xl pb-6">
+    <div class="relative">
+      <PageHeader
+        :title="isEditMode ? '내역 수정' : '내역 생성'"
+        :on-back="() => emit('close')"
+      />
       <button
         v-if="isEditMode"
         type="button"
-        class="justify-self-end text-sm font-semibold text-brand"
+        class="absolute right-4 top-0 flex h-[50px] items-center text-sm font-semibold text-brand"
         :disabled="isSubmitting"
         @click="deleteConfirmationVisible = true"
       >
         삭제
       </button>
-    </header>
+    </div>
 
     <form
-      class="space-y-3.5"
+      class="space-y-5 px-4 pb-20 pt-5 sm:px-5"
       @submit.prevent="save"
     >
       <fieldset :disabled="isSubmitting">
@@ -119,41 +162,70 @@ function save() {
             class="relative rounded-2xl border py-3.5 text-sm font-semibold"
             :class="
               selectedType === type.key
-                ? 'border-dm-mint-dark bg-btn-mt'
+                ? TRANSACTION_TYPE_STYLES[type.key]
                 : 'border-dm-gray/30 text-gray-600'
             "
-            @click="selectedType = type.key"
+            @click="selectType(type.key)"
           >
             {{ type.label }}
-            <span
-              v-if="selectedType === type.key"
-              class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-dm-mint-dark text-sm text-white"
-              >✓</span
-            >
           </button>
         </div>
       </fieldset>
 
-      <div class="block">
-        <span class="mb-2 block text-sm font-semibold">카테고리</span>
-        <span class="flex items-center rounded-2xl border border-dm-gray/30 px-4 py-3">
-          <span
-            class="mr-3 rounded-lg bg-dm-gray/15 p-2"
-            :class="TYPE_COLORS[selectedType]"
+      <fieldset :disabled="isSubmitting">
+        <legend class="sr-only">카테고리</legend>
+        <section
+          v-for="(group, groupIndex) in categoryGroups"
+          :key="group.mode"
+          :class="groupIndex > 0 && 'mt-4'"
+        >
+          <p
+            class="mb-2 text-xs font-semibold"
+            :class="
+              group.mode === 'personal'
+                ? 'text-btn-mt-dark'
+                : 'text-brand-dark'
+            "
           >
-            <component
-              :is="TRANSACTION_ICONS[selectedType]"
-              class="h-4 w-4"
-              :stroke-width="1.8"
-            />
-          </span>
-          <CategorySelect
-            v-model="category"
-            :groups="categoryGroups"
-            :disabled="isSubmitting"
-          />
-        </span>
-      </div>
+            {{ group.label }}
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <Button
+              v-for="option in group.options"
+              :key="`${group.mode}-${option}`"
+              type="button"
+              variant="outline"
+              class="h-10 min-w-0 flex-row gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
+              :class="
+                group.mode === 'personal'
+                  ? category === option
+                    ? 'border-dm-mint-darker bg-dm-mint-darker text-white hover:bg-dm-mint-darker hover:text-white'
+                    : 'border-dm-gray/30 bg-white text-dm-gray-dark hover:border-dm-mint-dark hover:bg-white hover:text-btn-mt-dark'
+                  : category === option
+                    ? 'border-brand bg-brand text-white hover:bg-brand hover:text-white'
+                    : 'border-dm-gray/30 bg-white text-dm-gray-dark hover:border-pink-04 hover:bg-white hover:text-brand-dark'
+              "
+              :aria-pressed="category === option"
+              @click="category = option"
+            >
+              <span
+                class="grid h-5 w-5 place-items-center transition-colors"
+                :class="
+                  category === option ? 'text-white' : CATEGORY_ICON_COLORS[option]
+                "
+                aria-hidden="true"
+              >
+                <component
+                  :is="CATEGORY_ICONS[option]"
+                  class="h-3.5 w-3.5"
+                  :stroke-width="2"
+                />
+              </span>
+              <span class="whitespace-nowrap">{{ option }}</span>
+            </Button>
+          </div>
+        </section>
+      </fieldset>
 
       <label class="block">
         <span class="mb-2 block text-sm font-semibold">금액</span>
@@ -190,21 +262,17 @@ function save() {
         />
       </label>
 
-      <button
-        type="submit"
-        class="w-full rounded-2xl bg-brand py-3.5 text-base font-semibold text-white disabled:opacity-60"
-        :disabled="isSubmitting"
+      <div
+        class="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-xl bg-white px-4 pb-5 pt-2 sm:px-5"
       >
-        {{ isSubmitting ? '처리 중...' : isEditMode ? '수정하기' : '등록하기' }}
-      </button>
-      <button
-        type="button"
-        class="w-full rounded-2xl border border-dm-gray/30 bg-dm-gray-light py-3.5 text-base font-semibold text-gray-600 shadow-sm"
-        :disabled="isSubmitting"
-        @click="emit('close')"
-      >
-        취소
-      </button>
+        <button
+          type="submit"
+          class="w-full rounded-2xl bg-brand py-3.5 text-base font-semibold text-white shadow-sm transition disabled:cursor-not-allowed disabled:bg-pink-03 disabled:text-white"
+          :disabled="isSubmitting || !isFormValid"
+        >
+          {{ isSubmitting ? '처리 중...' : isEditMode ? '수정하기' : '등록하기' }}
+        </button>
+      </div>
     </form>
 
     <DeleteConfirmDialog

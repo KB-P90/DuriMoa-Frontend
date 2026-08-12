@@ -45,7 +45,7 @@ const MARKER_COLORS = {
         v-for="(weekday, index) in WEEKDAYS"
         :key="weekday"
         class="pb-2 text-xs font-medium"
-        :class="index === 0 ? 'text-[#F09488]' : 'text-dm-gray-dark'"
+        :class="index === 0 ? 'text-brand' : 'text-dm-gray-dark'"
       >
         {{ weekday }}
       </span>

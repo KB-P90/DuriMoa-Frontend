@@ -1,5 +1,22 @@
 <script setup lang="ts">
-import { Banknote, Landmark, Utensils } from '@lucide/vue';
+import {
+  Banknote,
+  Brush,
+  Building2,
+  Camera,
+  CircleDollarSign,
+  Gift,
+  HandHeart,
+  House,
+  Landmark,
+  Package,
+  PiggyBank,
+  ShieldAlert,
+  Shirt,
+  ShoppingBag,
+  Ticket,
+  Utensils,
+} from '@lucide/vue';
 import type { Component } from 'vue';
 import type { Transaction, TransactionType } from '@/types/calendar';
 import { formatSignedAmount } from '@/utils/format';
@@ -13,9 +30,27 @@ const TRANSACTION_ICONS: Record<TransactionType, Component> = {
   saving: Landmark,
 };
 
+const CATEGORY_ICONS: Record<string, Component> = {
+  급여: Banknote,
+  부수입: CircleDollarSign,
+  기타: Package,
+  축의금: Gift,
+  식비: Utensils,
+  생활: House,
+  쇼핑: ShoppingBag,
+  '문화/여가': Ticket,
+  예식장: Building2,
+  스튜디오: Camera,
+  메이크업: Brush,
+  드레스: Shirt,
+  예비비: ShieldAlert,
+  저축: PiggyBank,
+  '결혼 저축': HandHeart,
+};
+
 const TYPE_COLORS: Record<TransactionType, string> = {
   income: 'text-[#65C466]',
-  expense: 'text-[#F09488]',
+  expense: 'text-brand',
   saving: 'text-[#3B86F7]',
 };
 </script>
@@ -34,7 +69,7 @@ const TYPE_COLORS: Record<TransactionType, string> = {
         :class="TYPE_COLORS[transaction.type]"
       >
         <component
-          :is="TRANSACTION_ICONS[transaction.type]"
+          :is="CATEGORY_ICONS[transaction.title] ?? TRANSACTION_ICONS[transaction.type]"
           class="h-5 w-5"
           :stroke-width="1.8"
         />
