@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LockKeyhole } from '@lucide/vue';
+import { LockKeyhole, UserRound } from '@lucide/vue';
 import { useProgressStore } from '@/stores/progressStore';
 import { computed } from 'vue';
 import { formatWon } from '@/utils/format';
@@ -15,16 +15,27 @@ const members = computed(() => progressStore.personalProgress.members);
       <h2 class="mb-4 text-base font-bold">자산 현황 공유</h2>
 
       <div
-        v-for="member in members"
+        v-for="(member, index) in members"
         :key="member.userId"
         class="flex items-center justify-between pr-2 mb-4 last:mb-0"
       >
         <div class="flex items-center gap-3">
-          <!-- TODO: API에서 아직 신랑/신부 역할 안 보내줘서 추후 반영 예정 -->
-          <img
-            src="/characters/rabbit-bride.png"
-            class="h-9"
-          />
+          <div
+            class="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-xl"
+            :class="index === 0 ? 'bg-dm-mint' : 'bg-pink-02'"
+          >
+            <img
+              v-if="member.profileImage"
+              :src="member.profileImage"
+              alt=""
+              class="h-full w-full object-cover"
+            />
+            <UserRound
+              v-else
+              class="h-6 w-6 text-[#292934]"
+              :class="index === 0 ? 'text-btn-mt-dark' : 'text-brand'"
+            />
+          </div>
 
           <span class="text-sm font-semibold">
             {{ member.name }}
@@ -58,20 +69,30 @@ const members = computed(() => progressStore.personalProgress.members);
       <h2 class="mb-4 text-base font-bold">개인별 달성률</h2>
 
       <div
-        v-for="member in members"
+        v-for="(member, index) in members"
         :key="member.userId"
         class="mb-6 last:mb-0"
       >
         <div class="flex justify-between mr-2">
           <div class="flex items-center gap-1">
-            <!-- TODO: API에서 아직 신랑/신부 역할 안 보내줘서 추후 반영 예정 -->
-            <!-- 역할에 따라 하단 달성률 & progress바 색상도 변경 필요 -->
-            <img
-              src="/characters/rabbit-bride.png"
-              class="h-9"
-            />
+            <div
+              class="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-xl"
+              :class="index === 0 ? 'bg-dm-mint' : 'bg-pink-02'"
+            >
+              <img
+                v-if="member.profileImage"
+                :src="member.profileImage"
+                alt=""
+                class="h-full w-full object-cover"
+              />
+              <UserRound
+                v-else
+                class="h-6 w-6 text-[#292934]"
+                :class="index === 0 ? 'text-btn-mt-dark' : 'text-brand'"
+              />
+            </div>
 
-            <span class="text-sm font-semibold">
+            <span class="ml-2 text-sm font-semibold">
               {{ member.name }}
             </span>
           </div>
@@ -83,10 +104,11 @@ const members = computed(() => progressStore.personalProgress.members);
           </div>
         </div>
 
-        <div class="mx-2 mt-2">
+        <div class="mt-3">
           <div class="h-4 rounded-full bg-gray-100">
             <div
-              class="h-full rounded-full bg-dm-mint-dark transition-all duration-1000"
+              class="h-full rounded-full transition-all duration-1000"
+              :class="index === 0 ? 'bg-dm-mint-darker' : 'bg-brand'"
               :style="{ width: `${member.progressRate}%` }"
             />
           </div>

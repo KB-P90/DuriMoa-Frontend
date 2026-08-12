@@ -19,6 +19,8 @@ export interface OverallProgress {
 export interface MemberProgress {
   userId: number;
   name: string;
+  role: string;
+  profileImage: string | null;
   assetShared: boolean;
   assetAmount: number | null;
   targetAmount: number;
