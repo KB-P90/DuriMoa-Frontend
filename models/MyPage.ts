@@ -1,5 +1,5 @@
 import type { MyPageProfileResponseDto, MyPageRoleDto } from '@/types/dto/myPage.dto';
-import type { CoupleRole, MyPage, MyPageAssetSummary } from '@/types/myPage';
+import type { CoupleRole, MyPage } from '@/types/myPage';
 
 export const toCoupleRole = (role: MyPageRoleDto | null | undefined): CoupleRole =>
   role === 'B' || role === 'BRIDE' ? 'BRIDE' : 'GROOM';
@@ -20,10 +20,7 @@ export const toDisplayDate = (date: string | null | undefined): string => {
   return date;
 };
 
-export const toMyPage = (
-  profile: MyPageProfileResponseDto,
-  assetSummary: MyPageAssetSummary
-): MyPage => {
+export const toMyPage = (profile: MyPageProfileResponseDto): MyPage => {
   const isShared = Boolean(profile.shared);
 
   return {
@@ -44,7 +41,10 @@ export const toMyPage = (
             status: profile.coupleStatus,
           }
         : null,
-    assetSummary,
+    assetSummary: {
+      connectedAccountsCount: profile.accountCount,
+      connectedCardsCount: profile.cardCount,
+    },
     shareSetting: {
       selectedScope: isShared ? 'ALL' : 'WEDDING_FUND_ONLY',
       statusText: isShared ? '전체 공개 중' : '요약 공개 중',

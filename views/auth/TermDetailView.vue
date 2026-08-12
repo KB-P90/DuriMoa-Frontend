@@ -1,6 +1,19 @@
 <script setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import AuthHeader from '@/components/auth/AuthHeader.vue';
 import AuthScreen from '@/components/auth/AuthScreen.vue';
+
+const route = useRoute();
+const ALLOWED_RETURN_PATHS = new Set(['/signup', '/auth/kakao/signup']);
+const backTo = computed(() => {
+  const returnTo = Array.isArray(route.query.returnTo)
+    ? route.query.returnTo[0]
+    : route.query.returnTo;
+  return typeof returnTo === 'string' && ALLOWED_RETURN_PATHS.has(returnTo)
+    ? returnTo
+    : '/signup';
+});
 
 // 라우터가 전달한 정적 약관 데이터만 화면에 출력한다.
 defineProps({
@@ -23,7 +36,7 @@ defineProps({
   <AuthScreen>
     <AuthHeader
       :title="title"
-      back-to="/signup"
+      :back-to="backTo"
     />
 
     <article class="px-5 pb-8 pt-4 text-dm-gray-dark sm:px-10 lg:px-16">

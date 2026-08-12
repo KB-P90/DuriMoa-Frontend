@@ -1,36 +1,58 @@
-export interface CoupleMemberDto {
-  user_id: number;
-  name: string;
-  profile_image: string | null;
-}
-
 export interface HomeDashboardResponseDto {
+  setup_completed: boolean;
   couple: {
-    id: number;
-    groom: CoupleMemberDto;
-    bride: CoupleMemberDto;
-    status: 'CONNECTED' | 'WAIT' | 'DISCONNECTED';
+    couple_id: number;
+    user_id: number;
+    user_name: string;
+    user_role: 'G' | 'B';
+    partner_user_id: number;
+    partner_name: string;
+    partner_role: 'G' | 'B';
+    couple_status: 'CONNECTED' | 'WAIT' | 'DISCONNECTED';
+    goal_id: number | null;
+    wedding_date: string | null;
+    remaining_months: number | null;
+    budget_plan_id: number | null;
   };
   asset_summary: {
-    total_accumulated_amount: number;
-    used_amount: number;
-    remaining_amount: number;
+    total_budget_amount: number;
+    total_saved_amount: number;
+    wedding_expense_amount: number;
+    remaining_wedding_fund_amount: number;
+    base_date: string;
   };
   saving_alert: {
     is_shortage: boolean;
     shortage_amount: number;
     remaining_days: number;
     message: string;
-  };
+  } | null;
   saving_mission_summary: {
-    total_count: number;
-    in_progress_count: number;
+    total_expected_saving_amount: number;
+    in_progress_mission_count: number;
+    completed_mission_count: number;
     mission: SavingMissionDto | null;
+    navigation_message: string;
   };
   goal_summary: {
     joint_goal: GoalSummaryDto;
     personal_goal: GoalSummaryDto;
   };
+  setup_checklist: {
+    total_count: number;
+    completed_count: number;
+    current_step: number | null;
+    steps: SetupChecklistStepDto[];
+  };
+  expected_budget_preview: unknown | null;
+}
+
+export interface SetupChecklistStepDto {
+  step: number;
+  code: string;
+  title: string;
+  completed: boolean;
+  status: string;
 }
 
 export interface SavingMissionDto {
@@ -58,7 +80,9 @@ export interface MonthlySavingMissionsResponseDto {
 export interface GoalSummaryDto {
   goal_id?: number;
   user_id?: number;
+  status?: string;
   target_amount: number;
   current_amount: number;
   achievement_rate: number;
+  setup_required?: boolean;
 }

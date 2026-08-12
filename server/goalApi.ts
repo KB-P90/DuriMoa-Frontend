@@ -25,7 +25,7 @@ export const postGoal = async (payload: GoalSubmission) => {
 };
 
 export const updateGoal = async (goalId: number, payload: GoalSubmission) => {
-  const { data } = await api.put<ApiResponse<unknown>>('/goal', payload, { params: { goalId } });
+  const { data } = await api.put<ApiResponse<unknown>>(`/goal/${goalId}`, payload);
   return data.data;
 };
 

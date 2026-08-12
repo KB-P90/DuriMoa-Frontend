@@ -2,22 +2,24 @@ import { computed, ref, watch, type Ref } from 'vue';
 import {
   acceptMyPageCouple,
   getMyPageCoupleStatus,
+  getMyPageInviteCode,
   inviteMyPageCouple,
 } from '@/server/myPageApi';
 import type { MyPageCouplePartnerResponseDto } from '@/types/dto/myPage.dto';
 import type { OnboardingCoupleRequest } from '@/types/onboarding';
 
 const INVITE_CODE_PATTERN = /^[A-Z0-9]{6}$/;
+const MY_INVITE_CODE_COPY_SUCCESS_MESSAGE = '내 초대 코드를 복사했어요.';
+const MY_INVITE_CODE_COPY_ERROR_MESSAGE = '초대 코드를 복사하지 못했어요.';
 
 const ERROR_MESSAGES = {
   ACCEPT: '연결 요청을 수락하지 못했어요. 다시 시도해주세요.',
   INVITE: '초대 코드를 확인하지 못했어요. 다시 시도해주세요.',
+  MY_INVITE_CODE: '내 초대 코드를 불러오지 못했어요.',
   STATUS: '커플 연결 상태를 불러오지 못했어요.',
 } as const;
 
-const toCoupleRequest = (
-  dto: MyPageCouplePartnerResponseDto
-): OnboardingCoupleRequest | null => {
+const toCoupleRequest = (dto: MyPageCouplePartnerResponseDto): OnboardingCoupleRequest | null => {
   if (dto.status === 'DISCONNECTED') {
     return null;
   }
@@ -36,10 +38,15 @@ const isCoupleRequest = (
 
 export function useMyInfoCouple(isActive: Readonly<Ref<boolean>>) {
   const inviteCodeDraft = ref('');
+  const myInviteCode = ref('');
   const requests = ref<OnboardingCoupleRequest[]>([]);
   const feedbackMessage = ref('');
   const errorMessage = ref('');
+  const myInviteCodeErrorMessage = ref('');
+  const myInviteCodeCopyMessage = ref('');
+  const hasMyInviteCodeCopyError = ref(false);
   const statusErrorMessage = ref('');
+  const isLoadingMyInviteCode = ref(false);
   const isLoadingStatus = ref(false);
   const isInviting = ref(false);
   const acceptingUserIds = ref<number[]>([]);
@@ -88,6 +95,53 @@ export function useMyInfoCouple(isActive: Readonly<Ref<boolean>>) {
     requests.value = requests.value.map((currentRequest, index) =>
       index === requestIndex ? request : currentRequest
     );
+  }
+
+  async function loadMyInviteCode() {
+    if (isLoadingMyInviteCode.value) {
+      return;
+    }
+
+    isLoadingMyInviteCode.value = true;
+    myInviteCodeErrorMessage.value = '';
+    myInviteCodeCopyMessage.value = '';
+    hasMyInviteCodeCopyError.value = false;
+
+    try {
+      const inviteCodeResponse = (await getMyPageInviteCode()).trim().toUpperCase();
+
+      if (!INVITE_CODE_PATTERN.test(inviteCodeResponse)) {
+        throw new Error('Invalid invite code response');
+      }
+
+      myInviteCode.value = inviteCodeResponse;
+    } catch {
+      myInviteCode.value = '';
+      myInviteCodeErrorMessage.value = ERROR_MESSAGES.MY_INVITE_CODE;
+    } finally {
+      isLoadingMyInviteCode.value = false;
+    }
+  }
+
+  async function copyMyInviteCode() {
+    if (!INVITE_CODE_PATTERN.test(myInviteCode.value)) {
+      return;
+    }
+
+    myInviteCodeCopyMessage.value = '';
+    hasMyInviteCodeCopyError.value = false;
+
+    try {
+      if (!navigator.clipboard) {
+        throw new Error('Clipboard API is unavailable');
+      }
+
+      await navigator.clipboard.writeText(myInviteCode.value);
+      myInviteCodeCopyMessage.value = MY_INVITE_CODE_COPY_SUCCESS_MESSAGE;
+    } catch {
+      hasMyInviteCodeCopyError.value = true;
+      myInviteCodeCopyMessage.value = MY_INVITE_CODE_COPY_ERROR_MESSAGE;
+    }
   }
 
   async function loadCoupleStatus() {
@@ -173,6 +227,7 @@ export function useMyInfoCouple(isActive: Readonly<Ref<boolean>>) {
     isActive,
     (active) => {
       if (active) {
+        void loadMyInviteCode();
         void loadCoupleStatus();
       }
     },
@@ -184,14 +239,21 @@ export function useMyInfoCouple(isActive: Readonly<Ref<boolean>>) {
     acceptingUserIds,
     canConfirm,
     confirmInviteCode,
+    copyMyInviteCode,
     errorMessage,
     feedbackMessage,
+    hasMyInviteCodeCopyError,
     hasInviteCodeError,
     inviteCode,
     isConnected,
     isInviting,
+    isLoadingMyInviteCode,
     isLoadingStatus,
     loadCoupleStatus,
+    loadMyInviteCode,
+    myInviteCode,
+    myInviteCodeCopyMessage,
+    myInviteCodeErrorMessage,
     requests,
     statusErrorMessage,
   };

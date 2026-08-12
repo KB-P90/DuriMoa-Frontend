@@ -23,8 +23,10 @@ export interface OnboardingCoupleRequest {
 
 // 계좌 선택 화면에 표시할 온보딩 계좌 정보다.
 export interface OnboardingAccount {
+  accountDisplay: string;
   accountName: string;
   accountNumber: string;
+  isRegistered: boolean;
 }
 
 // 백엔드 연결 전 초대 코드 테스트 데이터의 형태다.

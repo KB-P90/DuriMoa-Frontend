@@ -22,6 +22,7 @@ import type {
   ProposalCardItem,
 } from '@/types/goal';
 import { formatDateDot } from '@/utils/format';
+import Button from '@/components/ui/button/Button.vue';
 
 useAuthCheck();
 
@@ -170,19 +171,19 @@ function handleNewProposal() {
 <template>
   <div>
     <PageHeader title="예산 시안" />
-    <div class="flex items-center justify-end p-4">
-      <button
-        type="button"
-        class="cursor-pointer text-sm font-semibold text-brand transition-colors hover:text-brand-dark"
-        @click="handleNewProposal"
-      >
-        + 새 시안
-      </button>
-    </div>
     <Separator />
 
     <div class="p-4">
-      <h2 class="text-2xl font-extrabold text-[#232631]">우리의 예산 시안</h2>
+      <div class="flex flex-row justify-between items-center">
+        <h2 class="text-base font-bold text-gray-900">우리의 예산 시안</h2>
+
+        <Button
+          class="cursor-pointer rounded-lg text-sm font-semibold text-brand border border-pink-05 text-pink-05 h-[30px] shadow-none"
+          @click="handleNewProposal"
+        >
+          + 새 시안
+        </Button>
+      </div>
       <p class="mt-2 text-sm leading-5 text-dm-gray-dark">
         신청 버튼을 누르면 메인 시안 요청이 상대에게 전송돼요.<br />
         상대가 승인하면 메인 시안으로 최종 확정돼요.

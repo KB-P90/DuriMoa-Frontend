@@ -118,7 +118,7 @@ export const useGoalStore = defineStore('goal', () => {
         category: category.label,
         targetAmount: draft.items[category.code] ?? 0,
         included: !excluded[category.code],
-        type: categoryTypeLabels[category.code] ?? '균형형',
+        type: categoryTypeLabels[category.code] || '균형형',
       })),
     };
 

@@ -7,13 +7,11 @@ import type { OnboardingAccount, OnboardingCoupleRequest } from '@/types/onboard
 
 // 계좌 조회 DTO를 온보딩 화면의 계좌 정보로 변환한다.
 export const toOnboardingAccount = (dto: OnboardingAccountItemDto): OnboardingAccount => ({
-  accountName: dto.resAccountName ?? dto.resAccountDisplay ?? '이름 없는 계좌',
+  accountDisplay: dto.resAccountDisplay ?? dto.resAccount,
+  accountName: dto.resAccountName ?? '이름 없는 계좌',
   accountNumber: dto.resAccount,
+  isRegistered: dto.isRegistered,
 });
-
-// 화면의 은행명을 백엔드가 지원하는 금융기관 공식명으로 변환한다.
-export const toOnboardingCompany = (bankLabel: string) =>
-  bankLabel === '국민은행' ? 'KB국민은행' : bankLabel;
 
 // 커플 API DTO를 화면에서 지원하는 연결 요청으로 변환한다.
 export const toOnboardingCoupleRequest = (

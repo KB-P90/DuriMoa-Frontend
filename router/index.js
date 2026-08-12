@@ -5,6 +5,8 @@ import { authTermRoutes } from '@/router/routes/authTermRoutes';
 import AccountConnectView from '@/views/AccountConnectView.vue';
 import AccountHelpView from '@/views/auth/AccountHelpView.vue';
 import AuthSessionView from '@/views/auth/AuthSessionView.vue';
+import KakaoCallbackView from '@/views/auth/KakaoCallbackView.vue';
+import KakaoSignupView from '@/views/auth/KakaoSignupView.vue';
 import LoginView from '@/views/auth/LoginView.vue';
 import SignupView from '@/views/auth/SignupView.vue';
 import CalendarPageView from '@/views/CalendarPageView.vue';
@@ -25,6 +27,7 @@ import ProfileEditView from '@/views/ProfileEditView.vue';
 import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
 import ProgressView from '@/views/progress/ProgressView.vue';
 import MonthlyProgressView from '@/views/progress/MonthlyProgressView.vue';
+import MainView from '@/views/MainView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -33,8 +36,7 @@ const router = createRouter({
       path: '/',
       component: MainLayout,
       children: [
-        { path: '', redirect: { name: 'home' } },
-        { path: 'home', name: 'home', component: HomeView },
+        { path: '', name: 'home', component: MainView },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         {
           path: 'progress',
@@ -86,6 +88,8 @@ const router = createRouter({
     ...authTermRoutes,
     { path: '/account-help', name: 'account-help', component: AccountHelpView },
     { path: '/auth/session', name: 'session', component: AuthSessionView },
+    { path: '/auth/kakao/callback', name: 'kakao-callback', component: KakaoCallbackView },
+    { path: '/auth/kakao/signup', name: 'kakao-signup', component: KakaoSignupView },
     { path: '/onboarding', name: 'onboarding', component: OnboardingView },
     { path: '/:pathMatch(.*)*', redirect: '/login' },
   ],

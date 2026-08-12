@@ -1,23 +1,22 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import { RouterLink } from 'vue-router';
 import { Bell, ChevronRight, Coffee, Menu } from '@lucide/vue';
 import MenuPanel from '@/components/common/MenuPanel.vue';
-import NotificationPanel from '@/components/common/NotificationPanel.vue';
-import { getUnreadNotificationCount } from '@/server/notificationApi';
 import { useHomeStore } from '@/stores/homeStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 import { formatWon } from '@/utils/format';
 import NewUserHome from '@/components/home/NewUserHome.vue';
 
 const homeStore = useHomeStore();
 const { dashboard, missions } = storeToRefs(homeStore);
+const notificationStore = useNotificationStore();
 
 const missionCarousel = ref<HTMLElement | null>(null);
 const dragStartX = ref<number | null>(null);
 const dragStartScrollLeft = ref(0);
 const isMenuOpen = ref(false);
-const isNotificationOpen = ref(false);
-const unreadNotificationCount = ref(0);
 const isNewUser = computed(() => dashboard.value.coupleStatus === 'DISCONNECTED');
 const jointGoalGraphHeight = computed(
   () => `${Math.min(Math.max(dashboard.value.jointGoal.achievementRate, 0), 100)}%`
@@ -39,22 +38,9 @@ const endMissionDrag = () => {
   dragStartX.value = null;
 };
 
-async function fetchUnreadNotificationCount() {
-  try {
-    unreadNotificationCount.value = await getUnreadNotificationCount();
-  } catch {
-    // 무시: 배지 카운트는 실패해도 화면이 깨지지 않아야 한다.
-  }
-}
-
-function handleNotificationPanelClose() {
-  isNotificationOpen.value = false;
-  void fetchUnreadNotificationCount();
-}
-
 onMounted(() => {
   void homeStore.fetchHome();
-  void fetchUnreadNotificationCount();
+  void notificationStore.fetchUnreadCount();
 });
 </script>
 
@@ -72,14 +58,14 @@ onMounted(() => {
           type="button"
           aria-label="알림"
           class="relative grid h-5 w-5 cursor-pointer place-items-center text-[#2B2B2B]"
-          @click="isNotificationOpen = true"
+          @click="notificationStore.openPanel()"
         >
           <Bell
             class="h-5 w-5"
-            :stroke-width="1.6"
+            :stroke-width="2.5"
           />
           <span
-            v-if="unreadNotificationCount > 0"
+            v-if="notificationStore.unreadCount > 0"
             class="absolute right-0 top-0 h-2 w-2 rounded-full bg-brand-dark"
           />
         </button>
@@ -175,12 +161,13 @@ onMounted(() => {
       class="home-content relative -mt-[14px] rounded-t-[24px] bg-white px-4 pb-8 pt-[18px] md:min-h-[359px] md:px-10 md:pb-9 md:pt-5"
     >
       <button
+        v-if="dashboard.savingAlert"
         type="button"
         class="saving-alert flex h-[39px] w-full items-center gap-2 rounded-[11px] bg-pink-01 px-[13px] text-left md:h-11"
       >
         <span class="text-[10px] font-extrabold leading-3 text-brand">알림</span>
         <span class="truncate text-[11.5px] font-medium leading-[14px] text-[#5A5B69]">{{
-          dashboard.savingAlert.message
+          dashboard.savingAlert?.message
         }}</span>
       </button>
 
@@ -188,12 +175,15 @@ onMounted(() => {
 
       <div class="flex h-[19px] items-center justify-between">
         <h2 class="text-[13.5px] font-bold leading-4 tracking-[-0.27px]">이번 달 절약 미션</h2>
-        <span class="text-[11px] leading-4 text-dm-gray-dark"
+        <span
+          v-if="missions.length > 0"
+          class="text-[11px] leading-4 text-dm-gray-dark"
           >{{ dashboard.inProgressMissionCount }} / {{ dashboard.totalMissionCount }} 진행</span
         >
       </div>
 
       <div
+        v-if="missions.length > 0"
         ref="missionCarousel"
         aria-label="절약 미션 목록"
         @pointerdown="startMissionDrag"
@@ -225,6 +215,27 @@ onMounted(() => {
           >
         </button>
       </div>
+
+      <RouterLink
+        v-else
+        :to="{ name: 'expense' }"
+        class="mission-empty mt-2 flex h-[62px] items-center gap-2 rounded-2xl border border-[#F0E7E5] bg-white px-4 text-left md:h-[72px]"
+      >
+        <span class="grid h-8 w-8 shrink-0 place-items-center rounded-[11px] bg-pink-01 text-brand"
+          ><Coffee
+            class="h-3 w-3"
+            :stroke-width="1.6"
+        /></span>
+        <span
+          class="ml-[10px] flex-1 text-[12.5px] font-bold leading-[15px] tracking-[-0.25px] text-[#292934]"
+        >
+          지출을 기록하면 우리 맞춤 절약 미션이 생겨요
+        </span>
+        <ChevronRight
+          class="h-4 w-4 shrink-0 text-dm-gray-dark"
+          :stroke-width="2"
+        />
+      </RouterLink>
 
       <h2 class="mt-[20px] text-[13.5px] font-bold leading-4 tracking-[-0.27px] text-[#5A5B69]">
         우리의 목표
@@ -280,10 +291,5 @@ onMounted(() => {
       v-if="isMenuOpen"
       @close="isMenuOpen = false"
     />
-    <NotificationPanel
-      v-if="isNotificationOpen"
-      @close="handleNotificationPanelClose"
-    />
   </div>
 </template>
-피
