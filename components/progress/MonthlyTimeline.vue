@@ -17,11 +17,11 @@ const months = computed(() => progressStore.monthlyProgress?.months ?? []);
     >
       <div
         v-if="index !== months.length - 1"
-        class="absolute bottom-[-10px] left-5 top-2.5 w-1 -translate-x-1/2 bg-dm-mint-dark"
+        class="absolute bottom-[-10px] left-5 top-2.5 w-1 -translate-x-1/2 bg-dm-mint-darker"
       />
 
       <div class="relative flex w-10 flex-shrink-0 justify-center">
-        <div class="z-10 flex h-5 w-5 items-center justify-center rounded-full bg-btn-mt-dark">
+        <div class="z-10 flex h-5 w-5 items-center justify-center rounded-full bg-dm-mint-darker">
           <div class="h-2 w-2 rounded-full bg-white" />
         </div>
       </div>
@@ -35,10 +35,10 @@ const months = computed(() => progressStore.monthlyProgress?.months ?? []);
 
         <div class="text-right">
           <div class="flex h-6 items-center justify-center gap-2">
-            <div class="flex h-5 w-5 items-center justify-center rounded-full bg-btn-mt-dark">
+            <div class="flex h-5 w-5 items-center justify-center rounded-full bg-dm-mint-darker">
               <Check class="h-4 w-4 text-white" />
             </div>
-            <span class="text-base font-bold leading-none text-btn-mt-dark">
+            <span class="text-base font-bold leading-none text-dm-mint-darker">
               {{ month.progressRate }}% 달성
             </span>
           </div>
