@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ChevronRight } from 'lucide-vue-next';
+
 import CalendarSummary from '@/components/calendar/CalendarSummary.vue';
 import MonthCalendar from '@/components/calendar/MonthCalendar.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
@@ -61,6 +63,28 @@ const emit = defineEmits<{
 
     <div class="p-4 pt-0">
       <CalendarSummary :items="summary" />
+
+      <button
+        type="button"
+        class="mt-4 flex w-full items-center justify-between rounded-2xl bg-brand px-4 py-3 text-left shadow-md transition-colors hover:bg-brand-dark"
+        @click="emit('view-expense-analysis')"
+      >
+        <span class="flex items-center gap-3">
+          <span class="grid h-10 w-10 place-items-center rounded-xl bg-white/90">
+            <img
+              src="/icons/expense-analytics.png"
+              alt=""
+              class="h-6 w-6 object-contain"
+            />
+          </span>
+          <span>
+            <span class="block text-sm font-bold text-white">{{ expenseAnalysisLabel }}</span>
+            <span class="mt-0.5 block text-xs text-white/80">지출 흐름과 비율을 확인해 보세요</span>
+          </span>
+        </span>
+        <ChevronRight class="h-5 w-5 shrink-0 text-white/80" />
+      </button>
+
       <div class="mt-5">
         <MonthCalendar
           :days="days"
@@ -97,14 +121,6 @@ const emit = defineEmits<{
         v-if="showWeddingEmptyState"
         class="mt-4"
       />
-
-      <button
-        type="button"
-        class="mt-4 w-full rounded-2xl bg-brand py-3.5 text-base font-semibold text-white shadow-sm"
-        @click="emit('view-expense-analysis')"
-      >
-        {{ expenseAnalysisLabel }}
-      </button>
     </div>
   </div>
 </template>
