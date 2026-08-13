@@ -235,7 +235,10 @@ async function confirmDelete() {
 </script>
 
 <template>
-  <PageHeader title="결혼 예상 시안" />
+  <PageHeader
+    title="결혼 예상 시안"
+    :showBack="true"
+  />
   <div class="p-4 pb-[calc(9rem+env(safe-area-inset-bottom))]">
     <div class="mt-6 mb-6 text-center">
       <h1 class="text-lg font-extrabold text-[#232631]">

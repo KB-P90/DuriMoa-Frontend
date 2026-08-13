@@ -184,7 +184,10 @@ function handleNewProposal() {
 
 <template>
   <div>
-    <PageHeader title="예산 시안" />
+    <PageHeader
+      title="예산 시안"
+      :showBack="true"
+    />
     <Separator />
 
     <div class="p-4">
