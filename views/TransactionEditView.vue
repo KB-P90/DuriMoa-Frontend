@@ -136,6 +136,7 @@ function save() {
       <PageHeader
         :title="isEditMode ? '내역 수정' : '내역 생성'"
         :on-back="() => emit('close')"
+        :show-back="true"
       />
       <button
         v-if="isEditMode"

@@ -34,7 +34,10 @@ const emit = defineEmits<{
 
 <template>
   <div class="mx-auto w-full overflow-hidden">
-    <PageHeader :title="monthLabel" />
+    <PageHeader
+      title="캘린더"
+      :show-back="false"
+    />
     <div class="flex items-center justify-end p-4">
       <div
         class="flex shrink-0 rounded-2xl bg-gray-100 p-1 text-xs font-medium text-dm-gray-dark sm:text-sm"
