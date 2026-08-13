@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { BookOpenText, ChevronRight, CreditCard, UserRound } from '@lucide/vue';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useMyPageStore } from '@/stores/myPageStore';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { usePushNotificationStore } from '@/stores/pushNotificationStore';
 import type { ShareScope } from '@/types/myPage';
 import PageHeader from '@/components/common/PageHeader.vue';
+import { Switch } from '@/components/ui/switch';
 
 type AssetSummary = {
   id: 'accounts' | 'cards';
@@ -22,6 +24,9 @@ const router = useRouter();
 const myPageStore = useMyPageStore();
 const { isUpdatingShare, myPage } = storeToRefs(myPageStore);
 const notificationStore = useNotificationStore();
+const pushNotificationStore = usePushNotificationStore();
+const { pushEnabled } = storeToRefs(pushNotificationStore);
+const isTogglingPush = ref(false);
 
 const roleLabels = {
   GROOM: '신랑',
@@ -97,9 +102,21 @@ async function handleLogout() {
   router.push({ name: 'login' });
 }
 
+async function handleTogglePush(nextEnabled: boolean) {
+  if (isTogglingPush.value) return;
+
+  isTogglingPush.value = true;
+  try {
+    await pushNotificationStore.setPushEnabled(nextEnabled);
+  } finally {
+    isTogglingPush.value = false;
+  }
+}
+
 onMounted(() => {
   void myPageStore.fetchMyPage();
   void notificationStore.fetchUnreadCount();
+  void pushNotificationStore.fetchSettings();
 });
 </script>
 
@@ -153,6 +170,16 @@ onMounted(() => {
               프로필 설정
             </button>
           </div>
+        </div>
+        <div
+          class="relative z-10 mt-4 flex items-center justify-between border-t border-[#F2EFEE] pt-3"
+        >
+          <span class="text-xs font-bold text-[#5A5B69]">푸시 알림 받기</span>
+          <Switch
+            :model-value="pushEnabled"
+            :disabled="isTogglingPush"
+            @update:model-value="handleTogglePush"
+          />
         </div>
       </article>
 

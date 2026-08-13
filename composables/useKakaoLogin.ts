@@ -3,6 +3,7 @@ import { isAxiosError } from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 import { loginWithKakao, signupWithKakao } from '@/server/authApi';
 import { ACCESS_TOKEN_KEY } from '@/server/axios.js';
+import { usePushNotificationStore } from '@/stores/pushNotificationStore';
 import type { SignupRoleDto } from '@/types/dto/auth.dto';
 
 const KAKAO_AUTHORIZE_URL = 'https://kauth.kakao.com/oauth/authorize';
@@ -134,6 +135,7 @@ export function useKakaoCallback() {
         callbackError.value = KAKAO_LOGIN_ERROR_MESSAGE;
         return;
       }
+      void usePushNotificationStore().reregisterIfPermissionGranted();
       await router.replace({ name: HOME_ROUTE_NAME });
     } catch (error: unknown) {
       callbackError.value = getApiErrorMessage(error, KAKAO_LOGIN_ERROR_MESSAGE);
@@ -215,6 +217,7 @@ export function useKakaoSignup() {
         return;
       }
 
+      void usePushNotificationStore().reregisterIfPermissionGranted();
       clearKakaoSignupSession();
       await router.replace({ name: HOME_ROUTE_NAME });
     } catch (error: unknown) {

@@ -7,6 +7,7 @@ import {
 import { logoutAuth } from '@/server/authApi';
 import { ACCESS_TOKEN_KEY } from '@/server/axios.js';
 import { toCoupleRole, toMyPage } from '@/models/MyPage';
+import { usePushNotificationStore } from '@/stores/pushNotificationStore';
 import type { MyPage, MyPageAssetSummary, MyPageProfileForm } from '@/types/myPage';
 
 const MOCK_ASSET_SUMMARY: MyPageAssetSummary = {
@@ -127,6 +128,12 @@ export const useMyPageStore = defineStore('myPage', {
       }
     },
     async logout() {
+      try {
+        await usePushNotificationStore().unregisterCurrentDevice();
+      } catch {
+        // 푸시 기기 해제 실패해도 로그아웃은 계속 진행한다.
+      }
+
       try {
         await logoutAuth();
       } catch {

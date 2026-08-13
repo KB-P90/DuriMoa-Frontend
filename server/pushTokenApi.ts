@@ -1,11 +1,15 @@
 import { api } from '@/server/axios.js';
+import type { ApiResponse } from '@/types/common';
+import type { PushDeviceDto } from '@/types/push';
 
-export async function registerPushToken(token: string): Promise<void> {
-  await api.post('/push-tokens', { token });
+export async function registerPushDevice(token: string): Promise<PushDeviceDto> {
+  const { data } = await api.put<ApiResponse<PushDeviceDto>>('/push-devices', {
+    token,
+    platform: 'WEB',
+  });
+  return data.data;
 }
 
-export async function unregisterPushToken(token: string): Promise<void> {
-  await api.delete('/push-tokens', {
-    params: { token },
-  });
+export async function unregisterPushDevice(deviceId: number): Promise<void> {
+  await api.delete<ApiResponse<null>>(`/push-devices/${deviceId}`);
 }
