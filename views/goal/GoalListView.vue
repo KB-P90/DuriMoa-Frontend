@@ -195,7 +195,7 @@ function handleNewProposal() {
         <h2 class="text-base font-bold text-gray-900">우리의 예산 시안</h2>
 
         <Button
-          class="cursor-pointer rounded-lg text-sm font-semibold text-brand border border-pink-05 text-pink-05 h-[30px] shadow-none"
+          class="cursor-pointer rounded-lg text-sm font-semibold text-brand border border-pink-05 text-pink-05 hover:bg-brand-dark hover:text-white h-[30px] shadow-none"
           @click="handleNewProposal"
         >
           + 새 시안
