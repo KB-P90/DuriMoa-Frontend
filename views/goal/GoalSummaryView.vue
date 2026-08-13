@@ -301,7 +301,11 @@ async function confirmDelete() {
         @click="editCategory(category.code)"
       >
         <div class="flex items-center gap-3">
-          <span class="text-2xl">{{ category.icon }}</span>
+          <img
+            :src="category.icon"
+            :alt="category.label"
+            class="h-6 w-6 object-contain"
+          />
           <div>
             <div class="flex items-center gap-1.5">
               <span class="text-sm font-bold text-[#232631]">{{ category.label }}</span>
