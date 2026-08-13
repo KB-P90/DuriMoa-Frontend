@@ -225,7 +225,7 @@ function handleExclude() {
               :value="type.code"
               class="text-dm-gray-dark data-[state=active]:text-dm-mint-darker"
             >
-              {{ type.label }}{{ type.code === 'balanced' ? ' · 추천' : '' }}
+              {{ type.label }}
             </TabsTrigger>
           </TabsList>
         </Tabs>
