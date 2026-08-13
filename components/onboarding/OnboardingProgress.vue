@@ -5,9 +5,11 @@ import { ArrowLeft } from '@lucide/vue';
 const props = withDefaults(
   defineProps<{
     currentStep: number;
+    showStepIndicator?: boolean;
     totalSteps?: number;
   }>(),
   {
+    showStepIndicator: true,
     totalSteps: 5,
   }
 );
@@ -32,7 +34,7 @@ function handleBack() {
       <button
         type="button"
         class="-ml-2 grid h-10 w-10 shrink-0 place-items-center rounded-[10px] text-dm-gray-dark transition hover:bg-dm-gray/10 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
-        aria-label="이전 온보딩 단계로 이동"
+        aria-label="이전 화면으로 이동"
         @click="handleBack"
       >
         <ArrowLeft
@@ -41,11 +43,15 @@ function handleBack() {
           aria-hidden="true"
         />
       </button>
-      <span class="text-[11px] font-medium text-dm-gray-dark">
+      <span
+        v-if="showStepIndicator"
+        class="text-[11px] font-medium text-dm-gray-dark"
+      >
         {{ currentStep }} / {{ totalSteps }}
       </span>
     </div>
     <div
+      v-if="showStepIndicator"
       class="h-[3px] overflow-hidden rounded-full bg-dm-gray/15"
       role="progressbar"
       :aria-label="`온보딩 ${currentStep}단계`"
