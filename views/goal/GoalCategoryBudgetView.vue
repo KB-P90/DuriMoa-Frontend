@@ -4,8 +4,11 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { getGoalCategoryStat } from '@/server/goalApi';
 import GoalCategoryRangeChart from '@/components/goal/GoalCategoryRangeChart.vue';
+import GoalCreatingOverlay from '@/components/goal/GoalCreatingOverlay.vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { GoalCategoryChartSkeleton } from '@/components/skeleton/goal';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
 import { useAuthCheck } from '@/composables/useAuthCheck';
@@ -58,7 +61,8 @@ function applyDefaultAmount() {
 }
 
 async function loadStat() {
-  if (!goalStore.draft.region) {
+  // 예비비는 지역/유형별 시세 통계가 없는 카테고리라 기본 슬라이더만 사용한다.
+  if (category.value.code === 'reserve' || !goalStore.draft.region) {
     stat.value = null;
     return;
   }
@@ -121,6 +125,17 @@ const nextLabel = computed(() => {
   return nextCategory.value ? '다음 항목 설정하기' : '예산 시안 완성하기';
 });
 
+const creating = ref(false);
+
+// 실제로는 즉시 계산되지만, 시안이 막 완성됐다는 느낌을 주기 위해
+// 잠깐 생성 중 애니메이션을 보여준 뒤 요약 화면으로 넘어간다.
+function goToSummaryAfterCreating() {
+  creating.value = true;
+  setTimeout(() => {
+    router.push({ name: 'goal-summary' });
+  }, 3500);
+}
+
 function handleNext() {
   saveCurrentAmount();
 
@@ -135,7 +150,7 @@ function handleNext() {
       params: { categoryCode: nextCategory.value.code },
     });
   } else {
-    router.push({ name: 'goal-summary' });
+    goToSummaryAfterCreating();
   }
 }
 
@@ -147,17 +162,20 @@ function handleExclude() {
 </script>
 
 <template>
-  <div class="p-4">
+  <GoalCreatingOverlay v-if="creating" />
+  <PageHeader
+    title="결혼 목표 설정"
+    :showBack="true"
+  />
+  <div class="p-4 pb-[calc(9rem+env(safe-area-inset-bottom))]">
     <div class="mb-4 flex items-center justify-between">
-      <p class="text-xs font-bold text-dm-mint-darker">{{ step }}</p>
-      <Button
-        type="button"
-        variant="outline"
-        class="h-7 rounded-full border-dm-gray/40 bg-dm-gray-light px-3 text-[11px] font-bold text-dm-gray-dark shadow-none hover:bg-dm-gray-light"
-        @click="handleExclude"
+      <p class="text-base font-bold text-dm-mint-darker">{{ step }}</p>
+      <button
+        class="text-sm font-semibold text-brand"
+        @click="router.push({ name: 'home' })"
       >
-        이 항목 제외하기
-      </Button>
+        나가기
+      </button>
     </div>
 
     <Tabs
@@ -180,7 +198,11 @@ function handleExclude() {
     </Tabs>
 
     <div class="mt-6 flex flex-col items-center text-center">
-      <span class="text-4xl">{{ category.icon }}</span>
+      <img
+        :src="category.icon"
+        :alt="category.label"
+        class="h-9 w-9 object-contain"
+      />
       <h1 class="mt-2 text-xl font-extrabold text-[#232631]">{{ category.label }}</h1>
       <p class="mt-1 text-sm text-dm-gray-dark">{{ category.description }}</p>
     </div>
@@ -191,6 +213,7 @@ function handleExclude() {
     >
       <div class="rounded-2xl border border-dm-gray/40 p-4">
         <Tabs
+          v-if="categoryCode !== 'reserve'"
           :model-value="activeBudgetType"
           class="w-full"
           @update:model-value="selectBudgetType($event as BudgetTypeCode)"
@@ -202,23 +225,18 @@ function handleExclude() {
               :value="type.code"
               class="text-dm-gray-dark data-[state=active]:text-dm-mint-darker"
             >
-              {{ type.label }}{{ type.code === 'balanced' ? ' · 추천' : '' }}
+              {{ type.label }}
             </TabsTrigger>
           </TabsList>
         </Tabs>
 
         <GoalCategoryRangeChart
-          v-if="stat"
+          v-if="stat || categoryCode === 'reserve'"
           :stat="stat"
-          :value="amount"
+          v-model:value="amount"
           class="mt-4"
         />
-        <p
-          v-else-if="statLoading"
-          class="mt-4 text-center text-xs text-dm-gray-dark"
-        >
-          지역별 시세를 불러오는 중이에요...
-        </p>
+        <GoalCategoryChartSkeleton v-else-if="statLoading" />
 
         <div class="flex mx-auto items-center justify-center relative mt-4">
           <Input
@@ -246,12 +264,24 @@ function handleExclude() {
         </p>
       </div>
 
-      <Button
-        type="submit"
-        class="h-[52px] w-full rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
+      <div
+        class="fixed inset-x-0 bottom-0 z-40 mx-auto flex w-full max-w-[768px] flex-col gap-2 border-t border-dm-gray/15 bg-white px-4 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))]"
       >
-        {{ nextLabel }}
-      </Button>
+        <Button
+          type="submit"
+          class="h-[52px] w-full rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
+        >
+          {{ nextLabel }}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          class="h-[52px] w-full rounded-xl bg-dm-gray-light text-[15px] font-extrabold text-dm-gray-darker/70 shadow-none hover:bg-dm-gray/50 hover:text-white"
+          @click="handleExclude"
+        >
+          이 항목 제외하기
+        </Button>
+      </div>
     </form>
 
     <div

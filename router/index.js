@@ -28,6 +28,12 @@ import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
 import ProgressView from '@/views/progress/ProgressView.vue';
 import MonthlyProgressView from '@/views/progress/MonthlyProgressView.vue';
 import MainView from '@/views/MainView.vue';
+import NotFoundView from '@/views/NotFoundView.vue';
+import { useGoalStore } from '@/stores/goalStore';
+
+// 목표 설정 흐름 내부에서 "이전" 버튼으로 1단계(goal-schedule)로 돌아오는 경우는
+// 입력값을 유지해야 하므로, 그 외의 경로(홈 등)로 들어올 때만 이전 draft를 지운다.
+const GOAL_FLOW_ROUTE_NAMES = ['goal-budget-type', 'goal-category-budget'];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,26 +68,35 @@ const router = createRouter({
           }),
         },
         { path: 'goal', name: 'goal-list', component: GoalListView, props: { title: '예산 목록' } },
-        { path: 'goal/schedule', name: 'goal-schedule', component: GoalScheduleView },
-        { path: 'goal/budget-type', name: 'goal-budget-type', component: GoalBudgetTypeView },
-        {
-          path: 'goal/categories/:categoryCode',
-          name: 'goal-category-budget',
-          component: GoalCategoryBudgetView,
-          props: true,
-        },
-        {
-          path: 'goal/summary/:goalId?',
-          name: 'goal-summary',
-          component: GoalSummaryView,
-          props: true,
-        },
         { path: '/card/amount', name: 'card-amount', component: CardAmountInputView },
         { path: '/myinfo/profile', name: 'myinfo-profile', component: ProfileEditView },
         { path: '/myinfo/accounts', name: 'myinfo-account-connect', component: AccountConnectView },
         { path: '/myinfo/cards', name: 'myinfo-card-connect', component: CardConnectView },
         { path: '/myinfo/couple', name: 'myinfo-couple-connect', component: CoupleConnectView },
       ],
+    },
+    {
+      path: '/goal/schedule',
+      name: 'goal-schedule',
+      component: GoalScheduleView,
+      beforeEnter: (to, from) => {
+        if (!GOAL_FLOW_ROUTE_NAMES.includes(from.name)) {
+          useGoalStore().reset();
+        }
+      },
+    },
+    { path: '/goal/budget-type', name: 'goal-budget-type', component: GoalBudgetTypeView },
+    {
+      path: '/goal/categories/:categoryCode',
+      name: 'goal-category-budget',
+      component: GoalCategoryBudgetView,
+      props: true,
+    },
+    {
+      path: '/goal/summary/:goalId?',
+      name: 'goal-summary',
+      component: GoalSummaryView,
+      props: true,
     },
     { path: '/login', name: 'login', component: LoginView },
     { path: '/signup', name: 'signup', component: SignupView },
@@ -91,7 +106,7 @@ const router = createRouter({
     { path: '/auth/kakao/callback', name: 'kakao-callback', component: KakaoCallbackView },
     { path: '/auth/kakao/signup', name: 'kakao-signup', component: KakaoSignupView },
     { path: '/onboarding', name: 'onboarding', component: OnboardingView },
-    { path: '/:pathMatch(.*)*', redirect: '/login' },
+    { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },
   ],
   scrollBehavior: () => ({ top: 0 }),
 });

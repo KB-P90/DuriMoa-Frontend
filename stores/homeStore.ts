@@ -35,15 +35,17 @@ export const useHomeStore = defineStore('home', {
       this.isLoading = true;
 
       try {
-        const [dashboardDto, missionsDto] = await Promise.all([
+        const [dashboardResult, missionsResult] = await Promise.allSettled([
           getHomeDashboard(),
           getMonthlySavingMissions(year, month),
         ]);
 
-        if (dashboardDto) {
-          this.dashboard = toHomeDashboard(dashboardDto);
+        if (dashboardResult.status === 'fulfilled' && dashboardResult.value) {
+          this.dashboard = toHomeDashboard(dashboardResult.value);
         }
-        this.missions = missionsDto.missions.map(toSavingMission);
+        if (missionsResult.status === 'fulfilled') {
+          this.missions = missionsResult.value.missions.map(toSavingMission);
+        }
       } finally {
         this.isLoading = false;
       }

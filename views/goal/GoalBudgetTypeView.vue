@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import GoalStepHeader from '@/components/goal/GoalStepHeader.vue';
 import GoalStepNav from '@/components/goal/GoalStepNav.vue';
+import PageHeader from '@/components/common/PageHeader.vue';
+import { GoalBudgetEstimateSkeleton, GoalSavingsNoticeSkeleton } from '@/components/skeleton/goal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
 import { useAuthCheck } from '@/composables/useAuthCheck';
+import { getGoalBudgetEstimate } from '@/server/goalApi';
 import { useGoalStore } from '@/stores/goalStore';
 import type { BudgetTypeCode } from '@/types/goal';
 import { formatAmount } from '@/utils/format';
@@ -18,12 +21,32 @@ const goalStore = useGoalStore();
 
 const selected = ref<BudgetTypeCode>(goalStore.draft.budgetType ?? 'balanced');
 
-// GET /api/goal/stat?region= 붙기 전까지의 목업 값. 실제 응답 오면 이 테이블만 갈아끼우면 됨.
-const BUDGET_PREVIEWS: Record<BudgetTypeCode, { predicted: number; nationalAverage: number }> = {
-  saving: { predicted: 5000, nationalAverage: 5418 },
-  balanced: { predicted: 6500, nationalAverage: 6120 },
-  flex: { predicted: 8200, nationalAverage: 7450 },
-};
+const budgetPreviews = ref<Record<BudgetTypeCode, number>>({
+  saving: 0,
+  balanced: 0,
+  flex: 0,
+});
+
+const estimateLoading = ref(true);
+
+async function loadBudgetEstimate() {
+  if (!goalStore.draft.region) {
+    estimateLoading.value = false;
+    return;
+  }
+
+  try {
+    const estimate = await getGoalBudgetEstimate(goalStore.draft.region);
+    for (const { type, totalAmount } of estimate.estimates) {
+      const budgetType = BUDGET_TYPES.find((item) => item.label === type);
+      if (budgetType) budgetPreviews.value[budgetType.code] = totalAmount / 10_000;
+    }
+  } finally {
+    estimateLoading.value = false;
+  }
+}
+
+onMounted(loadBudgetEstimate);
 
 // 자산/저축 가능액은 마이페이지·홈 도메인 데이터가 필요해서 아직 목업.
 const CURRENT_ASSET = 3119;
@@ -41,13 +64,12 @@ const remainingMonths = computed(() => {
 });
 
 function previewFor(code: BudgetTypeCode) {
-  const { predicted, nationalAverage } = BUDGET_PREVIEWS[code];
-  const diff = nationalAverage - predicted;
+  const predicted = budgetPreviews.value[code];
   const requiredMonthly = remainingMonths.value
     ? Math.max(Math.round((predicted - CURRENT_ASSET) / remainingMonths.value), 0)
     : null;
 
-  return { predicted, nationalAverage, diff, requiredMonthly };
+  return { predicted, requiredMonthly };
 }
 
 // 경고 박스는 Tabs 컨텍스트가 아니라 selected를 직접 보고 그리는 반응형 블록이라
@@ -68,7 +90,11 @@ function handlePrev() {
 </script>
 
 <template>
-  <div class="p-4">
+  <PageHeader
+    title="결혼 목표 설정"
+    :showBack="true"
+  />
+  <div class="p-4 pb-[calc(6rem+env(safe-area-inset-bottom))]">
     <GoalStepHeader
       step="2/8"
       title="유형별 평균 예산을 보여드려요"
@@ -86,7 +112,7 @@ function handlePrev() {
           :value="type.code"
           class="text-dm-gray-dark data-[state=active]:text-dm-mint-darker"
         >
-          {{ type.label }}{{ type.code === 'balanced' ? ' · 추천' : '' }}
+          {{ type.label }}
         </TabsTrigger>
       </TabsList>
 
@@ -97,16 +123,18 @@ function handlePrev() {
       >
         <div class="rounded-2xl bg-dm-gray-light p-5 text-center md:h-full">
           <p class="text-xs font-bold text-dm-gray-dark">예측 결혼 예산</p>
-          <p class="mt-2 flex items-end justify-center gap-1">
+          <GoalBudgetEstimateSkeleton
+            v-if="estimateLoading"
+            class="mt-2"
+          />
+          <p
+            v-else
+            class="mt-2 flex items-end justify-center gap-1"
+          >
             <span class="text-4xl font-extrabold text-dm-mint-darker">
               {{ formatAmount(previewFor(type.code).predicted) }}
             </span>
             <span class="mb-1 text-sm font-bold text-dm-mint-darker">만원</span>
-          </p>
-          <p class="mt-2 text-xs text-dm-gray-dark">
-            전국 평균 {{ formatAmount(previewFor(type.code).nationalAverage) }}만원보다
-            {{ formatAmount(previewFor(type.code).diff) }}만원
-            {{ previewFor(type.code).diff >= 0 ? '낮아요' : '높아요' }}
           </p>
         </div>
       </TabsContent>
@@ -114,7 +142,11 @@ function handlePrev() {
 
     <div class="mt-4 flex gap-2 rounded-xl bg-pink-01 p-4">
       <span aria-hidden="true">⚠️</span>
-      <p class="text-xs leading-5 text-[#232631]">
+      <GoalSavingsNoticeSkeleton v-if="estimateLoading" />
+      <p
+        v-else
+        class="text-xs leading-5 text-[#232631]"
+      >
         <template v-if="selectedPreview.requiredMonthly !== null">
           현재 자산 {{ formatAmount(CURRENT_ASSET) }}만원 · 남은 {{ remainingMonths }}개월 기준 월
           {{ formatAmount(selectedPreview.requiredMonthly) }}만원을 모아야 해요. 지금 저축 가능액(월

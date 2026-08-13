@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 
 import GoalStepHeader from '@/components/goal/GoalStepHeader.vue';
 import GoalStepNav from '@/components/goal/GoalStepNav.vue';
+import CalendarDatePicker from '@/components/common/CalendarDatePicker.vue';
 import {
   Select,
   SelectContent,
@@ -15,6 +16,7 @@ import { REGIONS } from '@/constants/goal';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useGoalStore } from '@/stores/goalStore';
 import type { RegionName } from '@/types/goal';
+import PageHeader from '@/components/common/PageHeader.vue';
 
 useAuthCheck();
 
@@ -33,7 +35,12 @@ function handleNext() {
 </script>
 
 <template>
-  <div class="p-4">
+  <PageHeader
+    title="결혼 목표 설정"
+    :showBack="true"
+    :on-back="() => router.push({ name: 'home' })"
+  />
+  <div class="p-4 pb-[calc(6rem+env(safe-area-inset-bottom))]">
     <GoalStepHeader
       step="1/8"
       title="언제, 어디서 하나요"
@@ -50,12 +57,10 @@ function handleNext() {
         >
           결혼 예정일
         </label>
-        <input
+        <CalendarDatePicker
           id="goal-wedding-date"
           v-model="weddingDate"
-          class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray hover:border-dm-gray/60 focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
-          type="date"
-          required
+          title="결혼 예정일"
         />
       </div>
 
@@ -69,7 +74,7 @@ function handleNext() {
         <Select v-model="region">
           <SelectTrigger
             id="goal-region"
-            class="h-[46px] w-full rounded-xl border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] shadow-none hover:border-dm-gray/60 focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
+            class="h-[46px] w-full rounded-xl border-dm-gray/40 bg-white px-3.5 text-sm font-semibold text-[#232631] shadow-none hover:border-dm-gray/60 focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
           >
             <SelectValue placeholder="지역을 선택해주세요" />
           </SelectTrigger>
@@ -87,7 +92,7 @@ function handleNext() {
 
       <GoalStepNav
         :show-prev="false"
-        :next-disabled="!region"
+        :next-disabled="!region || !weddingDate"
       />
     </form>
   </div>

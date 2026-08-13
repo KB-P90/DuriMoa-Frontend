@@ -105,7 +105,10 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-2">
-    <PageHeader title="마이페이지" />
+    <PageHeader
+      title="마이페이지"
+      :show-back="false"
+    />
     <div
       class="flex flex-col gap-3 bg-gradient-to-b from-[#FFFBFC] to-white px-4 pb-8 pt-5 md:px-10 md:pb-9 md:pt-6"
     >

@@ -17,7 +17,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { GoalCategoryBadgeSkeleton, GoalCategoryDiffSkeleton } from '@/components/skeleton/goal';
 import { Slider } from '@/components/ui/slider';
+import PageHeader from '@/components/common/PageHeader.vue';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useGoalStore } from '@/stores/goalStore';
@@ -101,6 +103,7 @@ const categorySegments = computed(() =>
 // 카테고리별 하위25/상위25 구간을 알아야 알뜰형/균형형/플렉스형 배지를 매길 수 있어서,
 // 화면 진입 시 6개 카테고리 시세를 한 번에 불러온다.
 const categoryStats = ref<Partial<Record<GoalCategoryCode, GoalCategoryStat>>>({});
+const statsLoading = ref(true);
 
 // 목록 카드를 눌러 들어오면 goalStore.draft가 이미 채워져 있지만, URL로 바로 들어오거나
 // 새로고침한 경우엔 draft가 비어있으므로 목록을 다시 불러와 채운다.
@@ -124,23 +127,30 @@ onMounted(async () => {
     goalStore.draft.name = goalStore.defaultName;
   }
 
-  if (!goalStore.draft.region) return;
+  if (!goalStore.draft.region) {
+    statsLoading.value = false;
+    return;
+  }
 
-  const results = await Promise.all(
-    GOAL_CATEGORIES.map(async (category) => {
-      try {
-        return [
-          category.code,
-          await getGoalCategoryStat(goalStore.draft.region!, category.label),
-        ] as const;
-      } catch {
-        return [category.code, null] as const;
-      }
-    })
-  );
+  try {
+    const results = await Promise.all(
+      GOAL_CATEGORIES.map(async (category) => {
+        try {
+          return [
+            category.code,
+            await getGoalCategoryStat(goalStore.draft.region!, category.label),
+          ] as const;
+        } catch {
+          return [category.code, null] as const;
+        }
+      })
+    );
 
-  for (const [code, stat] of results) {
-    if (stat) categoryStats.value[code] = stat;
+    for (const [code, stat] of results) {
+      if (stat) categoryStats.value[code] = stat;
+    }
+  } finally {
+    statsLoading.value = false;
   }
 });
 
@@ -234,7 +244,11 @@ async function confirmDelete() {
 </script>
 
 <template>
-  <div class="p-4">
+  <PageHeader
+    title="결혼 예상 시안"
+    :showBack="true"
+  />
+  <div class="p-4 pb-[calc(9rem+env(safe-area-inset-bottom))]">
     <div class="mt-6 mb-6 text-center">
       <h1 class="text-lg font-extrabold text-[#232631]">
         {{ isEditing ? '예산 시안을 수정하고 있어요' : '예산 시안이 완성됐어요' }}
@@ -296,19 +310,28 @@ async function confirmDelete() {
         @click="editCategory(category.code)"
       >
         <div class="flex items-center gap-3">
-          <span class="text-2xl">{{ category.icon }}</span>
+          <img
+            :src="category.icon"
+            :alt="category.label"
+            class="h-6 w-6 object-contain"
+          />
           <div>
             <div class="flex items-center gap-1.5">
               <span class="text-sm font-bold text-[#232631]">{{ category.label }}</span>
+              <GoalCategoryBadgeSkeleton v-if="statsLoading && category.code !== 'reserve'" />
               <span
-                v-if="category.code !== 'reserve'"
+                v-else-if="category.code !== 'reserve'"
                 class="rounded-full px-1.5 py-0.5 text-[10px] font-bold"
                 :class="budgetTypeBadgeClass(category.code)"
               >
                 {{ budgetTypeLabelFor(category.code) }}
               </span>
             </div>
-            <p class="mt-0.5 text-[11px] text-dm-gray-dark">
+            <GoalCategoryDiffSkeleton v-if="statsLoading" />
+            <p
+              v-else
+              class="mt-0.5 text-[11px] text-dm-gray-dark"
+            >
               평균 대비 {{ formatSignedAmount(diffFor(category.code)) }}만원
             </p>
           </div>
@@ -394,24 +417,28 @@ async function confirmDelete() {
       지역 평균 출처 · 2025년 결혼 비용 통계 (기준연도 2025 · 갱신 2026.06.30)
     </p>
 
-    <Button
-      type="button"
-      :disabled="submitting"
-      class="mt-6 h-[52px] w-full rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
-      @click="handleShare"
+    <div
+      class="fixed inset-x-0 bottom-0 z-40 mx-auto flex w-full max-w-[768px] flex-col gap-2 border-t border-dm-gray/15 bg-white px-4 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))]"
     >
-      {{ submitLabel }}
-    </Button>
+      <Button
+        type="button"
+        :disabled="submitting"
+        class="h-[52px] w-full rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light shadow-none hover:bg-brand-dark"
+        @click="handleShare"
+      >
+        {{ submitLabel }}
+      </Button>
 
-    <Button
-      v-if="isEditing"
-      type="button"
-      variant="outline"
-      class="mt-3 h-[52px] w-full rounded-xl border-dm-mint-dark/60 bg-dm-mint-dark text-[15px] font-extrabold text-white shadow-none hover:bg-dm-mint-darker hover:text-white"
-      @click="openDeleteDialog"
-    >
-      시안 삭제
-    </Button>
+      <Button
+        v-if="isEditing"
+        type="button"
+        variant="outline"
+        class="h-[52px] w-full rounded-xl border-dm-mint-dark/60 bg-dm-mint-dark text-[15px] font-extrabold text-white shadow-none hover:bg-dm-mint-darker hover:text-white"
+        @click="openDeleteDialog"
+      >
+        시안 삭제
+      </Button>
+    </div>
 
     <AlertDialog v-model:open="deleteDialogOpen">
       <AlertDialogContent>

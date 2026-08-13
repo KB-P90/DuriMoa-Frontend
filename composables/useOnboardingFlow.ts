@@ -26,11 +26,6 @@ const ACTIVE_ONBOARDING_SCREENS = [
 ] as const satisfies readonly ActiveOnboardingScreen[];
 const DEFAULT_ACTIVE_ONBOARDING_SCREEN: ActiveOnboardingScreen = 'couple';
 
-const ACTIVE_PREVIOUS_SCREENS = {
-  account: 'couple',
-  'account-selection': 'account',
-} as const satisfies Record<Exclude<ActiveOnboardingScreen, 'couple'>, ActiveOnboardingScreen>;
-
 // 라우트 쿼리값이 문자열일 때만 값을 반환한다.
 function getQueryValue(value: unknown) {
   return typeof value === 'string' ? value : '';
@@ -96,9 +91,19 @@ export function useOnboardingFlow() {
   // URL 쿼리를 검증해 현재 온보딩 화면을 계산한다.
   const screen = computed(() => toOnboardingScreen(route.query.screen));
 
-  // 계좌 또는 카드 기관을 조회할 수 있을 때 연결 버튼을 활성화한다.
+  // 아이디와 비밀번호가 모두 입력된 영역만 금융기관 조회 대상으로 삼는다.
+  const hasAccountCredentials = computed(
+    () =>
+      internetBankingId.value.trim().length > 0 && internetBankingPassword.value.length > 0
+  );
+  const hasCardCredentials = computed(
+    () => cardLoginId.value.trim().length > 0 && cardLoginPassword.value.length > 0
+  );
+
+  // 계좌 또는 카드 중 하나 이상의 인증 정보가 완성되었을 때 연결 버튼을 활성화한다.
   const canContinueAccount = computed(
-    () => (bank.value.length > 0 || cardCompany.value.length > 0) && !isConnectingAccount.value
+    () =>
+      (hasAccountCredentials.value || hasCardCredentials.value) && !isConnectingAccount.value
   );
 
   // 조회가 완료된 계좌 또는 카드 중 새 항목을 하나 이상 선택했는지 나타낸다.
@@ -194,7 +199,7 @@ export function useOnboardingFlow() {
     }
   }
 
-  // 계좌와 카드를 모두 조회하고, 둘 중 하나라도 확인되면 선택 화면으로 이동한다.
+  // 인증 정보가 완성된 영역만 조회하고, 계좌·카드 중 하나라도 확인되면 선택 화면으로 이동한다.
   async function connectAccount() {
     if (!canContinueAccount.value) {
       return;
@@ -205,31 +210,35 @@ export function useOnboardingFlow() {
     cardConnectionErrorMessage.value = '';
 
     try {
-      const accountResult = await getConnectedAssets(
-        selectedCompany.value,
-        internetBankingId.value,
-        internetBankingPassword.value,
-        ONBOARDING_API_ERROR_MESSAGES.ACCOUNT_CREDENTIALS_REQUIRED,
-        ONBOARDING_API_ERROR_MESSAGES.ACCOUNT_CONNECTION,
-        '연결 가능한 계좌를 찾지 못했어요.'
-      );
-      const cardResult = await getConnectedAssets(
-        cardCompany.value,
-        cardLoginId.value,
-        cardLoginPassword.value,
-        '처음 연결하거나 새 카드사를 추가하려면 카드사 아이디와 비밀번호를 입력해주세요.',
-        '카드를 불러오지 못했어요. 입력 정보를 확인하고 다시 시도해주세요.',
-        '연결 가능한 카드를 찾지 못했어요.'
-      );
+      const accountResult = hasAccountCredentials.value
+        ? await getConnectedAssets(
+            selectedCompany.value,
+            internetBankingId.value,
+            internetBankingPassword.value,
+            ONBOARDING_API_ERROR_MESSAGES.ACCOUNT_CREDENTIALS_REQUIRED,
+            ONBOARDING_API_ERROR_MESSAGES.ACCOUNT_CONNECTION,
+            '연결 가능한 계좌를 찾지 못했어요.'
+          )
+        : null;
+      const cardResult = hasCardCredentials.value
+        ? await getConnectedAssets(
+            cardCompany.value,
+            cardLoginId.value,
+            cardLoginPassword.value,
+            '처음 연결하거나 새 카드사를 추가하려면 카드사 아이디와 비밀번호를 입력해주세요.',
+            '카드를 불러오지 못했어요. 입력 정보를 확인하고 다시 시도해주세요.',
+            '연결 가능한 카드를 찾지 못했어요.'
+          )
+        : null;
 
-      accounts.value = accountResult.items;
-      cards.value = cardResult.items;
+      accounts.value = accountResult?.items ?? [];
+      cards.value = cardResult?.items ?? [];
       selectedAccountNumbers.value = [];
       selectedCardNumbers.value = [];
-      isAccountConnected.value = accountResult.items.length > 0;
-      isCardConnected.value = cardResult.items.length > 0;
-      accountConnectionErrorMessage.value = accountResult.errorMessage;
-      cardConnectionErrorMessage.value = cardResult.errorMessage;
+      isAccountConnected.value = accounts.value.length > 0;
+      isCardConnected.value = cards.value.length > 0;
+      accountConnectionErrorMessage.value = accountResult?.errorMessage ?? '';
+      cardConnectionErrorMessage.value = cardResult?.errorMessage ?? '';
 
       if (
         (isAccountConnected.value || isCardConnected.value) &&
@@ -331,17 +340,14 @@ export function useOnboardingFlow() {
     }
   }
 
-  // 현재 단계의 이전 온보딩 화면으로 이동한다.
+  // 계좌 선택 화면만 계좌 입력 화면으로 돌아가고, 독립 설정 화면에서는 홈으로 이동한다.
   function goBack() {
-    // 뒤로가기 기준이 되는 현재 온보딩 화면이다.
-    const currentScreen = screen.value;
-
-    if (currentScreen === 'couple') {
-      router.push({ name: ONBOARDING_ROUTE_NAMES.HOME });
+    if (screen.value === 'account-selection') {
+      goToScreen('account');
       return;
     }
 
-    goToScreen(ACTIVE_PREVIOUS_SCREENS[currentScreen]);
+    goHome();
   }
 
   // 온보딩을 종료하고 홈 화면으로 이동한다.
@@ -349,9 +355,9 @@ export function useOnboardingFlow() {
     router.push({ name: ONBOARDING_ROUTE_NAMES.HOME });
   }
 
-  // 커플 연결을 마치면 계좌 연결 단계로 이동한다.
+  // 커플 연결 설정을 마치면 홈 체크리스트로 돌아간다.
   function continueFromCouple() {
-    goToScreen('account');
+    goHome();
   }
 
   // 화면에서 사용할 상태와 동작만 공개한다.

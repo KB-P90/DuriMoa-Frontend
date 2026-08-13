@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { X } from 'lucide-vue-next';
 import ProposalSummaryCard from '@/components/goal/ProposalSummaryCard.vue';
 import {
   AlertDialog,
@@ -33,7 +34,14 @@ defineEmits<{
     :open="open"
     @update:open="$emit('update:open', $event)"
   >
-    <AlertDialogContent>
+    <AlertDialogContent class="relative">
+      <AlertDialogCancel
+        class="absolute right-4 top-4 h-6 w-6 border-none p-0 text-dm-gray-dark hover:bg-dm-gray-light"
+        @click="$emit('update:open', false)"
+      >
+        <X class="h-4 w-4" />
+      </AlertDialogCancel>
+
       <template v-if="mode === 'request'">
         <AlertDialogHeader>
           <AlertDialogTitle>메인 시안 신청</AlertDialogTitle>
@@ -50,7 +58,7 @@ defineEmits<{
             취소
           </AlertDialogCancel>
           <AlertDialogAction
-            class="h-12 flex-1 rounded-xl hover:bg-brand"
+            class="h-12 flex-1 rounded-xl hover:bg-brand-dark bg-brand"
             @click="$emit('confirm')"
           >
             신청하기
@@ -86,7 +94,7 @@ defineEmits<{
             거절
           </AlertDialogCancel>
           <AlertDialogAction
-            class="h-12 flex-[1.6] rounded-xl hover:bg-brand"
+            class="h-12 flex-[1.6] rounded-xl hover:bg-brand-dark bg-brand"
             @click="$emit('confirm')"
           >
             수락하기
