@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { getGoalCategoryStat } from '@/server/goalApi';
 import GoalCategoryRangeChart from '@/components/goal/GoalCategoryRangeChart.vue';
+import GoalCreatingOverlay from '@/components/goal/GoalCreatingOverlay.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -124,6 +125,17 @@ const nextLabel = computed(() => {
   return nextCategory.value ? '다음 항목 설정하기' : '예산 시안 완성하기';
 });
 
+const creating = ref(false);
+
+// 실제로는 즉시 계산되지만, 시안이 막 완성됐다는 느낌을 주기 위해
+// 잠깐 생성 중 애니메이션을 보여준 뒤 요약 화면으로 넘어간다.
+function goToSummaryAfterCreating() {
+  creating.value = true;
+  setTimeout(() => {
+    router.push({ name: 'goal-summary' });
+  }, 3500);
+}
+
 function handleNext() {
   saveCurrentAmount();
 
@@ -138,7 +150,7 @@ function handleNext() {
       params: { categoryCode: nextCategory.value.code },
     });
   } else {
-    router.push({ name: 'goal-summary' });
+    goToSummaryAfterCreating();
   }
 }
 
@@ -150,6 +162,7 @@ function handleExclude() {
 </script>
 
 <template>
+  <GoalCreatingOverlay v-if="creating" />
   <PageHeader
     title="결혼 목표 설정"
     :showBack="true"
