@@ -59,7 +59,8 @@ function applyDefaultAmount() {
 }
 
 async function loadStat() {
-  if (!goalStore.draft.region) {
+  // 예비비는 지역/유형별 시세 통계가 없는 카테고리라 기본 슬라이더만 사용한다.
+  if (category.value.code === 'reserve' || !goalStore.draft.region) {
     stat.value = null;
     return;
   }
@@ -216,9 +217,9 @@ function handleExclude() {
         </Tabs>
 
         <GoalCategoryRangeChart
-          v-if="stat"
+          v-if="stat || categoryCode === 'reserve'"
           :stat="stat"
-          :value="amount"
+          v-model:value="amount"
           class="mt-4"
         />
         <p
