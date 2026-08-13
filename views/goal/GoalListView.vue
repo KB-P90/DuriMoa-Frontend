@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import { isAxiosError } from 'axios';
 import { toast } from 'vue-sonner';
 import { useRouter } from 'vue-router';
 
@@ -71,6 +72,19 @@ const cardItems = computed<ProposalCardItem[]>(() =>
 
 const mainProposal = computed(() => proposals.value.find((goal) => goal.isMain) ?? null);
 
+// 백엔드가 내려주는 실패 사유(message)를 그대로 토스트에 노출하고, 없으면 기본 문구로 대체한다.
+function getGoalApiErrorMessage(error: unknown, fallbackMessage: string) {
+  if (!isAxiosError(error) || !error.response) return fallbackMessage;
+
+  const data = error.response.data;
+  const hasMessage =
+    typeof data === 'object' &&
+    data !== null &&
+    'message' in data &&
+    typeof data.message === 'string';
+  return hasMessage ? data.message : fallbackMessage;
+}
+
 async function loadProposals() {
   try {
     proposals.value = await getGoalProposals();
@@ -117,8 +131,8 @@ async function cancelRequest(goalId: number) {
     await cancelMainProposalRequest(goalId);
     await loadProposals();
     toast.success('신청을 취소했어요.');
-  } catch {
-    toast.error('요청 취소에 실패했어요. 다시 시도해주세요.');
+  } catch (error) {
+    toast.error(getGoalApiErrorMessage(error, '요청 취소에 실패했어요. 다시 시도해주세요.'));
   }
 }
 
@@ -136,8 +150,8 @@ async function handleDialogConfirm() {
       toast.success('메인 시안으로 확정했어요.');
     }
     await loadProposals();
-  } catch {
-    toast.error('요청 처리에 실패했어요. 다시 시도해주세요.');
+  } catch (error) {
+    toast.error(getGoalApiErrorMessage(error, '요청 처리에 실패했어요. 다시 시도해주세요.'));
   }
 }
 
@@ -149,8 +163,8 @@ async function handleDialogCancel() {
     await decideMainProposalRequest(activeGoalId.value, 'REJECT');
     await loadProposals();
     toast.success('요청을 거절했어요.');
-  } catch {
-    toast.error('요청 처리에 실패했어요. 다시 시도해주세요.');
+  } catch (error) {
+    toast.error(getGoalApiErrorMessage(error, '요청 처리에 실패했어요. 다시 시도해주세요.'));
   }
 }
 
@@ -170,7 +184,11 @@ function handleNewProposal() {
 
 <template>
   <div>
-    <PageHeader title="예산 시안" />
+    <PageHeader
+      title="예산 시안 목록"
+      :showBack="true"
+      :on-back="() => router.push({ name: 'home' })"
+    />
     <Separator />
 
     <div class="p-4">
@@ -178,7 +196,7 @@ function handleNewProposal() {
         <h2 class="text-base font-bold text-gray-900">우리의 예산 시안</h2>
 
         <Button
-          class="cursor-pointer rounded-lg text-sm font-semibold text-brand border border-pink-05 text-pink-05 h-[30px] shadow-none"
+          class="cursor-pointer rounded-lg text-sm font-semibold text-brand border border-pink-05 text-pink-05 hover:bg-brand-dark hover:text-white h-[30px] shadow-none"
           @click="handleNewProposal"
         >
           + 새 시안

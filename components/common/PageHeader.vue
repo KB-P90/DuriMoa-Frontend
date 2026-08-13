@@ -5,6 +5,7 @@ import { ChevronLeft } from '@lucide/vue';
 const props = defineProps<{
   title: string;
   onBack?: () => void;
+  showBack?: boolean;
 }>();
 
 const router = useRouter();
@@ -21,6 +22,7 @@ function handleBack() {
 <template>
   <header class="flex h-[50px] items-center gap-3 border-b border-[#F5F5F9] px-4">
     <button
+      v-if="showBack !== false"
       type="button"
       aria-label="뒤로가기"
       class="grid h-6 w-6 shrink-0 place-items-center"

@@ -49,6 +49,5 @@ export const toMyPage = (profile: MyPageProfileResponseDto): MyPage => {
       selectedScope: isShared ? 'ALL' : 'WEDDING_FUND_ONLY',
       statusText: isShared ? '전체 공개 중' : '요약 공개 중',
     },
-    appVersion: 'P90 prototype · v1.0',
   };
 };
