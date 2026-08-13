@@ -72,7 +72,11 @@ function changeMonth({ year, month }: { year: number; month: number }) {
 
 <template>
   <div class="whitespace-nowrap">
-    <PageHeader :title="`${selectedMonth.year}년 ${selectedMonth.month}월 지출 관리`" />
+    <PageHeader
+      :title="`${selectedMonth.year}년 ${selectedMonth.month}월 지출 관리`"
+      :showBack="true"
+      :on-back="() => router.push({ name: 'home' })"
+    />
     <div class="flex items-center justify-end p-4">
       <MonthPicker
         :year="selectedMonth.year"

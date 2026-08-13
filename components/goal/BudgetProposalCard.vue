@@ -41,9 +41,9 @@ const STATUS_META: Record<
     badgeHoverClass: '',
     textClass: 'text-white',
     subTextClass: 'text-white/80',
-    cardClass: 'bg-brand-dark',
+    cardClass: 'bg-brand',
     cardBorderClass: '',
-    cardHoverClass: 'hover:bg-brand/80',
+    cardHoverClass: 'hover:bg-brand-dark',
     amountClass: 'text-white',
     textHoverClass: 'group-hover:text-white',
   },
@@ -54,7 +54,7 @@ const STATUS_META: Record<
     badgeHoverClass: '',
     cardBorderClass: 'border-dm-mint-dark/70',
     cardClass: 'bg-dm-mint-darker',
-    cardHoverClass: 'hover:bg-dm-mint-darker/80',
+    cardHoverClass: 'hover:bg-deep-green',
     amountClass: 'text-white',
     textClass: 'text-white',
     subTextClass: 'text-white/80',
@@ -76,11 +76,11 @@ const STATUS_META: Record<
   incoming: {
     label: '수락 요청',
     icon: BellRing,
-    badgeClass: 'bg-white/30 text-brand-dark',
-    badgeHoverClass: 'group-hover:text-white',
+    badgeClass: 'bg-white/70 text-brand-dark',
+    badgeHoverClass: 'group-hover:text-brand',
     cardBorderClass: 'border-pink-03/50',
-    cardClass: 'bg-pink-03/70',
-    cardHoverClass: 'hover:border-pink-03-dark hover:bg-brand-dark',
+    cardClass: 'bg-pink-02/70',
+    cardHoverClass: 'hover:border-pink-03-dark hover:bg-pink-04',
     amountClass: 'text-[#232631]',
     textClass: 'text-[#232631]',
     subTextClass: 'text-dm-gray-dark',
@@ -147,7 +147,7 @@ const STATUS_META: Record<
       <Button
         v-else-if="proposal.status === 'incoming'"
         type="button"
-        class="h-8 shrink-0 cursor-pointer rounded-full bg-white px-4 text-xs font-semibold text-brand-dark shadow-none transition-colors"
+        class="h-8 shrink-0 cursor-pointer rounded-full bg-white px-4 text-xs font-semibold text-brand-dark shadow-none transition-colors hover:bg-white"
         @click.stop="$emit('review', proposal.id)"
       >
         확인하기

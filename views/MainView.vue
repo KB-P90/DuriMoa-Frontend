@@ -25,37 +25,25 @@ const dragStartX = ref<number | null>(null);
 const dragStartScrollLeft = ref(0);
 const missionActiveIndex = ref(0);
 
-// 두리모아 체크리스트 5단계. code는 백엔드 setup_checklist.steps의 code와 매칭된다.
+// 두리모아 체크리스트 3단계. code는 백엔드 setup_checklist.steps의 code와 매칭된다.
 const STEP_DEFS = [
   {
     label: '계좌 연결',
     code: 'ACCOUNT_LINKED',
     ctaLabel: '계좌 연결하기',
-    to: { name: 'myinfo-account-connect' },
+    to: { name: 'onboarding', query: { screen: 'account' } },
   },
   {
     label: '커플 연결',
     code: 'COUPLE_CONNECTED',
     ctaLabel: '커플 연결 시작하기',
-    to: { name: 'myinfo-couple-connect' },
+    to: { name: 'onboarding', query: { screen: 'couple' } },
   },
   {
     label: '결혼 목표',
     code: 'WEDDING_GOAL_CREATED',
     ctaLabel: '결혼 목표 설정하기',
     to: { name: 'goal-schedule' },
-  },
-  {
-    label: '메인 시안',
-    code: 'MAIN_PLAN_SELECTED',
-    ctaLabel: '메인 시안 선택하기',
-    to: { name: 'goal-list' },
-  },
-  {
-    label: '첫 걸음',
-    code: 'FIRST_STEP_STARTED',
-    ctaLabel: '첫 저축 시작하기',
-    to: { name: 'calendar' },
   },
 ] as const;
 
@@ -107,37 +95,39 @@ const RECOMMENDATION_TIPS = [
   },
 ];
 
-const stepDone = computed(() => {
-  const completedByCode = new Map(
-    dashboard.value.setupChecklist.steps.map((step) => [step.code, step.completed])
-  );
-  return STEP_DEFS.map((def) => completedByCode.get(def.code) ?? false);
+// 백엔드 current_step은 1부터 시작하는 첫 미완료 단계이며, 전체 완료 시 null이다.
+const currentStepIndex = computed(() => {
+  const currentStep = dashboard.value.setupChecklist.currentStep;
+
+  if (currentStep === null) {
+    return dashboard.value.setupCompleted ? -1 : 0;
+  }
+
+  const currentIndex = currentStep - 1;
+  return currentIndex >= 0 && currentIndex < STEP_DEFS.length ? currentIndex : 0;
 });
 
-// -1이면 5단계 모두 완료.
-const nextStepIndex = computed(() => stepDone.value.findIndex((done) => !done));
 const isOnboardingComplete = computed(() => isLoggedIn && dashboard.value.setupCompleted);
 
 const heroCtaLabel = computed(() => {
   if (!isLoggedIn) return '로그인 하기';
-  if (nextStepIndex.value === -1) return '확인';
-  return STEP_DEFS[nextStepIndex.value].ctaLabel;
+  if (currentStepIndex.value === -1) return '확인';
+  return STEP_DEFS[currentStepIndex.value].ctaLabel;
 });
 
 const heroCtaTo = computed(() => {
   if (!isLoggedIn) return { name: 'login' };
-  if (nextStepIndex.value === -1) return { name: 'progress' };
-  return STEP_DEFS[nextStepIndex.value].to;
+  if (currentStepIndex.value === -1) return { name: 'progress' };
+  return STEP_DEFS[currentStepIndex.value].to;
 });
 
-// 게스트는 실제 진행 상태가 없어 1단계(계좌 연결)를 예시로 강조만 한다.
-const checklistActiveIndex = computed(() => (isLoggedIn ? Math.max(nextStepIndex.value, 0) : 0));
+// 체크 표시는 홈 API가 알려준 현재 단계에 맞춰 이동한다.
+const checklistActiveIndex = computed(() => (isLoggedIn ? Math.max(currentStepIndex.value, 0) : 0));
 const checklistSettingsTo = computed(() => heroCtaTo.value ?? { name: 'goal-list' });
 
-// 비로그인이거나, 계좌 연결/커플 연결/목표 설정 중 하나라도 안 끝났으면 아직 보여줄 실데이터가 없어
-// 예산 미리보기(마케팅용 정적 데이터)를 보여준다. 그 이후(메인 시안 선택~)부터는 사용 팁으로 바뀐다.
+// 비로그인이거나 홈 API의 현재 단계가 1~3단계면 예산 미리보기를 보여준다.
 const showBudgetPreview = computed(
-  () => !isLoggedIn || stepDone.value.slice(0, 3).some((done) => !done)
+  () => !isLoggedIn || (currentStepIndex.value >= 0 && currentStepIndex.value < 3)
 );
 
 // 로그인 전에는 실제 달성률이 없어 장식용 고정값을 보여준다.

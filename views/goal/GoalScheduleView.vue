@@ -35,7 +35,11 @@ function handleNext() {
 </script>
 
 <template>
-  <PageHeader title="결혼 목표 설정" />
+  <PageHeader
+    title="결혼 목표 설정"
+    :showBack="true"
+    :on-back="() => router.push({ name: 'home' })"
+  />
   <div class="p-4 pb-[calc(6rem+env(safe-area-inset-bottom))]">
     <GoalStepHeader
       step="1/8"

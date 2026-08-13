@@ -28,6 +28,7 @@ async function handleSubmit() {
     <PageHeader
       title="결제 금액 입력"
       :on-back="handleBack"
+      :showBack="true"
     />
 
     <div class="p-4">
