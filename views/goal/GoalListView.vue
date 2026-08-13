@@ -185,8 +185,9 @@ function handleNewProposal() {
 <template>
   <div>
     <PageHeader
-      title="예산 시안"
+      title="예산 시안 목록"
       :showBack="true"
+      :on-back="() => router.push({ name: 'home' })"
     />
     <Separator />
 

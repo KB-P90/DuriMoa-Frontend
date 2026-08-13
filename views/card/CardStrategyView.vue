@@ -49,6 +49,7 @@ onBeforeRouteLeave((to) => {
     <PageHeader
       title="카드 추천"
       :showBack="true"
+      :on-back="() => router.push({ name: 'home' })"
     />
 
     <div class="p-4">
