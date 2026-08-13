@@ -19,7 +19,7 @@ const myPageStore = useMyPageStore();
 const { isSavingProfile, myPage } = storeToRefs(myPageStore);
 
 const fileInput = ref<HTMLInputElement | null>(null);
-const form = ref<MyPageProfileForm>(myPageStore.buildProfileForm());
+const form = ref<MyPageProfileForm | null>(myPageStore.buildProfileForm());
 const selectedImageFile = ref<File | null>(null);
 
 const roleOptions: readonly { value: CoupleRole; label: string }[] = [
@@ -28,18 +28,21 @@ const roleOptions: readonly { value: CoupleRole; label: string }[] = [
 ] as const;
 
 const isPasswordMatched = computed(
-  () => form.value.newPassword !== '' && form.value.newPassword === form.value.newPasswordConfirm
+  () =>
+    Boolean(form.value?.newPassword) &&
+    form.value?.newPassword === form.value?.newPasswordConfirm
 );
 
 const canSave = computed(
   () =>
+    form.value !== null &&
     form.value.name.trim().length > 0 &&
     (!form.value.newPassword || form.value.newPassword === form.value.newPasswordConfirm) &&
     !isSavingProfile.value
 );
 
 watch(
-  () => myPage.value.user.id,
+  () => myPage.value?.user.id,
   () => {
     form.value = myPageStore.buildProfileForm();
   }
@@ -50,6 +53,10 @@ function openFilePicker() {
 }
 
 function handleImageSelected(event: Event) {
+  if (!myPage.value) {
+    return;
+  }
+
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
 
@@ -69,12 +76,16 @@ function handleImageSelected(event: Event) {
 }
 
 function resetDefaultImage() {
+  if (!myPage.value) {
+    return;
+  }
+
   selectedImageFile.value = null;
   myPage.value.user.profileImage = null;
 }
 
 async function saveProfile() {
-  if (!canSave.value) {
+  if (!canSave.value || !form.value) {
     return;
   }
 
@@ -93,18 +104,9 @@ onMounted(() => {
       class="absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-hidden bg-white text-[#292934] scale-[var(--profile-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
     >
       <PageHeader title="프로필 수정" />
-      <div class="flex h-9 items-center justify-end px-5">
-        <button
-          type="button"
-          class="text-[10.5px] font-bold leading-[13px] text-brand"
-          :disabled="!canSave"
-          @click="saveProfile"
-        >
-          저장
-        </button>
-      </div>
 
       <main
+        v-if="myPage && form"
         class="h-[749px] overflow-y-auto scrollbar-none bg-gradient-to-b from-white to-[#FFFBFC] p-4"
       >
         <section class="flex flex-col items-center pb-6 pt-5">
@@ -283,6 +285,12 @@ onMounted(() => {
           </button>
         </div>
       </main>
+      <div
+        v-else
+        class="flex h-[749px] items-center justify-center px-4 text-center text-sm text-dm-gray-dark"
+      >
+        {{ myPageStore.lastErrorMessage || '프로필 정보를 불러오는 중이에요.' }}
+      </div>
     </section>
   </div>
 </template>
