@@ -183,7 +183,11 @@ function handleExclude() {
     </Tabs>
 
     <div class="mt-6 flex flex-col items-center text-center">
-      <span class="text-4xl">{{ category.icon }}</span>
+      <img
+        :src="category.icon"
+        :alt="category.label"
+        class="h-9 w-9 object-contain"
+      />
       <h1 class="mt-2 text-xl font-extrabold text-[#232631]">{{ category.label }}</h1>
       <p class="mt-1 text-sm text-dm-gray-dark">{{ category.description }}</p>
     </div>
