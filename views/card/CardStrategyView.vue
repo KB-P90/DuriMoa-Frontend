@@ -46,7 +46,10 @@ onBeforeRouteLeave((to) => {
 
 <template>
   <div class="mx-auto w-full max-w-4xl">
-    <PageHeader title="카드 추천" />
+    <PageHeader
+      title="카드 추천"
+      :showBack="true"
+    />
 
     <div class="p-4">
       <!-- Loading State -->
