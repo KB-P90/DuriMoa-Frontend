@@ -7,6 +7,7 @@ import GoalCategoryRangeChart from '@/components/goal/GoalCategoryRangeChart.vue
 import PageHeader from '@/components/common/PageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { GoalCategoryChartSkeleton } from '@/components/skeleton/goal';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
 import { useAuthCheck } from '@/composables/useAuthCheck';
@@ -222,12 +223,7 @@ function handleExclude() {
           v-model:value="amount"
           class="mt-4"
         />
-        <p
-          v-else-if="statLoading"
-          class="mt-4 text-center text-xs text-dm-gray-dark"
-        >
-          지역별 시세를 불러오는 중이에요...
-        </p>
+        <GoalCategoryChartSkeleton v-else-if="statLoading" />
 
         <div class="flex mx-auto items-center justify-center relative mt-4">
           <Input
