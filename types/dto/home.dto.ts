@@ -1,26 +1,26 @@
 export interface HomeDashboardResponseDto {
   setup_completed: boolean;
   couple: {
-    couple_id: number;
+    couple_id: number | null;
     user_id: number;
     user_name: string;
     user_role: 'G' | 'B';
-    partner_user_id: number;
-    partner_name: string;
-    partner_role: 'G' | 'B';
-    couple_status: 'CONNECTED' | 'WAIT' | 'DISCONNECTED';
+    partner_user_id: number | null;
+    partner_name: string | null;
+    partner_role: 'G' | 'B' | null;
+    couple_status: 'CONNECTED' | 'WAIT' | 'DISCONNECTED' | null;
     goal_id: number | null;
     wedding_date: string | null;
     remaining_months: number | null;
     budget_plan_id: number | null;
   };
   asset_summary: {
-    total_budget_amount: number;
-    total_saved_amount: number;
-    wedding_expense_amount: number;
-    remaining_wedding_fund_amount: number;
-    base_date: string;
-  };
+    total_budget_amount: number | null;
+    total_saved_amount: number | null;
+    wedding_expense_amount: number | null;
+    remaining_wedding_fund_amount: number | null;
+    base_date: string | null;
+  } | null;
   saving_alert: {
     is_shortage: boolean;
     shortage_amount: number;
@@ -33,11 +33,11 @@ export interface HomeDashboardResponseDto {
     completed_mission_count: number;
     mission: SavingMissionDto | null;
     navigation_message: string;
-  };
+  } | null;
   goal_summary: {
     joint_goal: GoalSummaryDto;
     personal_goal: GoalSummaryDto;
-  };
+  } | null;
   setup_checklist: {
     total_count: number;
     completed_count: number;
@@ -81,8 +81,8 @@ export interface GoalSummaryDto {
   goal_id?: number;
   user_id?: number;
   status?: string;
-  target_amount: number;
-  current_amount: number;
-  achievement_rate: number;
+  target_amount: number | null;
+  current_amount: number | null;
+  achievement_rate: number | null;
   setup_required?: boolean;
 }
