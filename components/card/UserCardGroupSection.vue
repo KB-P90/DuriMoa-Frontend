@@ -38,12 +38,12 @@ function toggleExpand() {
       <div
         v-for="card in displayedCards"
         :key="card.id"
-        class="flex cursor-pointer items-center gap-4 rounded-2xl p-2 transition-colors hover:bg-gray-50/80"
+        class="flex cursor-pointer items-center gap-3 rounded-2xl p-2 transition-colors hover:bg-gray-50/80 min-[390px]:gap-4"
         @click="$emit('select-card', card)"
       >
         <!-- Card Graphic Plate -->
         <div
-          class="relative flex h-16 w-24 shrink-0 flex-col justify-between rounded-xl p-2.5 shadow-sm"
+          class="relative flex h-14 w-20 shrink-0 flex-col justify-between rounded-xl p-2 shadow-sm min-[390px]:h-16 min-[390px]:w-24 min-[390px]:p-2.5"
           :class="card.bgColor"
         >
           <div class="h-2.5 w-3.5 rounded-[2px] bg-white/70" />
@@ -53,19 +53,17 @@ function toggleExpand() {
         </div>
 
         <!-- Card Info -->
-        <div class="flex flex-1 flex-col">
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-              <strong class="text-sm font-bold text-gray-900">{{ card.name }}</strong>
-              <span
-                class="rounded-full bg-dm-mint-light px-2 py-0.5 text-[11px] font-bold text-btn-mt-dark"
-              >
-                {{ card.rankLabel }}
-              </span>
-            </div>
+        <div class="flex min-w-0 flex-1 flex-col">
+          <div class="flex min-w-0 items-center gap-2">
+            <strong class="min-w-0 flex-1 truncate text-sm font-bold text-gray-900">{{ card.name }}</strong>
+            <span
+              class="ml-auto shrink-0 rounded-full bg-dm-mint-light px-2 py-0.5 text-[11px] font-bold text-btn-mt-dark"
+            >
+              {{ card.rankLabel }}
+            </span>
           </div>
           <!-- 주요 혜택 최대 3개 (콤마 연결, 전월실적 스타일) -->
-          <p class="mt-1 text-xs text-dm-gray-dark">
+          <p class="mt-1 line-clamp-2 break-words text-xs text-dm-gray-dark">
             {{ card.benefits }}
           </p>
         </div>
