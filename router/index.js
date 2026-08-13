@@ -28,6 +28,7 @@ import MonthlyExpenseView from '@/views/MonthlyExpenseView.vue';
 import ProgressView from '@/views/progress/ProgressView.vue';
 import MonthlyProgressView from '@/views/progress/MonthlyProgressView.vue';
 import MainView from '@/views/MainView.vue';
+import NotFoundView from '@/views/NotFoundView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -91,7 +92,7 @@ const router = createRouter({
     { path: '/auth/kakao/callback', name: 'kakao-callback', component: KakaoCallbackView },
     { path: '/auth/kakao/signup', name: 'kakao-signup', component: KakaoSignupView },
     { path: '/onboarding', name: 'onboarding', component: OnboardingView },
-    { path: '/:pathMatch(.*)*', redirect: '/login' },
+    { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },
   ],
   scrollBehavior: () => ({ top: 0 }),
 });
