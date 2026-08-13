@@ -26,7 +26,10 @@ const activeTab = ref('overall');
 
 <template>
   <div class="whitespace-nowrap">
-    <PageHeader title="목표 달성 현황" />
+    <PageHeader
+      title="목표 달성 현황"
+      :show-back="false"
+    />
 
     <CoupleConnectionRequired v-if="progressStore.unavailableReason === 'NO_COUPLE'" />
     <CoupleConnectionRequired

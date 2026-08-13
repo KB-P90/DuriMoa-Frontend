@@ -148,7 +148,10 @@ function handleExclude() {
 </script>
 
 <template>
-  <PageHeader title="결혼 목표 설정" />
+  <PageHeader
+    title="결혼 목표 설정"
+    :showBack="true"
+  />
   <div class="p-4 pb-[calc(9rem+env(safe-area-inset-bottom))]">
     <div class="mb-4 flex items-center justify-between">
       <p class="text-base font-bold text-dm-mint-darker">{{ step }}</p>
