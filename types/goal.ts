@@ -25,6 +25,12 @@ export interface GoalCategoryStat {
   lower10: number;
 }
 
+// GET /api/goal/stat/estimate 응답 (지역별 유형별 예상 결혼 예산)
+export interface GoalBudgetEstimate {
+  region: string;
+  estimates: { type: string; totalAmount: number }[];
+}
+
 export interface GoalProposalItem {
   category: string;
   completed: boolean;
