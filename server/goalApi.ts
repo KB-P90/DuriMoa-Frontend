@@ -1,6 +1,7 @@
 import { api } from '@/server/axios.js';
 import type { ApiResponse } from '@/types/common';
 import type {
+  GoalBudgetEstimate,
   GoalCategoryStat,
   GoalProposal,
   GoalSubmission,
@@ -10,6 +11,13 @@ import type {
 export const getGoalCategoryStat = async (region: string, category: string) => {
   const { data } = await api.get<ApiResponse<GoalCategoryStat>>('/goal/stat', {
     params: { region, category },
+  });
+  return data.data;
+};
+
+export const getGoalBudgetEstimate = async (region: string) => {
+  const { data } = await api.get<ApiResponse<GoalBudgetEstimate>>('/goal/stat/estimate', {
+    params: { region },
   });
   return data.data;
 };
