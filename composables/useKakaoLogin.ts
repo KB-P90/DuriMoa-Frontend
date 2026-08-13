@@ -61,6 +61,8 @@ export function useKakaoAuthorization() {
   function startKakaoLogin() {
     const clientId = import.meta.env.VITE_KAKAO_REST_API_KEY?.trim();
     const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI?.trim();
+    console.log('clientID 확인', clientId);
+    console.log('redirectUrl', redirectUri);
     if (!clientId || !redirectUri) {
       authorizationError.value = '카카오 로그인 환경설정이 완료되지 않았습니다.';
       return;
