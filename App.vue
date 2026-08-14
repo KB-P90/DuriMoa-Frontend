@@ -19,7 +19,7 @@ function showNotificationToast(event) {
   toast.custom(NotificationToast, {
     componentProps: {
       type: event.type,
-      partnerName: myPageStore.myPage.partner?.name ?? '파트너',
+      partnerName: myPageStore.myPage?.partner?.name ?? '파트너',
       message: event.message,
       occurredAt: event.occurredAt,
     },

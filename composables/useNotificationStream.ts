@@ -13,11 +13,14 @@ function open() {
   eventSource = new EventSource(`${SSE_ENDPOINT}?token=${encodeURIComponent(token)}`);
 
   eventSource.addEventListener('notification', (event) => {
+    let parsed: NotificationStreamEvent;
     try {
-      registeredCallback?.(JSON.parse((event as MessageEvent).data));
+      parsed = JSON.parse((event as MessageEvent).data);
     } catch {
       // 형식이 다른 이벤트는 무시한다.
+      return;
     }
+    registeredCallback?.(parsed);
   });
 }
 
