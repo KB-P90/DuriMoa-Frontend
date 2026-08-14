@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+import { toast } from 'vue-sonner';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useCalendar } from '@/composables/useCalendar';
+import type { TransactionForm } from '@/types/calendar';
 import CalendarView from '@/views/CalendarView.vue';
 import TransactionEditView from '@/views/TransactionEditView.vue';
 
@@ -29,6 +32,37 @@ const {
   saveTransaction,
   removeTransaction,
 } = useCalendar();
+
+const createCalendarLabel = ref('');
+
+function handleOpenCreateTransaction(calendarLabel: string) {
+  createCalendarLabel.value = calendarLabel;
+  openCreateTransaction();
+}
+
+async function handleSaveTransaction(form: TransactionForm) {
+  const isEditMode = selectedTransaction.value !== null;
+
+  try {
+    await saveTransaction(form);
+    toast.success(
+      isEditMode
+        ? '내역이 수정되었어요.'
+        : `${createCalendarLabel.value} 캘린더에 내역이 추가되었어요.`
+    );
+  } catch {
+    toast.error('내역 저장에 실패했어요. 다시 시도해주세요.');
+  }
+}
+
+async function handleRemoveTransaction() {
+  try {
+    await removeTransaction();
+    toast.success('내역이 삭제되었어요.');
+  } catch {
+    toast.error('내역 삭제에 실패했어요. 다시 시도해주세요.');
+  }
+}
 </script>
 
 <template>
@@ -39,8 +73,8 @@ const {
     :mode="mode"
     :is-submitting="isSubmitting"
     @close="closeEditor"
-    @delete="removeTransaction"
-    @save="saveTransaction"
+    @delete="handleRemoveTransaction"
+    @save="handleSaveTransaction"
   />
   <CalendarView
     v-else
@@ -58,7 +92,7 @@ const {
     @select-date="selectDate"
     @change-month="changeMonth"
     @select-transaction="selectTransaction"
-    @create-transaction="openCreateTransaction"
+    @create-transaction="handleOpenCreateTransaction"
     @view-expense-analysis="openExpenseAnalysis"
   />
 </template>

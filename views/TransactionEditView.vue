@@ -19,11 +19,13 @@ import {
 import { computed, ref } from 'vue';
 import type { Component } from 'vue';
 import DeleteConfirmDialog from '@/components/calendar/DeleteConfirmDialog.vue';
+import CalendarDatePicker from '@/components/common/CalendarDatePicker.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
+import TransactionFormSkeleton from '@/components/skeleton/calendar/TransactionFormSkeleton.vue';
 import { Button } from '@/components/ui/button';
 import { CALENDAR_CATEGORIES, TRANSACTION_TYPES } from '@/constants/calendar';
 import type { CalendarMode, Transaction, TransactionForm, TransactionType } from '@/types/calendar';
-import { formatAmount, parseFormattedAmount } from '@/utils/format';
+import { formatAmount, formatAmountInput, parseFormattedAmount } from '@/utils/format';
 
 const props = defineProps<{
   transaction: Transaction | null;
@@ -44,6 +46,7 @@ const recordDate = ref(props.transaction?.date ?? props.defaultDate);
 const memo = ref(props.transaction?.memo ?? '');
 const deleteConfirmationVisible = ref(false);
 const isEditMode = computed(() => props.transaction !== null);
+const MAX_AMOUNT_DIGITS = 10;
 const isFormValid = computed(() => {
   const parsedAmount = parseFormattedAmount(amount.value);
 
@@ -83,7 +86,7 @@ const CATEGORY_ICONS: Record<string, Component> = {
   드레스: Shirt,
   예비비: ShieldAlert,
   저축: PiggyBank,
-  '결혼 저축': HandHeart,
+  '결혼 자금': HandHeart,
 };
 
 const CATEGORY_ICON_COLORS: Record<string, string> = {
@@ -101,7 +104,7 @@ const CATEGORY_ICON_COLORS: Record<string, string> = {
   '드레스': 'text-pink-05',
   '예비비': 'text-red',
   '저축': 'text-dm-mint-darker',
-  '결혼 저축': 'text-brand',
+  '결혼 자금': 'text-brand',
 };
 
 // TODO: 수입·저축 색상 토큰 등록 검토
@@ -115,6 +118,16 @@ function selectType(type: TransactionType) {
   if (selectedType.value === type) return;
   selectedType.value = type;
   category.value = '';
+}
+
+function handleAmountInput(event: Event) {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement)) return;
+
+  const formattedAmount = formatAmountInput(input.value, MAX_AMOUNT_DIGITS);
+
+  amount.value = formattedAmount;
+  input.value = formattedAmount;
 }
 
 function save() {
@@ -131,11 +144,14 @@ function save() {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-xl pb-6">
+  <div
+    class="fixed inset-0 z-[60] mx-auto w-full max-w-[768px] overflow-y-auto bg-background pb-6"
+  >
     <div class="relative">
       <PageHeader
         :title="isEditMode ? '내역 수정' : '내역 생성'"
         :on-back="() => emit('close')"
+        :show-back="true"
       />
       <button
         v-if="isEditMode"
@@ -148,7 +164,10 @@ function save() {
       </button>
     </div>
 
+    <TransactionFormSkeleton v-if="isSubmitting" />
+
     <form
+      v-else
       class="space-y-5 px-4 pb-20 pt-5 sm:px-5"
       @submit.prevent="save"
     >
@@ -231,27 +250,34 @@ function save() {
         <span class="mb-2 block text-sm font-semibold">금액</span>
         <span class="flex items-center rounded-2xl border border-dm-gray/30 px-4 py-3.5">
           <input
-            v-model="amount"
+            :value="amount"
             inputmode="numeric"
             pattern="[0-9,]+"
+            maxlength="13"
             class="min-w-0 flex-1 text-right text-base font-semibold outline-none"
             :disabled="isSubmitting"
             required
+            @input="handleAmountInput"
           />
           <span class="ml-3 text-sm font-medium text-dm-gray-dark">원</span>
         </span>
       </label>
 
-      <label class="block">
-        <span class="mb-2 block text-sm font-semibold">날짜</span>
-        <input
+      <div>
+        <label
+          class="mb-2 block text-sm font-semibold"
+          for="transaction-record-date"
+        >
+          날짜
+        </label>
+        <CalendarDatePicker
+          id="transaction-record-date"
           v-model="recordDate"
-          type="date"
-          class="w-full rounded-2xl border border-dm-gray/30 px-4 py-3.5 text-sm font-semibold outline-none"
+          title="날짜 선택"
+          :allow-past="true"
           :disabled="isSubmitting"
-          required
         />
-      </label>
+      </div>
 
       <label class="block">
         <span class="mb-2 block text-sm font-semibold">메모</span>
@@ -263,7 +289,7 @@ function save() {
       </label>
 
       <div
-        class="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-xl bg-white px-4 pb-5 pt-2 sm:px-5"
+        class="fixed inset-x-0 bottom-[env(safe-area-inset-bottom)] z-40 mx-auto w-full max-w-xl bg-white px-4 pb-5 pt-2 sm:px-5"
       >
         <button
           type="submit"
