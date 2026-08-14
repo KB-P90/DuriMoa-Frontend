@@ -5,6 +5,7 @@ import { computed } from 'vue';
 import CalendarSummary from '@/components/calendar/CalendarSummary.vue';
 import MonthCalendar from '@/components/calendar/MonthCalendar.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
+import CalendarContentSkeleton from '@/components/skeleton/calendar/CalendarContentSkeleton.vue';
 import TransactionList from '@/components/calendar/TransactionList.vue';
 import WeddingCalendarEmptyState from '@/components/calendar/WeddingCalendarEmptyState.vue';
 import type { Transaction } from '@/types/calendar';
@@ -72,9 +73,18 @@ const activeCalendarLabel = computed(
     </div>
 
     <div class="p-4 pt-0">
-      <CalendarSummary :items="summary" />
+      <CalendarContentSkeleton
+        v-if="isLoading"
+        :cell-count="days.length"
+      />
+
+      <CalendarSummary
+        v-if="!isLoading"
+        :items="summary"
+      />
 
       <button
+        v-if="!isLoading"
         type="button"
         class="mt-4 flex w-full items-center justify-between rounded-2xl bg-brand px-4 py-3 text-left shadow-md transition-colors hover:bg-brand-dark"
         @click="emit('view-expense-analysis')"
@@ -95,7 +105,10 @@ const activeCalendarLabel = computed(
         <ChevronRight class="h-5 w-5 shrink-0 text-white/80" />
       </button>
 
-      <div class="mt-5">
+      <div
+        v-if="!isLoading"
+        class="mt-5"
+      >
         <MonthCalendar
           :days="days"
           :selected-date="selectedDate"
@@ -105,7 +118,10 @@ const activeCalendarLabel = computed(
         />
       </div>
 
-      <section class="mt-5">
+      <section
+        v-if="!isLoading"
+        class="mt-5"
+      >
         <div class="mb-3 flex items-center justify-between">
           <h2 class="text-base font-bold text-gray-800">{{ selectedDateLabel }}</h2>
           <div class="flex items-center gap-2">
@@ -128,7 +144,7 @@ const activeCalendarLabel = computed(
       </section>
 
       <WeddingCalendarEmptyState
-        v-if="showWeddingEmptyState"
+        v-if="!isLoading && showWeddingEmptyState"
         class="mt-4"
       />
     </div>

@@ -21,6 +21,7 @@ import type { Component } from 'vue';
 import DeleteConfirmDialog from '@/components/calendar/DeleteConfirmDialog.vue';
 import CalendarDatePicker from '@/components/common/CalendarDatePicker.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
+import TransactionFormSkeleton from '@/components/skeleton/calendar/TransactionFormSkeleton.vue';
 import { Button } from '@/components/ui/button';
 import { CALENDAR_CATEGORIES, TRANSACTION_TYPES } from '@/constants/calendar';
 import type { CalendarMode, Transaction, TransactionForm, TransactionType } from '@/types/calendar';
@@ -164,7 +165,10 @@ function save() {
       </button>
     </div>
 
+    <TransactionFormSkeleton v-if="isSubmitting" />
+
     <form
+      v-else
       class="space-y-5 px-4 pb-20 pt-5 sm:px-5"
       @submit.prevent="save"
     >
