@@ -344,8 +344,8 @@ const visualFor = visualForNotificationType;
               :style="{ transform: `translateX(${swipeOffsetFor(notification.id)}px)` }"
               @click="handleItemClick(notification)"
               @contextmenu="onContextMenu($event, notification)"
-              @touchstart="onTouchStart($event, notification)"
-              @touchmove="onTouchMove"
+              @touchstart.passive="onTouchStart($event, notification)"
+              @touchmove.passive="onTouchMove"
               @touchend="onTouchEnd"
               @touchcancel="onTouchEnd"
             >
