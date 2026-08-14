@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { ChevronLeft, ChevronDown } from '@lucide/vue';
+import { CalendarDays, ChevronLeft, ChevronDown } from '@lucide/vue';
 import BottomSheet from './BottomSheet.vue';
 import WheelColumn from './WheelColumn.vue';
 
@@ -11,10 +11,12 @@ const props = withDefaults(
     modelValue: string;
     title?: string;
     placeholder?: string;
+    allowPast?: boolean;
   }>(),
   {
     title: '날짜선택',
     placeholder: '날짜를 선택해주세요',
+    allowPast: false,
   }
 );
 
@@ -29,7 +31,11 @@ const CURRENT_YEAR = today.getFullYear();
 const CURRENT_MONTH = today.getMonth() + 1;
 const CURRENT_DAY = today.getDate();
 
-const YEAR_RANGE = Array.from({ length: 15 }, (_, i) => CURRENT_YEAR + i);
+const YEAR_RANGE = computed(() => {
+  const startYear = props.allowPast ? CURRENT_YEAR - 15 : CURRENT_YEAR;
+  const endYear = CURRENT_YEAR + 14;
+  return Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+});
 
 function pad(value: number) {
   return String(value).padStart(2, '0');
@@ -47,6 +53,7 @@ function parseDate(value: string) {
 }
 
 function isPast(year: number, month: number, day: number) {
+  if (props.allowPast) return false;
   if (year !== CURRENT_YEAR) return year < CURRENT_YEAR;
   if (month !== CURRENT_MONTH) return month < CURRENT_MONTH;
   return day < CURRENT_DAY;
@@ -63,7 +70,7 @@ const jumpYear = ref(CURRENT_YEAR);
 const jumpMonth = ref(CURRENT_MONTH);
 
 const jumpMonths = computed(() => {
-  const start = jumpYear.value === CURRENT_YEAR ? CURRENT_MONTH : 1;
+  const start = !props.allowPast && jumpYear.value === CURRENT_YEAR ? CURRENT_MONTH : 1;
   return Array.from({ length: 12 - start + 1 }, (_, i) => start + i);
 });
 
@@ -164,11 +171,16 @@ function confirm() {
   <button
     type="button"
     v-bind="$attrs"
-    class="h-[46px] w-full cursor-pointer rounded-xl border border-dm-gray/40 bg-white px-3.5 text-left text-sm outline-none transition hover:border-dm-gray/60 focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
+    class="flex h-[46px] w-full cursor-pointer items-center justify-between rounded-xl border border-dm-gray/40 bg-white px-3.5 text-left text-sm outline-none transition hover:border-dm-gray/60 focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
     :class="displayValue ? 'font-semibold text-[#232631]' : 'font-medium text-dm-gray'"
     @click="open"
   >
-    {{ displayValue || placeholder }}
+    <span>{{ displayValue || placeholder }}</span>
+    <CalendarDays
+      class="h-5 w-5 shrink-0 text-dm-gray-dark"
+      :stroke-width="2"
+      aria-hidden="true"
+    />
   </button>
 
   <BottomSheet

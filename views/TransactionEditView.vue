@@ -19,6 +19,7 @@ import {
 import { computed, ref } from 'vue';
 import type { Component } from 'vue';
 import DeleteConfirmDialog from '@/components/calendar/DeleteConfirmDialog.vue';
+import CalendarDatePicker from '@/components/common/CalendarDatePicker.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
 import { Button } from '@/components/ui/button';
 import { CALENDAR_CATEGORIES, TRANSACTION_TYPES } from '@/constants/calendar';
@@ -84,7 +85,7 @@ const CATEGORY_ICONS: Record<string, Component> = {
   드레스: Shirt,
   예비비: ShieldAlert,
   저축: PiggyBank,
-  '결혼 저축': HandHeart,
+  '결혼 자금': HandHeart,
 };
 
 const CATEGORY_ICON_COLORS: Record<string, string> = {
@@ -102,7 +103,7 @@ const CATEGORY_ICON_COLORS: Record<string, string> = {
   '드레스': 'text-pink-05',
   '예비비': 'text-red',
   '저축': 'text-dm-mint-darker',
-  '결혼 저축': 'text-brand',
+  '결혼 자금': 'text-brand',
 };
 
 // TODO: 수입·저축 색상 토큰 등록 검토
@@ -259,16 +260,21 @@ function save() {
         </span>
       </label>
 
-      <label class="block">
-        <span class="mb-2 block text-sm font-semibold">날짜</span>
-        <input
+      <div>
+        <label
+          class="mb-2 block text-sm font-semibold"
+          for="transaction-record-date"
+        >
+          날짜
+        </label>
+        <CalendarDatePicker
+          id="transaction-record-date"
           v-model="recordDate"
-          type="date"
-          class="w-full rounded-2xl border border-dm-gray/30 px-4 py-3.5 text-sm font-semibold outline-none"
+          title="날짜 선택"
+          :allow-past="true"
           :disabled="isSubmitting"
-          required
         />
-      </label>
+      </div>
 
       <label class="block">
         <span class="mb-2 block text-sm font-semibold">메모</span>

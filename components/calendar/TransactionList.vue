@@ -45,7 +45,7 @@ const CATEGORY_ICONS: Record<string, Component> = {
   드레스: Shirt,
   예비비: ShieldAlert,
   저축: PiggyBank,
-  '결혼 저축': HandHeart,
+  '결혼 자금': HandHeart,
 };
 
 const TYPE_COLORS: Record<TransactionType, string> = {
