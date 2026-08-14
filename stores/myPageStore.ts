@@ -1,11 +1,8 @@
 import { defineStore } from 'pinia';
-import {
-  getMyPageProfile,
-  updateMyPageProfile,
-  updateMyPageShare,
-} from '@/server/myPageApi';
+import { getMyPageProfile, updateMyPageProfile, updateMyPageShare } from '@/server/myPageApi';
 import { logoutAuth } from '@/server/authApi';
 import { ACCESS_TOKEN_KEY } from '@/server/axios.js';
+import { disconnectNotificationStream } from '@/composables/useNotificationStream';
 import { toCoupleRole, toMyPage } from '@/models/MyPage';
 import type { MyPage, MyPageProfileForm } from '@/types/myPage';
 
@@ -91,6 +88,7 @@ export const useMyPageStore = defineStore('myPage', {
         await logoutAuth();
       } finally {
         localStorage.removeItem(ACCESS_TOKEN_KEY);
+        disconnectNotificationStream();
       }
     },
     buildProfileForm(): MyPageProfileForm | null {
