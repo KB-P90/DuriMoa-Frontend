@@ -101,13 +101,13 @@ onMounted(() => {
 <template>
   <div class="profile-stage relative aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]">
     <section
-      class="absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-hidden bg-white text-[#292934] scale-[var(--profile-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
+      class="absolute inset-0 origin-top-left relative h-[799px] w-[390px] overflow-hidden bg-white text-[#292934] scale-[var(--profile-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
     >
       <PageHeader title="프로필 수정" />
 
       <main
         v-if="myPage && form"
-        class="h-[749px] overflow-y-auto scrollbar-none bg-gradient-to-b from-white to-[#FFFBFC] p-4"
+        class="h-[749px] overflow-y-auto scrollbar-none bg-gradient-to-b from-white to-[#FFFBFC] p-4 pb-[86px]"
       >
         <section class="flex flex-col items-center pb-6 pt-5">
           <div class="relative">
@@ -267,24 +267,29 @@ onMounted(() => {
           </div>
         </section>
 
-        <div class="mt-6 flex flex-col gap-3">
+        <div class="mt-6">
           <button
             type="button"
-            class="h-[50px] rounded-[12px] bg-brand text-[14px] font-extrabold text-white shadow-[0_6px_14px_rgba(255,143,132,0.26)] disabled:bg-dm-gray"
-            :disabled="!canSave"
-            @click="saveProfile"
-          >
-            저장하기
-          </button>
-          <button
-            type="button"
-            class="h-[44px] rounded-[12px] border border-[#E9E9F0] bg-white text-[13px] font-bold text-brand"
+            class="h-[44px] w-full rounded-[12px] border border-[#E9E9F0] bg-white text-[13px] font-bold text-brand"
             @click="router.back()"
           >
             취소
           </button>
         </div>
       </main>
+      <footer
+        v-if="myPage && form"
+        class="absolute bottom-0 left-0 right-0 z-10 border-t border-divider bg-white/95 p-4 backdrop-blur-sm"
+      >
+        <button
+          type="button"
+          class="h-[50px] w-full rounded-[12px] bg-brand text-[14px] font-extrabold text-white shadow-[0_6px_14px_rgba(255,143,132,0.26)] disabled:bg-dm-gray"
+          :disabled="!canSave"
+          @click="saveProfile"
+        >
+          저장하기
+        </button>
+      </footer>
       <div
         v-else
         class="flex h-[749px] items-center justify-center px-4 text-center text-sm text-dm-gray-dark"
