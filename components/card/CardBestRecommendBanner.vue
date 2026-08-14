@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { ChevronRight } from '@lucide/vue';
 import type { BestCardRecommendation } from '@/types/card';
+import { getCardCompanyColor } from '@/utils/card';
 import { formatAmount, formatWon } from '@/utils/format';
 
 defineProps<{
@@ -54,7 +55,7 @@ const imageError = ref(false);
         <!-- Vertical Card Visual Plate -->
         <div
           class="relative flex h-32 w-20 shrink-0 flex-col justify-between overflow-hidden rounded-2xl p-2.5 shadow-md min-[390px]:h-36 min-[390px]:w-24 min-[390px]:p-3"
-          :class="best.cardBgColor || 'bg-[#FF4983]'"
+          :class="best.cardImage && !imageError ? 'bg-white' : getCardCompanyColor(best.cardCompany)"
         >
           <template v-if="best.cardImage && !imageError">
             <img
@@ -66,14 +67,6 @@ const imageError = ref(false);
           </template>
           <template v-else>
             <div class="h-3.5 w-5 rounded-sm bg-white/70" />
-            <div class="flex flex-col items-center gap-0.5">
-              <span class="text-xs font-bold tracking-widest text-white/80">{{
-                best.cardCompany
-              }}</span>
-              <span class="text-[11px] font-extrabold tracking-wider text-white line-clamp-1">{{
-                best.cardName
-              }}</span>
-            </div>
           </template>
         </div>
 
