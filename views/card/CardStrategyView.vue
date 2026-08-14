@@ -6,6 +6,7 @@ import CardBestRecommendBanner from '@/components/card/CardBestRecommendBanner.v
 import UserCardGroupSection from '@/components/card/UserCardGroupSection.vue';
 import CardDisclaimer from '@/components/card/CardDisclaimer.vue';
 import CardDetailModal from '@/components/card/CardDetailModal.vue';
+import CardStrategySkeleton from '@/components/skeleton/card/CardStrategySkeleton.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
 import { useCardStore } from '@/stores/cardStore';
 import { formatWon } from '@/utils/format';
@@ -54,15 +55,7 @@ onBeforeRouteLeave((to) => {
 
     <div class="p-4">
       <!-- Loading State -->
-      <div
-        v-if="cardStore.isLoading"
-        class="py-12 text-center text-dm-gray-dark"
-      >
-        <div
-          class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-pink-03 border-t-transparent mb-2"
-        ></div>
-        <p class="text-sm font-semibold">카드 추천 정보를 불러오는 중입니다...</p>
-      </div>
+      <CardStrategySkeleton v-if="cardStore.isLoading" />
 
       <!-- Error State -->
       <div
