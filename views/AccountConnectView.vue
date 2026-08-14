@@ -1,83 +1,78 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
-import AccountConnectionForm from '@/components/common/AccountConnectionForm.vue';
+import { useRouter } from 'vue-router';
+import { Landmark } from '@lucide/vue';
 import PageHeader from '@/components/common/PageHeader.vue';
+import { ONBOARDING_ROUTE_NAMES } from '@/constants/onboard';
 import { useAuthCheck } from '@/composables/useAuthCheck';
-import { useAssetConnectionStore } from '@/stores/assetConnectionStore';
+import { useLinkedAssetStore } from '@/stores/linkedAssetStore';
 
 useAuthCheck();
 
-const assetConnectionStore = useAssetConnectionStore();
-const { accountForm, isLoadingAccount } = storeToRefs(assetConnectionStore);
+const router = useRouter();
+const linkedAssetStore = useLinkedAssetStore();
+const { assets, isLoading, lastErrorMessage } = storeToRefs(linkedAssetStore);
 
-const bank = computed({
-  get: () => accountForm.value.selectedProvider,
-  set: (selectedProvider: string) => {
-    accountForm.value = { ...accountForm.value, selectedProvider };
-  },
-});
-
-const internetBankingId = computed({
-  get: () => accountForm.value.loginId,
-  set: (loginId: string) => {
-    accountForm.value = { ...accountForm.value, loginId };
-  },
-});
-
-const internetBankingPassword = computed({
-  get: () => accountForm.value.loginPassword,
-  set: (loginPassword: string) => {
-    accountForm.value = { ...accountForm.value, loginPassword };
-  },
-});
-
-const canSubmit = computed(
-  () =>
-    bank.value.length > 0 &&
-    internetBankingId.value.trim().length > 0 &&
-    internetBankingPassword.value.length > 0 &&
-    !isLoadingAccount.value
-);
+function goToAssetOnboarding() {
+  router.push({ name: ONBOARDING_ROUTE_NAMES.ONBOARDING, query: { screen: 'account' } });
+}
 
 onMounted(() => {
-  void assetConnectionStore.fetchAccountConnectionForm();
+  void linkedAssetStore.fetchLinkedAssets();
 });
 </script>
 
 <template>
-  <div class="account-stage relative aspect-[390/520] w-full md:aspect-auto md:min-h-[520px]">
+  <div class="flex min-h-full w-full flex-1 flex-col">
     <section
-      class="absolute inset-0 origin-top-left h-[520px] w-[390px] overflow-hidden rounded-[30px] bg-white text-[#292934] shadow-[0_20px_50px_-18px_rgba(34,34,43,0.28),0_0_0_1px_rgba(34,34,43,0.06)] scale-[var(--account-scale)] md:relative md:h-auto md:min-h-[520px] md:w-full md:scale-100 md:overflow-visible md:rounded-none md:shadow-none"
+      class="flex min-h-full w-full flex-1 flex-col bg-white text-foreground"
     >
-      <PageHeader title="은행연결" />
+      <PageHeader title="계좌 연결" />
 
-      <main class="p-4">
-        <AccountConnectionForm
-          v-model:bank="bank"
-          v-model:internet-banking-id="internetBankingId"
-          v-model:internet-banking-password="internetBankingPassword"
-          form-id-prefix="myinfo-account"
-          :helper-text="accountForm.helperText"
-          :password-entered-message="accountForm.passwordMessage"
-          :disabled="isLoadingAccount"
-        />
+      <main class="flex flex-1 flex-col px-3 pt-5">
+        <p class="px-1 text-xs font-medium leading-5 text-dm-gray-dark">
+          본 서비스에서 사용하는 계좌입니다.
+        </p>
+
+        <ul
+          v-if="assets.accounts.length > 0"
+          aria-label="연결된 계좌 목록"
+          class="mt-5 overflow-hidden rounded-2xl border border-divider bg-white shadow-[0_6px_18px_-12px_rgba(34,34,43,0.18)]"
+        >
+          <li
+            v-for="account in assets.accounts"
+            :key="account.id"
+            class="flex min-h-[92px] items-center gap-5 border-b border-divider px-4 py-4 last:border-b-0"
+          >
+            <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-yellow/10 text-yellow-08" aria-hidden="true">
+              <Landmark class="h-5 w-5" :stroke-width="1.8" />
+            </span>
+            <span class="min-w-0">
+              <strong class="block text-sm font-extrabold leading-5">{{ account.accountName }}</strong>
+              <span class="block text-[10px] leading-4 text-dm-gray-dark">{{ account.company }} · {{ account.maskedNumber }}</span>
+            </span>
+          </li>
+        </ul>
+        <section
+          v-else
+          aria-label="연결된 계좌 없음"
+          class="mt-5 flex min-h-[92px] items-center gap-5 rounded-2xl border border-divider bg-white px-4 text-dm-gray-dark shadow-[0_6px_18px_-12px_rgba(34,34,43,0.18)]"
+        >
+          <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-yellow/10 text-yellow-08" aria-hidden="true">
+            <Landmark class="h-5 w-5" :stroke-width="1.8" />
+          </span>
+          <p class="text-sm font-medium">{{ isLoading ? '계좌를 불러오는 중이에요.' : lastErrorMessage || '연결된 계좌가 없어요.' }}</p>
+        </section>
 
         <button
           type="button"
-          class="mt-5 h-[52px] w-full rounded-[12px] bg-brand text-[14px] font-extrabold text-white shadow-[0_6px_14px_rgba(255,143,132,0.24)] disabled:bg-dm-gray"
-          :disabled="!canSubmit"
+          class="sticky bottom-0 z-10 mt-auto h-[52px] w-full rounded-t-xl bg-brand text-sm font-extrabold text-white shadow-[0_-6px_18px_rgba(34,34,43,0.12)] active:bg-brand-dark"
+          @click="goToAssetOnboarding"
         >
-          은행 선택하기
+          계좌 추가하기
         </button>
       </main>
     </section>
   </div>
 </template>
-
-<style scoped>
-.account-stage {
-  container-type: inline-size;
-  --account-scale: calc(100cqw / 390px);
-}
-</style>
