@@ -25,7 +25,7 @@ import TransactionFormSkeleton from '@/components/skeleton/calendar/TransactionF
 import { Button } from '@/components/ui/button';
 import { CALENDAR_CATEGORIES, TRANSACTION_TYPES } from '@/constants/calendar';
 import type { CalendarMode, Transaction, TransactionForm, TransactionType } from '@/types/calendar';
-import { formatAmount, parseFormattedAmount } from '@/utils/format';
+import { formatAmount, formatAmountInput, parseFormattedAmount } from '@/utils/format';
 
 const props = defineProps<{
   transaction: Transaction | null;
@@ -124,8 +124,7 @@ function handleAmountInput(event: Event) {
   const input = event.target;
   if (!(input instanceof HTMLInputElement)) return;
 
-  const digits = input.value.replace(/\D/g, '').slice(0, MAX_AMOUNT_DIGITS);
-  const formattedAmount = digits ? formatAmount(Number(digits)) : '';
+  const formattedAmount = formatAmountInput(input.value, MAX_AMOUNT_DIGITS);
 
   amount.value = formattedAmount;
   input.value = formattedAmount;

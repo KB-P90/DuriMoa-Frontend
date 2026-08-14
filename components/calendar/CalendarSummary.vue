@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SummaryItem } from '@/types/calendar';
-import { formatAmount } from '@/utils/format';
+import { formatCompactWonAmount } from '@/utils/format';
 
 defineProps<{ items: readonly SummaryItem[] }>();
 
@@ -18,14 +18,6 @@ const LABEL_COLORS = {
   saving: 'text-[#3B86F7]',
 } as const;
 
-const ONE_HUNDRED_MILLION_WON = 100_000_000;
-
-function formatSummaryAmount(amount: number): string {
-  if (Math.abs(amount) < ONE_HUNDRED_MILLION_WON) return `${formatAmount(amount)} 원`;
-
-  const amountInHundredMillions = Math.trunc((amount / ONE_HUNDRED_MILLION_WON) * 10) / 10;
-  return `${formatAmount(amountInHundredMillions)} 억 원`;
-}
 </script>
 
 <template>
@@ -46,7 +38,7 @@ function formatSummaryAmount(amount: number): string {
         {{ item.label }}
       </div>
       <strong class="mt-1 block text-xs font-semibold tracking-tight text-gray-800">
-        {{ formatSummaryAmount(item.amount) }}
+        {{ formatCompactWonAmount(item.amount) }}
       </strong>
     </article>
   </section>
