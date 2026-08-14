@@ -2,8 +2,7 @@
 import AccountConnectionForm from '@/components/common/AccountConnectionForm.vue';
 import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFooter.vue';
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
-
-const CARD_PROVIDER_OPTIONS = ['KB카드', '신한카드', '삼성카드', '현대카드'] as const;
+import { ONBOARDING_CARD_OPTIONS } from '@/constants/onboard';
 
 const props = defineProps<{
   cardConnectionErrorMessage: string;
@@ -93,7 +92,7 @@ function handleSubmit() {
             helper-text="기존에 연결한 카드사는 아이디와 비밀번호를 다시 입력하지 않아도 돼요"
             :connection-error-message="cardConnectionErrorMessage"
             :disabled="isLoading"
-            :provider-options="CARD_PROVIDER_OPTIONS"
+            :provider-options="ONBOARDING_CARD_OPTIONS"
             @submit="handleSubmit"
           />
         </section>

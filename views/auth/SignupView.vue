@@ -7,6 +7,7 @@ import { useSignup } from '@/composables/useSignup';
 
 // 회원가입 API를 주입해 입력 검증 이후 서버 요청을 실행한다.
 const {
+  financeTermsAgreed,
   isSubmitting,
   marketingTermsAgreed,
   name,
@@ -47,7 +48,7 @@ const {
           <input
             id="signup-name"
             v-model="name"
-            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
+            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-white px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
             type="text"
             name="name"
             autocomplete="name"
@@ -73,7 +74,7 @@ const {
           <input
             id="signup-phone"
             v-model="phone"
-            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
+            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-white px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
             type="tel"
             name="phone"
             inputmode="numeric"
@@ -101,7 +102,7 @@ const {
                 required
               />
               <span
-                class="grid h-[46px] place-items-center rounded-xl border border-dm-gray/40 bg-dm-gray-light text-sm font-bold text-dm-gray-dark transition peer-checked:border-pink-03 peer-checked:bg-pink-01 peer-checked:text-brand-dark"
+                class="grid h-[46px] place-items-center rounded-xl border border-dm-gray/40 bg-white text-sm font-bold text-dm-gray-dark transition peer-checked:border-pink-03 peer-checked:bg-pink-01 peer-checked:text-brand-dark"
               >
                 신부
               </span>
@@ -115,7 +116,7 @@ const {
                 value="G"
               />
               <span
-                class="grid h-[46px] place-items-center rounded-xl border border-dm-gray/40 bg-dm-gray-light text-sm font-bold text-dm-gray-dark transition peer-checked:border-pink-03 peer-checked:bg-pink-01 peer-checked:text-brand-dark"
+                class="grid h-[46px] place-items-center rounded-xl border border-dm-gray/40 bg-white text-sm font-bold text-dm-gray-dark transition peer-checked:border-pink-03 peer-checked:bg-pink-01 peer-checked:text-brand-dark"
               >
                 신랑
               </span>
@@ -136,7 +137,7 @@ const {
           <input
             id="signup-password"
             v-model="password"
-            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
+            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-white px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
             type="password"
             name="password"
             autocomplete="new-password"
@@ -160,7 +161,7 @@ const {
           <input
             id="signup-password-confirmation"
             v-model="passwordConfirm"
-            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-dm-gray-light px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
+            class="h-[46px] w-full rounded-xl border border-dm-gray/40 bg-white px-3.5 text-sm font-semibold text-[#232631] outline-none transition placeholder:font-medium placeholder:text-dm-gray focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
             type="password"
             name="passwordConfirm"
             autocomplete="new-password"
@@ -177,15 +178,19 @@ const {
             id="signup-password-confirmation-status"
             class="mt-1.5 text-[11px] leading-4"
             :class="
-              passwordConfirm.length > 0 && !passwordsMatch
-                ? 'text-brand-dark'
-                : 'text-dm-gray-dark'
+              passwordConfirm.length === 0
+                ? 'text-dm-gray-dark'
+                : passwordsMatch
+                  ? 'text-deep-green'
+                  : 'text-brand-dark'
             "
           >
             {{
-              passwordConfirm.length > 0 && !passwordsMatch
-                ? '비밀번호가 일치하지 않아요.'
-                : '비밀번호와 동일하게 입력해주세요.'
+              passwordConfirm.length === 0
+                ? '비밀번호와 동일하게 입력해주세요.'
+                : passwordsMatch
+                  ? '비밀번호가 일치합니다.'
+                  : '비밀번호가 일치하지 않아요.'
             }}
           </p>
         </div>
@@ -193,9 +198,11 @@ const {
 
       <!-- 약관 카드와 전문 화면 이동 -->
       <TermsAgreementCard
+        v-model:finance-terms-agreed="financeTermsAgreed"
         v-model:marketing-terms-agreed="marketingTermsAgreed"
         v-model:privacy-terms-agreed="privacyTermsAgreed"
         v-model:service-terms-agreed="serviceTermsAgreed"
+        class="!bg-white [&_input:not(:checked)+span]:!bg-white"
       />
 
       <!-- 모바일에서 항상 접근하기 쉬운 하단 가입 버튼 -->

@@ -121,8 +121,25 @@ const heroCtaTo = computed(() => {
   return STEP_DEFS[currentStepIndex.value].to;
 });
 
-// 체크 표시는 홈 API가 알려준 현재 단계에 맞춰 이동한다.
-const checklistActiveIndex = computed(() => (isLoggedIn ? Math.max(currentStepIndex.value, 0) : 0));
+// 완료 표시는 홈 API의 단계별 completed 값만 사용한다.
+const checklistCompletedSteps = computed(() =>
+  STEP_DEFS.map((stepDefinition) => {
+    if (!isLoggedIn) {
+      return false;
+    }
+
+    return (
+      dashboard.value.setupChecklist.steps.find(
+        (checklistStep) => checklistStep.code === stepDefinition.code
+      )?.completed ?? false
+    );
+  })
+);
+
+// 홈 API가 알려준 첫 미완료 단계를 현재 진행할 단계로 표시한다.
+const checklistCurrentIndex = computed(() =>
+  isLoggedIn ? Math.max(currentStepIndex.value, 0) : 0
+);
 const checklistSettingsTo = computed(() => heroCtaTo.value ?? { name: 'goal-list' });
 
 // 비로그인이거나 홈 API의 현재 단계가 1~3단계면 예산 미리보기를 보여준다.
@@ -265,7 +282,8 @@ onMounted(() => {
       <template v-if="!isOnboardingComplete">
         <HomeChecklistCard
           :steps="stepLabels"
-          :active-index="checklistActiveIndex"
+          :completed-steps="checklistCompletedSteps"
+          :current-index="checklistCurrentIndex"
           :settings-to="checklistSettingsTo"
         />
         <HomeBudgetPreview

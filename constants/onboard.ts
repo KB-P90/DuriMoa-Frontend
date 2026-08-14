@@ -1,11 +1,45 @@
 import type { OnboardingScreen } from '@/types/onboarding';
 
-// 계좌 연결 화면에서 선택할 수 있는 은행과 API 전달값이다.
+// 계좌 연결 화면에서 선택하고 API에 전달할 백엔드 등록 은행명이다.
 export const ONBOARDING_BANK_OPTIONS = [
-  { bankCode: '0004', company: '국민은행', label: '국민은행' },
-  { bankCode: '0088', company: '신한은행', label: '신한은행' },
-  { bankCode: '0081', company: 'KEB하나은행', label: '하나은행' },
-  { bankCode: '0020', company: '우리은행', label: '우리은행' },
+  '산업은행',
+  '기업은행',
+  '국민은행',
+  '수협은행',
+  '농협은행',
+  '우리은행',
+  'SC은행',
+  '씨티은행',
+  '대구은행',
+  '부산은행',
+  '광주은행',
+  '제주은행',
+  '전북은행',
+  '경남은행',
+  '새마을금고',
+  '신협은행',
+  '우체국',
+  'KEB하나은행',
+  '신한은행',
+  'K뱅크',
+] as const;
+
+// 카드 연결 화면에서 선택하고 API에 전달할 백엔드 등록 카드사명이다.
+export const ONBOARDING_CARD_OPTIONS = [
+  'KB카드',
+  '현대카드',
+  '삼성카드',
+  'NH카드',
+  'BC카드',
+  '신한카드',
+  '씨티카드',
+  '우리카드',
+  '롯데카드',
+  '하나카드',
+  '전북카드',
+  '광주카드',
+  '수협카드',
+  '제주카드',
 ] as const;
 
 // URL에서 사용할 수 있는 온보딩 화면 이름이다.
@@ -34,7 +68,7 @@ export const ONBOARDING_PREVIOUS_SCREENS = {
 
 // 온보딩 최초 진입 시 사용할 기본값이다.
 export const ONBOARDING_DEFAULT_VALUES = {
-  bank: ONBOARDING_BANK_OPTIONS[0].label,
+  bank: ONBOARDING_BANK_OPTIONS[0],
   financialVisibility: 'WEDDING',
   role: 'G',
   screen: 'account',

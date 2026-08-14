@@ -30,10 +30,12 @@ import MonthlyProgressView from '@/views/progress/MonthlyProgressView.vue';
 import MainView from '@/views/MainView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 import { useGoalStore } from '@/stores/goalStore';
+import { useSignupStore } from '@/stores/signupStore';
 
 // 목표 설정 흐름 내부에서 "이전" 버튼으로 1단계(goal-schedule)로 돌아오는 경우는
 // 입력값을 유지해야 하므로, 그 외의 경로(홈 등)로 들어올 때만 이전 draft를 지운다.
 const GOAL_FLOW_ROUTE_NAMES = ['goal-budget-type', 'goal-category-budget'];
+const SIGNUP_TERM_ROUTE_NAMES = authTermRoutes.map((route) => route.name);
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -99,7 +101,16 @@ const router = createRouter({
       props: true,
     },
     { path: '/login', name: 'login', component: LoginView },
-    { path: '/signup', name: 'signup', component: SignupView },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: SignupView,
+      beforeEnter: (_to, from) => {
+        if (!SIGNUP_TERM_ROUTE_NAMES.includes(from.name)) {
+          useSignupStore().reset();
+        }
+      },
+    },
     ...authTermRoutes,
     { path: '/account-help', name: 'account-help', component: AccountHelpView },
     { path: '/auth/session', name: 'session', component: AuthSessionView },

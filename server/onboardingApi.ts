@@ -10,6 +10,8 @@ import type {
   OnboardingRegisterResponseDto,
   OnboardingSelectRequestDto,
   OnboardingSelectResponseDto,
+  OnboardingWeddingFundRequestDto,
+  OnboardingWeddingFundResponseDto,
 } from '@/types/dto/onboarding.dto';
 
 // 인터넷뱅킹 정보로 CODEF 금융계정을 등록하거나 추가한다.
@@ -37,6 +39,17 @@ export const selectOnboardingAccounts = async (request: OnboardingSelectRequestD
     request
   );
   return data.data;
+};
+
+// 현재까지 모은 결혼자금을 원 단위 문자열로 저장한다.
+export const saveOnboardingWeddingFund = async (
+  request: OnboardingWeddingFundRequestDto
+) => {
+  const { data } = await api.post<OnboardingWeddingFundResponseDto>(
+    '/onboarding/wedding-fund',
+    request
+  );
+  return data;
 };
 
 // 초대 코드에 해당하는 상대에게 커플 연결을 요청한다.

@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { Check } from '@lucide/vue';
 import { RouterLink } from 'vue-router';
 import type { RouteLocationRaw } from 'vue-router';
 
 defineProps<{
   steps: readonly string[];
-  activeIndex: number;
+  completedSteps: readonly boolean[];
+  currentIndex: number;
   settingsTo: RouteLocationRaw;
 }>();
 </script>
@@ -32,18 +34,29 @@ defineProps<{
       >
         <span
           class="grid h-[38px] w-[38px] place-items-center rounded-full text-sm font-bold"
-          :class="
-            index === activeIndex
+          :class="[
+            completedSteps[index]
               ? 'bg-brand text-white'
-              : 'border border-[#D8D9DF] bg-white text-dm-gray-dark'
-          "
+              : index === currentIndex
+                ? 'border-2 border-brand bg-white text-brand'
+                : 'border border-dm-gray/55 bg-white text-dm-gray-dark',
+          ]"
         >
-          <template v-if="index === activeIndex">✓</template>
+          <Check
+            v-if="completedSteps[index]"
+            class="h-5 w-5"
+            :stroke-width="3"
+            aria-label="완료"
+          />
           <template v-else>{{ index + 1 }}</template>
         </span>
         <span
           class="whitespace-nowrap text-[10.5px]"
-          :class="index === activeIndex ? 'font-bold text-brand' : 'text-dm-gray-dark'"
+          :class="
+            completedSteps[index] || index === currentIndex
+              ? 'font-bold text-brand'
+              : 'text-dm-gray-dark'
+          "
         >
           {{ label }}
         </span>
