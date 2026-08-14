@@ -20,8 +20,8 @@ const imageError = ref(false);
 <template>
   <div>
     <!-- Top Header & Change Amount Button -->
-    <div class="mb-4 flex items-start justify-between">
-      <div>
+    <div class="mb-4 flex items-start justify-between gap-2">
+      <div class="min-w-0">
         <h2 class="text-xl font-extrabold text-gray-900 sm:text-2xl">
           {{ formatWon(amount) }} 결제라면
         </h2>
@@ -30,7 +30,7 @@ const imageError = ref(false);
 
       <button
         type="button"
-        class="inline-flex cursor-pointer items-center gap-0.5 rounded-full bg-[#FFF0EF] px-3.5 py-1.5 text-xs font-bold text-brand transition-colors hover:bg-pink-01"
+        class="inline-flex shrink-0 cursor-pointer items-center gap-0.5 rounded-full bg-[#FFF0EF] px-3 py-1.5 text-xs font-bold text-brand transition-colors hover:bg-pink-01 min-[390px]:px-3.5"
         @click="$emit('click-change-amount')"
       >
         <span>금액 변경</span>
@@ -50,10 +50,10 @@ const imageError = ref(false);
         BEST {{ best.rank || 1 }}
       </span>
 
-      <div class="flex items-center gap-5">
+      <div class="flex items-center gap-3 min-[390px]:gap-5">
         <!-- Vertical Card Visual Plate -->
         <div
-          class="relative flex h-36 w-24 shrink-0 flex-col justify-between overflow-hidden rounded-2xl p-3 shadow-md"
+          class="relative flex h-32 w-20 shrink-0 flex-col justify-between overflow-hidden rounded-2xl p-2.5 shadow-md min-[390px]:h-36 min-[390px]:w-24 min-[390px]:p-3"
           :class="best.cardBgColor || 'bg-[#FF4983]'"
         >
           <template v-if="best.cardImage && !imageError">
@@ -78,9 +78,9 @@ const imageError = ref(false);
         </div>
 
         <!-- Card Detail Info -->
-        <div class="flex flex-1 flex-col pt-1">
+        <div class="flex min-w-0 flex-1 flex-col pt-1">
           <span class="text-[11px] font-bold text-brand"> 이번 결제 추천 </span>
-          <strong class="mt-0.5 text-lg font-extrabold text-gray-900 sm:text-xl">
+          <strong class="mt-0.5 line-clamp-2 break-keep text-base font-extrabold leading-tight text-gray-900 min-[390px]:text-lg sm:text-xl">
             {{ best.cardName }}
           </strong>
 
@@ -100,7 +100,7 @@ const imageError = ref(false);
           </div>
 
           <div
-            class="mt-2.5 self-start rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-[#5A5B69] shadow-2xs"
+            class="mt-2.5 max-w-full self-start truncate rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold text-[#5A5B69] shadow-2xs min-[390px]:px-3"
           >
             <span class="mr-1 text-brand">●</span> {{ best.ownerName || best.userName }} 님의 카드
           </div>

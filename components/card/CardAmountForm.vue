@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { ArrowRight } from '@lucide/vue';
 import { formatAmount, parseFormattedAmount } from '@/utils/format';
 import type { QuickAmountOption } from '@/types/card';
@@ -22,9 +22,6 @@ const quickOptions: QuickAmountOption[] = [
   { label: '+ 30만원', value: 300_000 },
 ];
 
-// 방금 전 가장 최근에 클릭한 퀵 버튼 선택 상태 유지
-const selectedQuickValue = ref<number | null>(null);
-
 const formattedAmount = computed({
   get: () => (props.amount > 0 ? formatAmount(props.amount) : ''),
   set: (val: string) => {
@@ -37,12 +34,10 @@ function handleInputChange(event: Event) {
   const target = event.target as HTMLInputElement;
   const rawValue = target.value.replace(/[^0-9]/g, '');
   const numValue = Number(rawValue);
-  selectedQuickValue.value = null; // 직접 입력 시 퀵 버튼 선택 하이라이트 초기화
   emit('update:amount', numValue);
 }
 
 function handleQuickAdd(value: number) {
-  selectedQuickValue.value = value; // 최근 누른 버튼 상태 유지
   emit('add-amount', value);
 }
 </script>
@@ -75,12 +70,7 @@ function handleQuickAdd(value: number) {
         v-for="option in quickOptions"
         :key="option.value"
         type="button"
-        class="flex-1 cursor-pointer rounded-xl border py-2.5 text-xs font-semibold transition-all"
-        :class="
-          selectedQuickValue === option.value
-            ? 'border-pink-03 bg-[#FFF0EF] text-brand font-bold shadow-xs'
-            : 'border-gray-200 bg-white text-[#5A5B69] hover:bg-gray-50'
-        "
+        class="flex-1 cursor-pointer rounded-xl border border-gray-200 bg-white py-2.5 text-xs font-semibold text-[#5A5B69] transition-all hover:bg-gray-50 active:border-pink-03 active:bg-pink-01 active:font-bold active:text-brand active:shadow-xs"
         @click="handleQuickAdd(option.value)"
       >
         {{ option.label }}

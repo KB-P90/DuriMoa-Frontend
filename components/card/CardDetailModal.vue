@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { X, ShoppingBag, Bus, Coffee, CreditCard } from '@lucide/vue';
 import type { CardDetail } from '@/types/card';
 
@@ -12,25 +12,99 @@ const emit = defineEmits<{
 }>();
 
 const imageError = ref(false);
+const isClosing = ref(false);
+const isDragging = ref(false);
+const dragOffsetY = ref(0);
+
+const CLOSE_ANIMATION_DURATION = 300;
+const CLOSE_DRAG_THRESHOLD = 96;
+
+let dragStartY = 0;
+
+const sheetStyle = computed(() => ({
+  transform: isClosing.value
+    ? 'translateY(100%)'
+    : `translateY(${dragOffsetY.value}px)`,
+  transition: isDragging.value ? 'none' : `transform ${CLOSE_ANIMATION_DURATION}ms ease-out`,
+}));
+
+function closeWithAnimation() {
+  if (isClosing.value) return;
+
+  isDragging.value = false;
+  isClosing.value = true;
+  window.setTimeout(() => emit('close'), CLOSE_ANIMATION_DURATION);
+}
+
+function startDrag(event: PointerEvent) {
+  if (isClosing.value || !event.isPrimary) return;
+
+  isDragging.value = true;
+  dragStartY = event.clientY - dragOffsetY.value;
+  event.currentTarget instanceof HTMLElement && event.currentTarget.setPointerCapture(event.pointerId);
+}
+
+function moveDrag(event: PointerEvent) {
+  if (!isDragging.value || !event.isPrimary) return;
+
+  const nextOffset = event.clientY - dragStartY;
+  dragOffsetY.value = Math.max(nextOffset, 0);
+}
+
+function endDrag(event: PointerEvent) {
+  if (!isDragging.value || !event.isPrimary) return;
+
+  isDragging.value = false;
+  if (dragOffsetY.value >= CLOSE_DRAG_THRESHOLD) {
+    closeWithAnimation();
+    return;
+  }
+
+  dragOffsetY.value = 0;
+}
+
+function cancelDrag() {
+  if (!isDragging.value) return;
+
+  isDragging.value = false;
+  dragOffsetY.value = 0;
+}
 </script>
 
 <template>
   <div
     class="fixed inset-0 z-[60] flex cursor-pointer items-end justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-300"
-    @click.self="emit('close')"
+    :class="isClosing ? 'opacity-0' : 'opacity-100'"
+    @click.self="closeWithAnimation"
   >
     <div
       class="relative max-h-[85vh] w-full max-w-[768px] cursor-default overflow-y-auto scrollbar-none rounded-t-[32px] bg-white px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-3 shadow-2xl animate-in slide-in-from-bottom duration-300 ease-out"
+      :style="sheetStyle"
     >
       <!-- Bottom Sheet Drag Handle Bar -->
-      <div class="mx-auto mb-4 h-1.5 w-12 rounded-full bg-gray-200" />
+      <div
+        role="slider"
+        aria-label="카드 상세 시트 위치"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        :aria-valuenow="Math.min(Math.max(Math.round(dragOffsetY), 0), 100)"
+        tabindex="0"
+        class="mx-auto mb-4 w-fit cursor-grab touch-none select-none px-3 py-1 active:cursor-grabbing"
+        @pointerdown="startDrag"
+        @pointermove="moveDrag"
+        @pointerup="endDrag"
+        @pointercancel="cancelDrag"
+        @keydown.down.prevent="closeWithAnimation"
+      >
+        <span class="block h-1.5 w-12 rounded-full bg-gray-200" />
+      </div>
 
       <!-- Close Button -->
       <button
         type="button"
         aria-label="닫기"
         class="absolute right-5 top-5 grid h-8 w-8 cursor-pointer place-items-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700"
-        @click="emit('close')"
+        @click="closeWithAnimation"
       >
         <X
           class="h-5 w-5"
