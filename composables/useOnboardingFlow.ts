@@ -14,6 +14,7 @@ import { getOnboardingApiErrorMessage } from '@/utils/onboardingApiError';
 import {
   getOnboardingAccounts,
   registerOnboardingAccount,
+  saveOnboardingWeddingFund,
   selectOnboardingAccounts,
 } from '@/server/onboardingApi';
 
@@ -75,10 +76,12 @@ export function useOnboardingFlow() {
   const isCardConnected = ref(false);
   const isConnectingAccount = ref(false);
   const isSelectingAccounts = ref(false);
+  const isSavingWeddingFund = ref(false);
   const weddingFundAmountInWon = ref<number | null>(null);
   const accountConnectionErrorMessage = ref('');
   const cardConnectionErrorMessage = ref('');
   const accountSelectionErrorMessage = ref('');
+  const weddingFundErrorMessage = ref('');
 
   // 화면에서 선택한 백엔드 등록 은행명을 API 요청에 그대로 사용한다.
   const selectedCompany = computed(() => bank.value);
@@ -116,8 +119,10 @@ export function useOnboardingFlow() {
       !isSelectingAccounts.value
   );
 
-  // 퍼블리싱용 결혼자금 입력 여부를 확인한다. 실제 저장 API는 추후 연결한다.
-  const canContinueWeddingFund = computed(() => weddingFundAmountInWon.value !== null);
+  // 결혼자금이 입력되고 저장 요청 중이 아닐 때 완료 버튼을 활성화한다.
+  const canContinueWeddingFund = computed(
+    () => weddingFundAmountInWon.value !== null && !isSavingWeddingFund.value
+  );
 
   // 계좌 연결 정보가 변경되면 이전 연결 완료 상태를 해제한다.
   watch([bank, internetBankingId, internetBankingPassword], () => {
@@ -135,6 +140,11 @@ export function useOnboardingFlow() {
     isCardConnected.value = false;
     cardConnectionErrorMessage.value = '';
     accountSelectionErrorMessage.value = '';
+  });
+
+  // 결혼자금을 다시 입력하면 이전 저장 오류 안내를 제거한다.
+  watch(weddingFundAmountInWon, () => {
+    weddingFundErrorMessage.value = '';
   });
 
   // 지정한 온보딩 화면으로 이동한다.
@@ -338,13 +348,39 @@ export function useOnboardingFlow() {
     }
   }
 
-  // 퍼블리싱 단계에서는 입력값만 확인하고 홈으로 이동한다. 저장 API는 추후 연결한다.
-  function completeWeddingFund() {
-    if (!canContinueWeddingFund.value) {
+  // 현재까지 모은 결혼자금을 원 단위 문자열로 저장한 뒤 홈으로 이동한다.
+  async function completeWeddingFund() {
+    const weddingFund = weddingFundAmountInWon.value;
+
+    if (weddingFund === null || isSavingWeddingFund.value) {
       return;
     }
 
-    goHome();
+    isSavingWeddingFund.value = true;
+    weddingFundErrorMessage.value = '';
+
+    try {
+      const response = await saveOnboardingWeddingFund({
+        weddingFund: String(weddingFund),
+      });
+
+      if (!response.success) {
+        weddingFundErrorMessage.value =
+          response.message || '결혼자금을 저장하지 못했어요. 다시 시도해주세요.';
+        return;
+      }
+
+      if (isCurrentOnboardingScreen('wedding-fund')) {
+        goHome();
+      }
+    } catch (error: unknown) {
+      weddingFundErrorMessage.value = getOnboardingApiErrorMessage(
+        error,
+        '결혼자금을 저장하지 못했어요. 다시 시도해주세요.'
+      );
+    } finally {
+      isSavingWeddingFund.value = false;
+    }
   }
 
   // 계좌 연결 하위 화면은 바로 전 화면으로 돌아가고, 그 외 화면에서는 홈으로 이동한다.
@@ -394,6 +430,7 @@ export function useOnboardingFlow() {
     internetBankingId,
     internetBankingPassword,
     isConnectingAccount,
+    isSavingWeddingFund,
     isSelectingAccounts,
     screen,
     selectConnectedAccounts,
@@ -402,5 +439,6 @@ export function useOnboardingFlow() {
     toggleAccount,
     toggleCard,
     weddingFundAmountInWon,
+    weddingFundErrorMessage,
   };
 }

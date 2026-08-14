@@ -10,6 +10,8 @@ const MAX_WON_AMOUNT_DIGITS = 15;
 const props = defineProps<{
   amountInWon: number | null;
   canContinue: boolean;
+  errorMessage: string;
+  isLoading: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -82,6 +84,7 @@ function handleAmountInput(event: Event) {
             inputmode="numeric"
             autocomplete="off"
             placeholder="0"
+            :disabled="isLoading"
             aria-describedby="onboarding-wedding-fund-description"
             @input="handleAmountInput"
           />
@@ -94,6 +97,14 @@ function handleAmountInput(event: Event) {
         >
           계좌에 연결되지 않은 현금과 예금도 포함해서 원 단위로 입력해주세요.
         </p>
+
+        <p
+          v-if="errorMessage"
+          class="mt-2 break-keep text-center text-[11px] leading-4 text-brand-dark"
+          role="alert"
+        >
+          {{ errorMessage }}
+        </p>
       </div>
 
       <div class="mt-4 rounded-[14px] bg-pink-01 px-4 py-3.5">
@@ -104,9 +115,10 @@ function handleAmountInput(event: Event) {
     </div>
 
     <OnboardingActionFooter
-      label="입력 완료"
+      :label="isLoading ? '결혼자금 저장하는 중...' : '입력 완료'"
       secondary-label="다음에 하기"
-      :disabled="!canContinue"
+      :disabled="!canContinue || isLoading"
+      :secondary-disabled="isLoading"
       @primary="$emit('next')"
       @secondary="$emit('skip')"
     />

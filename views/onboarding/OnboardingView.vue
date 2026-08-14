@@ -34,6 +34,7 @@ const {
   internetBankingId,
   internetBankingPassword,
   isConnectingAccount,
+  isSavingWeddingFund,
   isSelectingAccounts,
   screen,
   selectConnectedAccounts,
@@ -42,6 +43,7 @@ const {
   toggleAccount,
   toggleCard,
   weddingFundAmountInWon,
+  weddingFundErrorMessage,
 } = useOnboardingFlow();
 
 // 현재 커플 연결 단계가 화면에 표시되고 있는지 나타낸다.
@@ -76,11 +78,13 @@ const {
 <template>
   <AuthScreen class="!bg-white [&>section]:!bg-white">
     <Loading
-      v-if="isConnectingAccount || isSelectingAccounts"
+      v-if="isConnectingAccount || isSelectingAccounts || isSavingWeddingFund"
       :label="
         isConnectingAccount
           ? '계좌와 카드를 불러오는 중이에요'
-          : '선택한 계좌와 카드를 저장하는 중이에요'
+          : isSelectingAccounts
+            ? '선택한 계좌와 카드를 저장하는 중이에요'
+            : '결혼자금을 저장하는 중이에요'
       "
     />
 
@@ -155,6 +159,8 @@ const {
         v-else-if="screen === 'wedding-fund'"
         v-model:amount-in-won="weddingFundAmountInWon"
         :can-continue="canContinueWeddingFund"
+        :error-message="weddingFundErrorMessage"
+        :is-loading="isSavingWeddingFund"
         @back="goBack"
         @next="completeWeddingFund"
         @skip="goHome"
