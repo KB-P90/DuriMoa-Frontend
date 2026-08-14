@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { ArrowLeft } from '@lucide/vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { ArrowLeft, Check, Trash2 } from '@lucide/vue';
 
 import {
+  deleteNotification,
+  deleteSelectedNotifications,
   getNotifications,
   markAllNotificationsRead,
   markNotificationRead,
@@ -15,8 +17,29 @@ const emit = defineEmits<{
   close: [];
 }>();
 
+const LONG_PRESS_MS = 500;
+const LONG_PRESS_MOVE_TOLERANCE = 10;
+const SWIPE_REVEAL_PX = 72;
+const SWIPE_DELETE_PX = 160;
+
 const notifications = ref<AppNotification[]>([]);
 const isLoading = ref(false);
+
+const isSelectionMode = ref(false);
+const selectedIds = ref<Set<number>>(new Set());
+
+const swipedId = ref<number | null>(null);
+const dragState = ref<{ id: number; startX: number; currentX: number; dragging: boolean } | null>(
+  null
+);
+let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+
+const contextMenu = ref<{ visible: boolean; x: number; y: number; id: number | null }>({
+  visible: false,
+  x: 0,
+  y: 0,
+  id: null,
+});
 
 const hasUnread = computed(() => notifications.value.some((item) => !item.isRead));
 
@@ -31,9 +54,22 @@ async function fetchNotifications() {
   }
 }
 
-onMounted(fetchNotifications);
+function closeContextMenu() {
+  contextMenu.value.visible = false;
+}
 
-async function handleSelect(notification: AppNotification) {
+onMounted(() => {
+  fetchNotifications();
+  window.addEventListener('click', closeContextMenu);
+  window.addEventListener('scroll', closeContextMenu, true);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('click', closeContextMenu);
+  window.removeEventListener('scroll', closeContextMenu, true);
+});
+
+async function handleOpenNotification(notification: AppNotification) {
   if (notification.isRead) return;
 
   notification.isRead = true;
@@ -55,6 +91,160 @@ async function handleMarkAllRead() {
   }
 }
 
+function handleItemClick(notification: AppNotification) {
+  if (isSelectionMode.value) {
+    toggleSelected(notification.id);
+    return;
+  }
+
+  if (swipedId.value !== null) {
+    swipedId.value = null;
+    return;
+  }
+
+  void handleOpenNotification(notification);
+}
+
+function toggleSelected(id: number) {
+  if (selectedIds.value.has(id)) {
+    selectedIds.value.delete(id);
+  } else {
+    selectedIds.value.add(id);
+  }
+}
+
+function enterSelectionMode(id: number) {
+  isSelectionMode.value = true;
+  selectedIds.value = new Set([id]);
+  swipedId.value = null;
+  dragState.value = null;
+  closeContextMenu();
+}
+
+function exitSelectionMode() {
+  isSelectionMode.value = false;
+  selectedIds.value = new Set();
+}
+
+async function handleDeleteSelected() {
+  const ids = Array.from(selectedIds.value);
+  if (ids.length === 0) return;
+
+  const previous = notifications.value;
+  const idSet = new Set(ids);
+  notifications.value = previous.filter((item) => !idSet.has(item.id));
+
+  try {
+    await deleteSelectedNotifications(ids);
+    exitSelectionMode();
+  } catch {
+    notifications.value = previous;
+  }
+}
+
+async function handleDeleteSingle(id: number) {
+  swipedId.value = null;
+  const previous = notifications.value;
+  notifications.value = previous.filter((item) => item.id !== id);
+
+  try {
+    await deleteNotification(id);
+  } catch {
+    notifications.value = previous;
+  }
+}
+
+function clearLongPressTimer() {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+}
+
+function onTouchStart(event: TouchEvent, notification: AppNotification) {
+  if (isSelectionMode.value) return;
+
+  const touch = event.touches[0];
+  dragState.value = {
+    id: notification.id,
+    startX: touch.clientX,
+    currentX: touch.clientX,
+    dragging: false,
+  };
+
+  clearLongPressTimer();
+  longPressTimer = setTimeout(() => {
+    if (!dragState.value || dragState.value.dragging || dragState.value.id !== notification.id)
+      return;
+    enterSelectionMode(notification.id);
+  }, LONG_PRESS_MS);
+}
+
+function onTouchMove(event: TouchEvent) {
+  if (!dragState.value || isSelectionMode.value) return;
+
+  const touch = event.touches[0];
+  const deltaX = touch.clientX - dragState.value.startX;
+
+  if (Math.abs(deltaX) > LONG_PRESS_MOVE_TOLERANCE) {
+    clearLongPressTimer();
+  }
+
+  if (deltaX >= 0) {
+    dragState.value.currentX = dragState.value.startX;
+    return;
+  }
+
+  dragState.value.dragging = true;
+  dragState.value.currentX = touch.clientX;
+  swipedId.value = dragState.value.id;
+}
+
+function onTouchEnd() {
+  clearLongPressTimer();
+  if (!dragState.value) return;
+
+  const { id } = dragState.value;
+  const offset = swipeOffsetFor(id);
+
+  if (offset <= -SWIPE_DELETE_PX) {
+    void handleDeleteSingle(id);
+  } else if (offset > -SWIPE_REVEAL_PX) {
+    swipedId.value = null;
+  }
+
+  dragState.value = null;
+}
+
+function swipeOffsetFor(id: number) {
+  if (isSelectionMode.value) return 0;
+
+  if (dragState.value?.id === id && dragState.value.dragging) {
+    const raw = dragState.value.currentX - dragState.value.startX;
+    return Math.max(raw, -(SWIPE_DELETE_PX + 40));
+  }
+
+  return swipedId.value === id ? -SWIPE_REVEAL_PX : 0;
+}
+
+function isDraggingItem(id: number) {
+  return dragState.value?.id === id && dragState.value.dragging;
+}
+
+function onContextMenu(event: MouseEvent, notification: AppNotification) {
+  if (isSelectionMode.value) return;
+
+  event.preventDefault();
+  swipedId.value = null;
+  contextMenu.value = { visible: true, x: event.clientX, y: event.clientY, id: notification.id };
+}
+
+async function handleContextMenuDelete() {
+  const id = contextMenu.value.id;
+  closeContextMenu();
+  if (id !== null) await handleDeleteSingle(id);
+}
+
 const visualFor = visualForNotificationType;
 </script>
 
@@ -65,6 +255,7 @@ const visualFor = visualForNotificationType;
     >
       <header class="flex h-14 shrink-0 items-center gap-3 border-b border-dm-gray/15 px-4">
         <button
+          v-if="!isSelectionMode"
           type="button"
           aria-label="뒤로 가기"
           class="grid h-6 w-6 cursor-pointer place-items-center"
@@ -75,14 +266,36 @@ const visualFor = visualForNotificationType;
             :stroke-width="2"
           />
         </button>
-        <h1 class="flex-1 text-base font-extrabold text-[#232631]">알림</h1>
         <button
-          v-if="hasUnread"
+          v-else
+          type="button"
+          class="cursor-pointer text-sm font-semibold text-dm-gray-dark"
+          @click="exitSelectionMode"
+        >
+          취소
+        </button>
+
+        <h1 class="flex-1 text-base font-extrabold text-[#232631]">
+          {{ isSelectionMode ? `${selectedIds.size}개 선택` : '알림' }}
+        </h1>
+
+        <button
+          v-if="!isSelectionMode && hasUnread"
           type="button"
           class="cursor-pointer text-sm font-semibold text-dm-gray-dark"
           @click="handleMarkAllRead"
         >
           모두 읽음
+        </button>
+        <button
+          v-else-if="isSelectionMode"
+          type="button"
+          class="cursor-pointer text-sm font-semibold disabled:cursor-not-allowed disabled:text-disable"
+          :class="selectedIds.size > 0 ? 'text-red' : 'text-disable'"
+          :disabled="selectedIds.size === 0"
+          @click="handleDeleteSelected"
+        >
+          모두 삭제
         </button>
       </header>
 
@@ -100,41 +313,107 @@ const visualFor = visualForNotificationType;
           v-else
           class="flex flex-col"
         >
-          <button
+          <div
             v-for="notification in notifications"
             :key="notification.id"
-            type="button"
-            class="relative mb-3 flex cursor-pointer items-start gap-3 rounded-2xl p-4 text-left last:mb-0"
-            :class="notification.isRead ? 'bg-white' : 'bg-pink-01'"
-            @click="handleSelect(notification)"
+            class="relative mb-3 overflow-hidden rounded-2xl last:mb-0"
           >
-            <span
-              class="grid h-10 w-10 shrink-0 place-items-center rounded-full text-lg"
-              :class="visualFor(notification.type).circleClass"
+            <div
+              class="absolute inset-y-0 right-0 flex w-20 items-center justify-center rounded-2xl bg-red"
             >
-              {{ visualFor(notification.type).icon }}
-            </span>
-            <span class="flex-1">
-              <span class="block text-sm font-bold text-[#232631]">{{ notification.title }}</span>
-              <span class="mt-1 block text-sm leading-5 text-dm-gray-dark">
-                {{ notification.content }}
-              </span>
+              <button
+                type="button"
+                aria-label="알림 삭제"
+                class="grid h-10 w-10 cursor-pointer place-items-center text-white"
+                @click.stop="handleDeleteSingle(notification.id)"
+              >
+                <Trash2
+                  class="h-5 w-5"
+                  :stroke-width="2"
+                />
+              </button>
+            </div>
+
+            <button
+              type="button"
+              class="relative flex w-full cursor-pointer items-start gap-3 rounded-2xl p-4 text-left"
+              :class="[
+                notification.isRead ? 'bg-white' : 'bg-pink-01',
+                !isDraggingItem(notification.id) && 'transition-transform duration-200',
+              ]"
+              :style="{ transform: `translateX(${swipeOffsetFor(notification.id)}px)` }"
+              @click="handleItemClick(notification)"
+              @contextmenu="onContextMenu($event, notification)"
+              @touchstart.passive="onTouchStart($event, notification)"
+              @touchmove.passive="onTouchMove"
+              @touchend="onTouchEnd"
+              @touchcancel="onTouchEnd"
+            >
               <span
-                class="mt-1.5 block text-xs"
+                v-if="isSelectionMode"
+                class="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full border-2"
                 :class="
-                  notification.isRead ? 'text-dm-gray-dark' : 'font-semibold text-brand-dark'
+                  selectedIds.has(notification.id)
+                    ? 'border-brand bg-brand'
+                    : 'border-dm-gray bg-white'
                 "
               >
-                {{ formatRelativeTime(notification.createdAt) }}
+                <Check
+                  v-if="selectedIds.has(notification.id)"
+                  class="h-3 w-3 text-white"
+                  :stroke-width="3"
+                />
               </span>
-            </span>
-            <span
-              v-if="!notification.isRead"
-              class="absolute right-4 top-4 h-2 w-2 rounded-full bg-brand-dark"
-            />
-          </button>
+
+              <span
+                class="grid h-10 w-10 shrink-0 place-items-center rounded-full text-lg"
+                :class="visualFor(notification.type).circleClass"
+              >
+                {{ visualFor(notification.type).icon }}
+              </span>
+              <span class="flex-1">
+                <span class="block text-sm font-bold text-[#232631]">{{ notification.title }}</span>
+                <span class="mt-1 block text-sm leading-5 text-dm-gray-dark">
+                  {{ notification.content }}
+                </span>
+                <span
+                  class="mt-1.5 block text-xs"
+                  :class="
+                    notification.isRead ? 'text-dm-gray-dark' : 'font-semibold text-brand-dark'
+                  "
+                >
+                  {{ formatRelativeTime(notification.createdAt) }}
+                </span>
+              </span>
+              <span
+                v-if="!notification.isRead && !isSelectionMode"
+                class="absolute right-4 top-4 h-2 w-2 rounded-full bg-brand-dark"
+              />
+            </button>
+          </div>
         </div>
       </main>
     </section>
+  </Teleport>
+
+  <Teleport to="body">
+    <div
+      v-if="contextMenu.visible"
+      class="fixed z-[70] min-w-[120px] rounded-xl bg-white py-1 shadow-lg ring-1 ring-black/10"
+      :style="{ left: `${contextMenu.x}px`, top: `${contextMenu.y}px` }"
+      @click.stop
+    >
+      <button
+        type="button"
+        class="flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-left text-sm font-semibold text-red"
+        @click="handleContextMenuDelete"
+      >
+        <Trash2
+          class="h-4 w-4"
+          :stroke-width="2"
+        />
+        삭제
+      </button>
+    </div>
   </Teleport>
 </template>
