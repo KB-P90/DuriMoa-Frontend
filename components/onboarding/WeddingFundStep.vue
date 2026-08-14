@@ -5,10 +5,10 @@ import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFoot
 import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
 import { formatAmount } from '@/utils/format';
 
-const MAX_AMOUNT_DIGITS = 9;
+const MAX_WON_AMOUNT_DIGITS = 15;
 
 const props = defineProps<{
-  amount: number | null;
+  amountInWon: number | null;
   canContinue: boolean;
 }>();
 
@@ -16,17 +16,17 @@ const emit = defineEmits<{
   back: [];
   next: [];
   skip: [];
-  'update:amount': [amount: number | null];
+  'update:amountInWon': [amountInWon: number | null];
 }>();
 
-const formattedAmount = computed(() =>
-  props.amount === null ? '' : formatAmount(props.amount)
+const formattedAmountInWon = computed(() =>
+  props.amountInWon === null ? '' : formatAmount(props.amountInWon)
 );
 
 function handleAmountInput(event: Event) {
   const target = event.target as HTMLInputElement;
-  const digits = target.value.replace(/[^0-9]/g, '').slice(0, MAX_AMOUNT_DIGITS);
-  emit('update:amount', digits.length > 0 ? Number(digits) : null);
+  const digits = target.value.replace(/[^0-9]/g, '').slice(0, MAX_WON_AMOUNT_DIGITS);
+  emit('update:amountInWon', digits.length > 0 ? Number(digits) : null);
 }
 </script>
 
@@ -76,7 +76,7 @@ function handleAmountInput(event: Event) {
         >
           <input
             id="onboarding-wedding-fund"
-            :value="formattedAmount"
+            :value="formattedAmountInWon"
             class="min-w-0 flex-1 bg-transparent text-right font-mono text-[24px] font-extrabold text-black outline-none placeholder:text-dm-gray"
             type="text"
             inputmode="numeric"
@@ -85,14 +85,14 @@ function handleAmountInput(event: Event) {
             aria-describedby="onboarding-wedding-fund-description"
             @input="handleAmountInput"
           />
-          <span class="ml-2 shrink-0 text-[14px] font-bold text-dm-gray-dark">만원</span>
+          <span class="ml-2 shrink-0 text-[14px] font-bold text-dm-gray-dark">원</span>
         </div>
 
         <p
           id="onboarding-wedding-fund-description"
           class="mt-3 break-keep text-center text-[11px] leading-5 text-dm-gray-dark"
         >
-          계좌에 연결되지 않은 현금과 예금도 포함해서 입력해주세요.
+          계좌에 연결되지 않은 현금과 예금도 포함해서 원 단위로 입력해주세요.
         </p>
       </div>
 

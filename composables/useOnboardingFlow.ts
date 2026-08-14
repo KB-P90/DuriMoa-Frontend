@@ -4,7 +4,7 @@ import type { Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   ONBOARDING_API_ERROR_MESSAGES,
-  ONBOARDING_BANK_OPTIONS,
+  ONBOARDING_CARD_OPTIONS,
   ONBOARDING_DEFAULT_VALUES,
   ONBOARDING_ROUTE_NAMES,
 } from '@/constants/onboard';
@@ -62,7 +62,7 @@ export function useOnboardingFlow() {
 
   // 계좌 연결과 이후 설정 화면에서 사용하는 입력 상태다.
   const bank = ref<string>(ONBOARDING_DEFAULT_VALUES.bank);
-  const cardCompany = ref('KB카드');
+  const cardCompany = ref<string>(ONBOARDING_CARD_OPTIONS[0]);
   const cardLoginId = ref('');
   const cardLoginPassword = ref('');
   const internetBankingId = ref('');
@@ -75,20 +75,13 @@ export function useOnboardingFlow() {
   const isCardConnected = ref(false);
   const isConnectingAccount = ref(false);
   const isSelectingAccounts = ref(false);
-  const weddingFundAmount = ref<number | null>(null);
+  const weddingFundAmountInWon = ref<number | null>(null);
   const accountConnectionErrorMessage = ref('');
   const cardConnectionErrorMessage = ref('');
   const accountSelectionErrorMessage = ref('');
 
-  // 선택한 은행명에 대응하는 API 요청용 은행 정보다.
-  const selectedBankOption = computed(
-    () =>
-      ONBOARDING_BANK_OPTIONS.find((bankOption) => bankOption.label === bank.value) ??
-      ONBOARDING_BANK_OPTIONS[0]
-  );
-
-  // 백엔드 금융기관 Enum에 맞춘 API 요청용 기관명이다.
-  const selectedCompany = computed(() => selectedBankOption.value.company);
+  // 화면에서 선택한 백엔드 등록 은행명을 API 요청에 그대로 사용한다.
+  const selectedCompany = computed(() => bank.value);
 
   // URL 쿼리를 검증해 현재 온보딩 화면을 계산한다.
   const screen = computed(() => toOnboardingScreen(route.query.screen));
@@ -124,7 +117,7 @@ export function useOnboardingFlow() {
   );
 
   // 퍼블리싱용 결혼자금 입력 여부를 확인한다. 실제 저장 API는 추후 연결한다.
-  const canContinueWeddingFund = computed(() => weddingFundAmount.value !== null);
+  const canContinueWeddingFund = computed(() => weddingFundAmountInWon.value !== null);
 
   // 계좌 연결 정보가 변경되면 이전 연결 완료 상태를 해제한다.
   watch([bank, internetBankingId, internetBankingPassword], () => {
@@ -408,6 +401,6 @@ export function useOnboardingFlow() {
     selectedCardNumbers,
     toggleAccount,
     toggleCard,
-    weddingFundAmount,
+    weddingFundAmountInWon,
   };
 }

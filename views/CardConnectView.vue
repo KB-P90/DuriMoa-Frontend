@@ -4,9 +4,8 @@ import { storeToRefs } from 'pinia';
 import AccountConnectionForm from '@/components/common/AccountConnectionForm.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
 import { useAuthCheck } from '@/composables/useAuthCheck';
+import { ONBOARDING_CARD_OPTIONS } from '@/constants/onboard';
 import { useAssetConnectionStore } from '@/stores/assetConnectionStore';
-
-const CARD_PROVIDER_OPTIONS = ['신한카드', 'KB국민카드', '삼성카드', '현대카드'] as const;
 
 useAuthCheck();
 
@@ -67,7 +66,7 @@ onMounted(() => {
           password-placeholder="카드사 로그인 비밀번호"
           :helper-text="cardForm.helperText"
           :password-entered-message="cardForm.passwordMessage"
-          :provider-options="CARD_PROVIDER_OPTIONS"
+          :provider-options="ONBOARDING_CARD_OPTIONS"
           :disabled="isLoadingCard"
         />
 

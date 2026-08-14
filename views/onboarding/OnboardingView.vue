@@ -41,7 +41,7 @@ const {
   selectedCardNumbers,
   toggleAccount,
   toggleCard,
-  weddingFundAmount,
+  weddingFundAmountInWon,
 } = useOnboardingFlow();
 
 // 현재 커플 연결 단계가 화면에 표시되고 있는지 나타낸다.
@@ -153,7 +153,7 @@ const {
 
       <WeddingFundStep
         v-else-if="screen === 'wedding-fund'"
-        v-model:amount="weddingFundAmount"
+        v-model:amount-in-won="weddingFundAmountInWon"
         :can-continue="canContinueWeddingFund"
         @back="goBack"
         @next="completeWeddingFund"

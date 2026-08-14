@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
+import { ONBOARDING_BANK_OPTIONS, ONBOARDING_CARD_OPTIONS } from '@/constants/onboard';
 import type { AssetConnectionForm } from '@/types/assetConnection';
 
 const MOCK_ACCOUNT_CONNECTION_FORM: AssetConnectionForm = {
-  selectedProvider: 'KB국민은행',
+  selectedProvider: ONBOARDING_BANK_OPTIONS[2],
   loginId: '',
   loginPassword: '',
   helperText: '영문·숫자·특수문자 포함 8자 이상',
@@ -10,7 +11,7 @@ const MOCK_ACCOUNT_CONNECTION_FORM: AssetConnectionForm = {
 };
 
 const MOCK_CARD_CONNECTION_FORM: AssetConnectionForm = {
-  selectedProvider: '신한카드',
+  selectedProvider: ONBOARDING_CARD_OPTIONS[5],
   loginId: '',
   loginPassword: '',
   helperText: '영문·숫자·특수문자 포함 8자 이상',
