@@ -150,7 +150,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
       <input
         id="couple-invite-code"
         v-model="inviteCode"
-        class="h-[52px] min-w-0 rounded-[13px] border bg-dm-gray-light px-4 font-mono text-[14px] font-extrabold uppercase tracking-[0.12em] outline-none transition placeholder:font-sans placeholder:text-[12px] placeholder:font-medium placeholder:normal-case placeholder:tracking-normal placeholder:text-dm-gray"
+        class="h-[52px] min-w-0 rounded-[13px] border bg-dm-gray-light px-4 font-mono text-[14px] font-extrabold uppercase tracking-[0.12em] text-black outline-none transition placeholder:font-sans placeholder:text-[12px] placeholder:font-medium placeholder:normal-case placeholder:tracking-normal placeholder:text-black"
         :class="
           hasInviteCodeError || errorMessage
             ? 'border-pink-03-dark focus:ring-3 focus:ring-brand/15'
@@ -176,7 +176,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
 
       <button
         type="submit"
-        class="grid h-[52px] place-items-center rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[13px] font-extrabold transition enabled:hover:border-pink-03 enabled:hover:bg-pink-01 disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
+        class="grid h-[52px] place-items-center rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[13px] font-extrabold text-black transition enabled:hover:border-pink-03 enabled:hover:bg-pink-01 disabled:cursor-not-allowed focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
         :disabled="!canConfirm"
       >
         {{ isInviting ? '확인 중' : '확인' }}

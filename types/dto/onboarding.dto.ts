@@ -49,6 +49,17 @@ export interface OnboardingSelectResponseDto {
   processedNumbers: string[];
 }
 
+// 현재까지 모은 결혼자금을 원 단위 문자열로 저장하는 요청이다.
+export interface OnboardingWeddingFundRequestDto {
+  weddingFund: string;
+}
+
+// 결혼자금 저장 API는 공통 data 필드 없이 처리 결과만 반환한다.
+export interface OnboardingWeddingFundResponseDto {
+  success: boolean;
+  message: string;
+}
+
 // 커플 초대 코드 요청이다.
 export interface CoupleInviteRequestDto {
   inviteCode: string;

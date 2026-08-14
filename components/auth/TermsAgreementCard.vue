@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 defineProps({
   returnTo: {
@@ -13,8 +13,8 @@ const serviceAgreed = defineModel<boolean>('serviceTermsAgreed', { default: fals
 const privacyAgreed = defineModel<boolean>('privacyTermsAgreed', { default: false });
 const marketingAgreed = defineModel<boolean>('marketingTermsAgreed', { default: false });
 
-// 금융정보 연동 동의는 회원가입 DTO와 별개의 화면 상태다.
-const financeAgreed = ref(false);
+// 금융정보 연동 동의는 회원가입 DTO와 별개이며, 부모가 연결하지 않으면 화면 내부에서 관리한다.
+const financeAgreed = defineModel<boolean>('financeTermsAgreed', { default: false });
 
 // 전체 동의 선택 시 모든 약관을 같은 값으로 변경하고, 개별 상태도 전체 동의에 반영한다.
 const allAgreed = computed<boolean>({

@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { Check, ChevronDown, Landmark } from '@lucide/vue';
 import { ONBOARDING_BANK_OPTIONS } from '@/constants/onboard';
 
-const defaultProviderOptions = ONBOARDING_BANK_OPTIONS.map((bankOption) => bankOption.label);
+const defaultProviderOptions = ONBOARDING_BANK_OPTIONS;
 
 const props = withDefaults(
   defineProps<{
