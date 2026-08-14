@@ -12,7 +12,9 @@ function open() {
   const token = getAccessToken();
   if (!token || eventSource || !registeredCallback) return;
 
-  const source = new EventSource(`${SSE_ENDPOINT}?token=${encodeURIComponent(token)}`);
+  const source = new EventSource(
+    `https://durimoa.kro.kr/api/notifications/subscribe?token=${encodeURIComponent(token)}`
+  );
   eventSource = source;
 
   source.addEventListener('notification', (event) => {
