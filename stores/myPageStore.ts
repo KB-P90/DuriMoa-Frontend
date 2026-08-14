@@ -1,11 +1,8 @@
 import { defineStore } from 'pinia';
-import {
-  getMyPageProfile,
-  updateMyPageProfile,
-  updateMyPageShare,
-} from '@/server/myPageApi';
+import { getMyPageProfile, updateMyPageProfile, updateMyPageShare } from '@/server/myPageApi';
 import { logoutAuth } from '@/server/authApi';
 import { ACCESS_TOKEN_KEY } from '@/server/axios.js';
+import { disconnectNotificationStream } from '@/composables/useNotificationStream';
 import { toCoupleRole, toMyPage } from '@/models/MyPage';
 import type { MyPage, MyPageAssetSummary, MyPageProfileForm } from '@/types/myPage';
 
@@ -133,6 +130,7 @@ export const useMyPageStore = defineStore('myPage', {
         // 서버 로그아웃 실패 시에도 클라이언트 세션은 종료한다.
       } finally {
         localStorage.removeItem(ACCESS_TOKEN_KEY);
+        disconnectNotificationStream();
       }
     },
     buildProfileForm(): MyPageProfileForm {

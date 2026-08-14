@@ -3,6 +3,7 @@ import { isAxiosError } from 'axios';
 import { useRouter } from 'vue-router';
 import { login } from '@/server/authApi';
 import { registerPushNotification } from '@/server/notificationPermission';
+import { reconnectNotificationStream } from '@/composables/useNotificationStream';
 import { formatPhoneNumber } from '@/utils/phone';
 
 const LOGIN_STORAGE_KEYS = {
@@ -58,6 +59,7 @@ export function useLogin() {
 
       localStorage.setItem(LOGIN_STORAGE_KEYS.ACCESS_TOKEN, accessToken);
       void registerPushNotification();
+      reconnectNotificationStream();
       await router.replace({ name: HOME_ROUTE_NAME });
     } catch (error: unknown) {
       if (isAxiosError(error) && error.response?.status === 401) {
