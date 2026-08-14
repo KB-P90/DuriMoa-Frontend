@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { ArrowLeft, Check, Trash2 } from '@lucide/vue';
+import { useRouter } from 'vue-router';
+import { Check, Trash2 } from '@lucide/vue';
 
+import PageHeader from '@/components/common/PageHeader.vue';
+import { NotificationListSkeleton } from '@/components/skeleton/notification';
 import {
   deleteNotification,
   deleteSelectedNotifications,
@@ -9,9 +12,13 @@ import {
   markAllNotificationsRead,
   markNotificationRead,
 } from '@/server/notificationApi';
+import { useNotificationStore } from '@/stores/notificationStore';
 import type { AppNotification } from '@/types/notification';
 import { formatRelativeTime } from '@/utils/format';
-import { visualForNotificationType } from '@/utils/notification';
+import { routeForNotificationType, visualForNotificationType } from '@/utils/notification';
+
+const notificationStore = useNotificationStore();
+const router = useRouter();
 
 const emit = defineEmits<{
   close: [];
@@ -46,7 +53,9 @@ const hasUnread = computed(() => notifications.value.some((item) => !item.isRead
 async function fetchNotifications() {
   isLoading.value = true;
   try {
-    notifications.value = await getNotifications();
+    const result = await getNotifications();
+    notifications.value = result.notifications;
+    notificationStore.setUnreadCount(result.unreadCount);
   } catch {
     notifications.value = [];
   } finally {
@@ -75,6 +84,7 @@ async function handleOpenNotification(notification: AppNotification) {
   notification.isRead = true;
   try {
     await markNotificationRead(notification.id);
+    notificationStore.setUnreadCount(Math.max(notificationStore.unreadCount - 1, 0));
   } catch {
     notification.isRead = false;
   }
@@ -86,6 +96,7 @@ async function handleMarkAllRead() {
 
   try {
     await markAllNotificationsRead();
+    notificationStore.setUnreadCount(0);
   } catch {
     for (const item of previouslyUnread) item.isRead = false;
   }
@@ -103,6 +114,12 @@ function handleItemClick(notification: AppNotification) {
   }
 
   void handleOpenNotification(notification);
+
+  const target = routeForNotificationType(notification.targetType);
+  if (target) {
+    emit('close');
+    router.push(target);
+  }
 }
 
 function toggleSelected(id: number) {
@@ -111,6 +128,16 @@ function toggleSelected(id: number) {
   } else {
     selectedIds.value.add(id);
   }
+}
+
+const isAllSelected = computed(
+  () => notifications.value.length > 0 && selectedIds.value.size === notifications.value.length
+);
+
+function toggleSelectAll() {
+  selectedIds.value = isAllSelected.value
+    ? new Set()
+    : new Set(notifications.value.map((item) => item.id));
 }
 
 function enterSelectionMode(id: number) {
@@ -161,14 +188,18 @@ function clearLongPressTimer() {
   }
 }
 
-function onTouchStart(event: TouchEvent, notification: AppNotification) {
+// 터치 전용 이벤트 대신 Pointer Events를 써서 PC 마우스에서도 롱프레스/스와이프가
+// 동작하게 한다(BottomSheet.vue, GoalCategoryRangeChart.vue와 동일한 패턴).
+function onPointerDown(event: PointerEvent, notification: AppNotification) {
   if (isSelectionMode.value) return;
+  if (event.pointerType === 'mouse' && event.button !== 0) return;
 
-  const touch = event.touches[0];
+  (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+
   dragState.value = {
     id: notification.id,
-    startX: touch.clientX,
-    currentX: touch.clientX,
+    startX: event.clientX,
+    currentX: event.clientX,
     dragging: false,
   };
 
@@ -180,11 +211,10 @@ function onTouchStart(event: TouchEvent, notification: AppNotification) {
   }, LONG_PRESS_MS);
 }
 
-function onTouchMove(event: TouchEvent) {
+function onPointerMove(event: PointerEvent) {
   if (!dragState.value || isSelectionMode.value) return;
 
-  const touch = event.touches[0];
-  const deltaX = touch.clientX - dragState.value.startX;
+  const deltaX = event.clientX - dragState.value.startX;
 
   if (Math.abs(deltaX) > LONG_PRESS_MOVE_TOLERANCE) {
     clearLongPressTimer();
@@ -196,13 +226,15 @@ function onTouchMove(event: TouchEvent) {
   }
 
   dragState.value.dragging = true;
-  dragState.value.currentX = touch.clientX;
+  dragState.value.currentX = event.clientX;
   swipedId.value = dragState.value.id;
 }
 
-function onTouchEnd() {
+function onPointerUp(event: PointerEvent) {
   clearLongPressTimer();
   if (!dragState.value) return;
+
+  (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
 
   const { id } = dragState.value;
   const offset = swipeOffsetFor(id);
@@ -253,32 +285,11 @@ const visualFor = visualForNotificationType;
     <section
       class="fixed inset-0 z-[60] mx-auto flex w-full max-w-[768px] flex-col bg-white text-[#292934]"
     >
-      <header class="flex h-14 shrink-0 items-center gap-3 border-b border-dm-gray/15 px-4">
-        <button
-          v-if="!isSelectionMode"
-          type="button"
-          aria-label="뒤로 가기"
-          class="grid h-6 w-6 cursor-pointer place-items-center"
-          @click="emit('close')"
-        >
-          <ArrowLeft
-            class="h-5 w-5 text-[#232631]"
-            :stroke-width="2"
-          />
-        </button>
-        <button
-          v-else
-          type="button"
-          class="cursor-pointer text-sm font-semibold text-dm-gray-dark"
-          @click="exitSelectionMode"
-        >
-          취소
-        </button>
-
-        <h1 class="flex-1 text-base font-extrabold text-[#232631]">
-          {{ isSelectionMode ? `${selectedIds.size}개 선택` : '알림' }}
-        </h1>
-
+      <PageHeader
+        title="알림"
+        :show-back="true"
+        :on-back="isSelectionMode ? exitSelectionMode : () => emit('close')"
+      >
         <button
           v-if="!isSelectionMode && hasUnread"
           type="button"
@@ -287,23 +298,36 @@ const visualFor = visualForNotificationType;
         >
           모두 읽음
         </button>
-        <button
+        <div
           v-else-if="isSelectionMode"
-          type="button"
-          class="cursor-pointer text-sm font-semibold disabled:cursor-not-allowed disabled:text-disable"
-          :class="selectedIds.size > 0 ? 'text-red' : 'text-disable'"
-          :disabled="selectedIds.size === 0"
-          @click="handleDeleteSelected"
+          class="flex items-center gap-3"
         >
-          모두 삭제
-        </button>
-      </header>
+          <button
+            type="button"
+            class="cursor-pointer text-sm font-semibold text-dm-gray-dark"
+            @click="toggleSelectAll"
+          >
+            전체 선택
+          </button>
+          <button
+            type="button"
+            class="cursor-pointer text-sm font-semibold disabled:cursor-not-allowed disabled:text-disable"
+            :class="selectedIds.size > 0 ? 'text-red' : 'text-disable'"
+            :disabled="selectedIds.size === 0"
+            @click="handleDeleteSelected"
+          >
+            삭제
+          </button>
+        </div>
+      </PageHeader>
 
       <main
         class="flex-1 overflow-y-auto scrollbar-none px-4 pb-[calc(4rem+env(safe-area-inset-bottom))] pt-4"
       >
+        <NotificationListSkeleton v-if="isLoading" />
+
         <p
-          v-if="!isLoading && notifications.length === 0"
+          v-else-if="notifications.length === 0"
           class="py-16 text-center text-sm text-dm-gray-dark"
         >
           받은 알림이 없어요
@@ -344,10 +368,10 @@ const visualFor = visualForNotificationType;
               :style="{ transform: `translateX(${swipeOffsetFor(notification.id)}px)` }"
               @click="handleItemClick(notification)"
               @contextmenu="onContextMenu($event, notification)"
-              @touchstart.passive="onTouchStart($event, notification)"
-              @touchmove.passive="onTouchMove"
-              @touchend="onTouchEnd"
-              @touchcancel="onTouchEnd"
+              @pointerdown="onPointerDown($event, notification)"
+              @pointermove="onPointerMove"
+              @pointerup="onPointerUp"
+              @pointercancel="onPointerUp"
             >
               <span
                 v-if="isSelectionMode"
@@ -367,9 +391,9 @@ const visualFor = visualForNotificationType;
 
               <span
                 class="grid h-10 w-10 shrink-0 place-items-center rounded-full text-lg"
-                :class="visualFor(notification.type).circleClass"
+                :class="visualFor(notification.targetType).circleClass"
               >
-                {{ visualFor(notification.type).icon }}
+                {{ visualFor(notification.targetType).icon }}
               </span>
               <span class="flex-1">
                 <span class="block text-sm font-bold text-[#232631]">{{ notification.title }}</span>

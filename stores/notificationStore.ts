@@ -17,6 +17,9 @@ export const useNotificationStore = defineStore('notification', {
     incrementUnreadCount() {
       this.unreadCount += 1;
     },
+    setUnreadCount(count: number) {
+      this.unreadCount = count;
+    },
     openPanel() {
       this.isPanelOpen = true;
     },

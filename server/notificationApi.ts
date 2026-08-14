@@ -4,14 +4,24 @@ import type { AppNotification, NotificationListResponseDto } from '@/types/notif
 
 export const getNotifications = async () => {
   const { data } = await api.get<ApiResponse<NotificationListResponseDto>>('/notifications');
-  return data.data.notices.map((notice): AppNotification => ({
-    id: notice.noticeId,
-    type: notice.type,
-    title: notice.title,
-    content: notice.content,
-    isRead: notice.isRead,
-    createdAt: notice.createdAt,
-  }));
+  return {
+    notifications: data.data.notices.map(
+      (notice): AppNotification => ({
+        id: notice.noticeId,
+        type: notice.type,
+        title: notice.title,
+        content: notice.content,
+        isRead: notice.isRead,
+        createdAt: notice.createdAt,
+        targetType: notice.targetType,
+        targetId: notice.targetId,
+      })
+    ),
+    // 별도 안읽음 개수 API(getUnreadNotificationCount)가 실제 스펙과 맞는지 확인이
+    // 안 돼서 배지가 갱신 안 되는 문제가 있었다. 목록 응답에 이미 unreadCount가
+    // 같이 오므로(검증됨) 목록을 불러올 때마다 이 값으로 동기화한다.
+    unreadCount: data.data.unreadCount,
+  };
 };
 
 export const markNotificationRead = async (notificationId: number) => {
@@ -24,9 +34,13 @@ export const markAllNotificationsRead = async () => {
   return data.data;
 };
 
+type UnreadCountResponse = {
+  unreadCount: number;
+};
+
 export const getUnreadNotificationCount = async () => {
-  const { data } = await api.get<ApiResponse<number>>('/notifications/unread-count');
-  return data.data;
+  const { data } = await api.get<ApiResponse<UnreadCountResponse>>('/notifications/unread-count');
+  return data.data.unreadCount;
 };
 
 export const deleteNotification = async (notificationId: number) => {
