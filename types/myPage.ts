@@ -35,7 +35,6 @@ export interface MyPage {
   partner: MyPagePartner | null;
   assetSummary: MyPageAssetSummary;
   shareSetting: MyPageShareSetting;
-  appVersion: string;
 }
 
 export interface MyPageProfileForm {

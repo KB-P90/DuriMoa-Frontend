@@ -52,25 +52,29 @@ const assetSummaries = computed<AssetSummary[]>(() => [
   {
     id: 'accounts',
     label: '연결된 계좌',
-    count: myPage.value.assetSummary.connectedAccountsCount,
+    count: myPage.value?.assetSummary.connectedAccountsCount ?? 0,
     icon: BookOpenText,
   },
   {
     id: 'cards',
     label: '연결된 카드',
-    count: myPage.value.assetSummary.connectedCardsCount,
+    count: myPage.value?.assetSummary.connectedCardsCount ?? 0,
     icon: CreditCard,
   },
 ]);
 
 const selectedShareCaption = computed(() => {
+  if (!myPage.value) {
+    return '';
+  }
+
   const selectedOption = shareOptions.find(
     (option) => option.value === myPage.value.shareSetting.selectedScope
   );
   return selectedOption?.caption ?? '';
 });
 
-const isPartnerConnected = computed(() => myPage.value.partner?.status === 'CONNECTED');
+const isPartnerConnected = computed(() => myPage.value?.partner?.status === 'CONNECTED');
 
 function goProfileEdit() {
   router.push({ name: 'myinfo-profile' });
@@ -85,7 +89,7 @@ function goCoupleConnect() {
 }
 
 async function handleShareToggle(scope: ShareScope) {
-  if (scope === myPage.value.shareSetting.selectedScope) {
+  if (!myPage.value || scope === myPage.value.shareSetting.selectedScope) {
     return;
   }
 
@@ -104,16 +108,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
-    <PageHeader
-      title="마이페이지"
-      :show-back="false"
-    />
+  <div class="flex min-h-full flex-col">
+    <PageHeader title="마이페이지" />
     <div
-      class="flex flex-col gap-3 bg-gradient-to-b from-[#FFFBFC] to-white px-4 pb-8 pt-5 md:px-10 md:pb-9 md:pt-6"
+      v-if="myPage"
+      class="flex flex-1 flex-col justify-between gap-5 bg-gradient-to-b from-[#FFFBFC] to-white px-4 py-5 md:px-10 md:py-6"
     >
       <article
-        class="relative overflow-hidden rounded-2xl border border-[#F2EFEE] bg-[linear-gradient(105deg,#FFFFFF_0%,#FFFFFF_49%,#FFF1EF_100%)] p-4 shadow-[0_1px_2px_rgba(34,34,43,0.04),0_6px_18px_-8px_rgba(34,34,43,0.14)] md:p-5"
+        class="relative overflow-hidden rounded-2xl border border-[#F2EFEE] bg-[linear-gradient(105deg,#FFFFFF_0%,#FFFFFF_49%,#FFF1EF_100%)] p-5 shadow-[0_1px_2px_rgba(34,34,43,0.04),0_6px_18px_-8px_rgba(34,34,43,0.14)] md:p-6"
       >
         <div
           class="absolute -bottom-[45px] -right-[29px] h-28 w-28 rounded-full bg-[#F2EFEF]/30"
@@ -161,17 +163,17 @@ onMounted(() => {
 
       <article
         v-if="isPartnerConnected && myPage.partner"
-        class="flex items-center gap-2.5 rounded-2xl bg-pink-01 px-3.5 py-3"
+        class="flex items-center gap-3 rounded-2xl bg-pink-01 px-4 py-4"
       >
-        <div class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white">
+        <div class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white">
           <UserRound
-            class="h-4 w-4 text-[#292934]"
+            class="h-5 w-5 text-[#292934]"
             :stroke-width="2"
           />
         </div>
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-1.5">
-            <strong class="text-sm font-bold leading-4">{{ myPage.partner.name }}</strong>
+            <strong class="text-base font-bold leading-5">{{ myPage.partner.name }}</strong>
             <span
               class="rounded-full bg-white px-2 py-1 text-xs font-extrabold leading-3 text-brand shadow-[0_0.6px_3px_rgba(0,0,0,0.2)]"
               >{{ roleLabels[myPage.partner.role] }}</span
@@ -189,12 +191,18 @@ onMounted(() => {
       <button
         v-else
         type="button"
-        class="flex h-10 items-center justify-between rounded-xl bg-btn-mt-dark px-3.5 text-sm font-extrabold text-white shadow-[0_1px_2px_rgba(34,34,43,0.04)]"
+        class="flex items-center gap-3 rounded-2xl bg-pink-01 px-4 py-4 text-left shadow-[0_1px_2px_rgba(34,34,43,0.04)]"
         @click="goCoupleConnect"
       >
-        <span>상대와 연결하기</span>
+        <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white">
+          <UserRound
+            class="h-5 w-5 text-[#292934]"
+            :stroke-width="2"
+          />
+        </span>
+        <span class="min-w-0 flex-1 text-base font-bold leading-5">상대와 연결하기</span>
         <ChevronRight
-          class="h-[18px] w-[18px]"
+          class="h-5 w-5 shrink-0 text-[#292934]"
           :stroke-width="2.2"
         />
       </button>
@@ -205,14 +213,14 @@ onMounted(() => {
           <span class="text-xs leading-4 text-dm-gray-dark">연결된 자산을 관리해요</span>
         </div>
         <div
-          class="rounded-2xl border border-[#E9E9F0] bg-white p-4 shadow-[0_1px_2px_rgba(34,34,43,0.04),0_6px_18px_-8px_rgba(34,34,43,0.14)]"
+          class="rounded-2xl border border-[#E9E9F0] bg-white p-5 shadow-[0_1px_2px_rgba(34,34,43,0.04),0_6px_18px_-8px_rgba(34,34,43,0.14)]"
         >
           <div class="flex gap-2">
             <button
               v-for="item in assetSummaries"
               :key="item.id"
               type="button"
-              class="flex flex-1 items-center gap-2.5 rounded-xl bg-dm-mint-light p-3 text-left first:bg-[#E6F2F1]"
+              class="flex flex-1 items-center gap-2.5 rounded-xl bg-dm-mint-light p-3.5 text-left first:bg-[#E6F2F1]"
               @click="goAssetConnect(item.id)"
             >
               <component
@@ -248,7 +256,7 @@ onMounted(() => {
           }}</span>
         </div>
         <div
-          class="flex flex-col gap-2.5 rounded-2xl border border-[#E9E9F0] bg-white px-4 py-4 shadow-[0_1px_2px_rgba(34,34,43,0.04),0_6px_18px_-8px_rgba(34,34,43,0.14)]"
+          class="flex flex-col gap-3 rounded-2xl border border-[#E9E9F0] bg-white p-5 shadow-[0_1px_2px_rgba(34,34,43,0.04),0_6px_18px_-8px_rgba(34,34,43,0.14)]"
         >
           <p class="text-sm font-bold leading-5 text-[#5A5B69]">
             파트너에게 내 금융정보를 어디까지 보여줄까요?
@@ -280,14 +288,17 @@ onMounted(() => {
 
       <button
         type="button"
-        class="h-12 w-full shrink-0 rounded-xl border border-[#E9E9F0] bg-white text-xs font-bold text-dm-gray-dark"
+        class="h-14 w-full shrink-0 rounded-xl border border-[#E9E9F0] bg-white text-sm font-bold text-dm-gray-dark"
         @click="handleLogout"
       >
         로그아웃
       </button>
-      <p class="text-center text-xs leading-4 text-[#B5AAAE]">
-        {{ myPage.appVersion }}
-      </p>
+    </div>
+    <div
+      v-else
+      class="flex flex-1 items-center justify-center px-4 text-center text-sm text-dm-gray-dark"
+    >
+      {{ myPageStore.lastErrorMessage || '마이페이지 정보를 불러오는 중이에요.' }}
     </div>
   </div>
 </template>
