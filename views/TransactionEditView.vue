@@ -44,6 +44,7 @@ const recordDate = ref(props.transaction?.date ?? props.defaultDate);
 const memo = ref(props.transaction?.memo ?? '');
 const deleteConfirmationVisible = ref(false);
 const isEditMode = computed(() => props.transaction !== null);
+const MAX_AMOUNT_DIGITS = 10;
 const isFormValid = computed(() => {
   const parsedAmount = parseFormattedAmount(amount.value);
 
@@ -117,6 +118,17 @@ function selectType(type: TransactionType) {
   category.value = '';
 }
 
+function handleAmountInput(event: Event) {
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement)) return;
+
+  const digits = input.value.replace(/\D/g, '').slice(0, MAX_AMOUNT_DIGITS);
+  const formattedAmount = digits ? formatAmount(Number(digits)) : '';
+
+  amount.value = formattedAmount;
+  input.value = formattedAmount;
+}
+
 function save() {
   if (!isFormValid.value) return;
 
@@ -131,7 +143,9 @@ function save() {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-xl pb-6">
+  <div
+    class="fixed inset-0 z-[60] mx-auto w-full max-w-[768px] overflow-y-auto bg-background pb-6"
+  >
     <div class="relative">
       <PageHeader
         :title="isEditMode ? '내역 수정' : '내역 생성'"
@@ -232,12 +246,14 @@ function save() {
         <span class="mb-2 block text-sm font-semibold">금액</span>
         <span class="flex items-center rounded-2xl border border-dm-gray/30 px-4 py-3.5">
           <input
-            v-model="amount"
+            :value="amount"
             inputmode="numeric"
             pattern="[0-9,]+"
+            maxlength="13"
             class="min-w-0 flex-1 text-right text-base font-semibold outline-none"
             :disabled="isSubmitting"
             required
+            @input="handleAmountInput"
           />
           <span class="ml-3 text-sm font-medium text-dm-gray-dark">원</span>
         </span>
@@ -264,7 +280,7 @@ function save() {
       </label>
 
       <div
-        class="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-40 mx-auto w-full max-w-xl bg-white px-4 pb-5 pt-2 sm:px-5"
+        class="fixed inset-x-0 bottom-[env(safe-area-inset-bottom)] z-40 mx-auto w-full max-w-xl bg-white px-4 pb-5 pt-2 sm:px-5"
       >
         <button
           type="submit"

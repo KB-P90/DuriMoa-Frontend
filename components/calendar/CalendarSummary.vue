@@ -17,6 +17,15 @@ const LABEL_COLORS = {
   expense: 'text-brand',
   saving: 'text-[#3B86F7]',
 } as const;
+
+const ONE_HUNDRED_MILLION_WON = 100_000_000;
+
+function formatSummaryAmount(amount: number): string {
+  if (Math.abs(amount) < ONE_HUNDRED_MILLION_WON) return `${formatAmount(amount)} 원`;
+
+  const amountInHundredMillions = Math.trunc((amount / ONE_HUNDRED_MILLION_WON) * 10) / 10;
+  return `${formatAmount(amountInHundredMillions)} 억 원`;
+}
 </script>
 
 <template>
@@ -36,8 +45,8 @@ const LABEL_COLORS = {
         />
         {{ item.label }}
       </div>
-      <strong class="mt-1 block text-sm font-semibold tracking-tight text-gray-800 sm:text-base">
-        {{ formatAmount(item.amount) }}
+      <strong class="mt-1 block text-xs font-semibold tracking-tight text-gray-800">
+        {{ formatSummaryAmount(item.amount) }}
       </strong>
     </article>
   </section>

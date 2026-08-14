@@ -19,7 +19,7 @@ import {
 } from '@lucide/vue';
 import type { Component } from 'vue';
 import type { Transaction, TransactionType } from '@/types/calendar';
-import { formatSignedAmount } from '@/utils/format';
+import { formatAmount } from '@/utils/format';
 
 defineProps<{ transactions: readonly Transaction[] }>();
 const emit = defineEmits<{ select: [transaction: Transaction] }>();
@@ -84,7 +84,7 @@ const TYPE_COLORS: Record<TransactionType, string> = {
         class="shrink-0 text-sm font-semibold tracking-tight"
         :class="TYPE_COLORS[transaction.type]"
       >
-        {{ formatSignedAmount(transaction.amount) }}
+        {{ formatAmount(transaction.amount) }} 원
       </strong>
     </button>
   </div>
