@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SummaryItem } from '@/types/calendar';
-import { formatAmount } from '@/utils/format';
+import { formatCompactWonAmount } from '@/utils/format';
 
 defineProps<{ items: readonly SummaryItem[] }>();
 
@@ -17,6 +17,7 @@ const LABEL_COLORS = {
   expense: 'text-brand',
   saving: 'text-[#3B86F7]',
 } as const;
+
 </script>
 
 <template>
@@ -36,8 +37,8 @@ const LABEL_COLORS = {
         />
         {{ item.label }}
       </div>
-      <strong class="mt-1 block text-sm font-semibold tracking-tight text-gray-800 sm:text-base">
-        {{ formatAmount(item.amount) }}
+      <strong class="mt-1 block text-xs font-semibold tracking-tight text-gray-800">
+        {{ formatCompactWonAmount(item.amount) }}
       </strong>
     </article>
   </section>

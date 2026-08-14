@@ -14,6 +14,26 @@ export function parseFormattedAmount(amount: string): number {
   return Number(amount.replaceAll(',', ''));
 }
 
+// 입력값에서 숫자만 남기고 최대 자릿수와 천 단위 구분자를 적용합니다.
+export function formatAmountInput(value: string, maxDigits = 10): string {
+  const digits = value.replace(/\D/g, '').slice(0, maxDigits);
+  return digits ? formatAmount(Number(digits)) : '';
+}
+
+// 금액에 원 단위를 붙여 표시합니다.
+export function formatWonAmount(amount: number): string {
+  return `${formatAmount(amount)} 원`;
+}
+
+// 1억 원 이상의 금액을 소수 첫째 자리까지 버림한 억 단위로 표시합니다.
+export function formatCompactWonAmount(amount: number): string {
+  const oneHundredMillionWon = 100_000_000;
+  if (Math.abs(amount) < oneHundredMillionWon) return formatWonAmount(amount);
+
+  const amountInHundredMillions = Math.trunc((amount / oneHundredMillionWon) * 10) / 10;
+  return `${formatAmount(amountInHundredMillions)} 억 원`;
+}
+
 export const formatWon = (amount: number) =>
   `${new Intl.NumberFormat('ko-KR').format(amount / 10_000)}만원`;
 
