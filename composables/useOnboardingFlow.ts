@@ -17,12 +17,13 @@ import {
   selectOnboardingAccounts,
 } from '@/server/onboardingApi';
 
-type ActiveOnboardingScreen = 'account' | 'account-selection' | 'couple';
+type ActiveOnboardingScreen = 'account' | 'account-selection' | 'couple' | 'wedding-fund';
 
 const ACTIVE_ONBOARDING_SCREENS = [
   'account',
   'account-selection',
   'couple',
+  'wedding-fund',
 ] as const satisfies readonly ActiveOnboardingScreen[];
 const DEFAULT_ACTIVE_ONBOARDING_SCREEN: ActiveOnboardingScreen = 'couple';
 
@@ -74,6 +75,7 @@ export function useOnboardingFlow() {
   const isCardConnected = ref(false);
   const isConnectingAccount = ref(false);
   const isSelectingAccounts = ref(false);
+  const weddingFundAmount = ref<number | null>(null);
   const accountConnectionErrorMessage = ref('');
   const cardConnectionErrorMessage = ref('');
   const accountSelectionErrorMessage = ref('');
@@ -120,6 +122,9 @@ export function useOnboardingFlow() {
         )) &&
       !isSelectingAccounts.value
   );
+
+  // 퍼블리싱용 결혼자금 입력 여부를 확인한다. 실제 저장 API는 추후 연결한다.
+  const canContinueWeddingFund = computed(() => weddingFundAmount.value !== null);
 
   // 계좌 연결 정보가 변경되면 이전 연결 완료 상태를 해제한다.
   watch([bank, internetBankingId, internetBankingPassword], () => {
@@ -314,7 +319,7 @@ export function useOnboardingFlow() {
     selectedNumbers.value = [];
   }
 
-  // 선택한 신규 계좌와 카드를 기관별로 저장한 뒤 온보딩을 종료한다.
+  // 선택한 신규 계좌와 카드를 기관별로 저장한 뒤 결혼자금 입력 화면으로 이동한다.
   async function selectConnectedAccounts() {
     if (!canContinueAccountSelection.value) {
       return;
@@ -328,7 +333,7 @@ export function useOnboardingFlow() {
       await saveSelectedAssets(cardCompany.value, cards, selectedCardNumbers);
 
       if (isCurrentOnboardingScreen('account-selection')) {
-        goHome();
+        goToScreen('wedding-fund');
       }
     } catch (error: unknown) {
       accountSelectionErrorMessage.value = getOnboardingApiErrorMessage(
@@ -340,8 +345,22 @@ export function useOnboardingFlow() {
     }
   }
 
-  // 계좌 선택 화면만 계좌 입력 화면으로 돌아가고, 독립 설정 화면에서는 홈으로 이동한다.
+  // 퍼블리싱 단계에서는 입력값만 확인하고 홈으로 이동한다. 저장 API는 추후 연결한다.
+  function completeWeddingFund() {
+    if (!canContinueWeddingFund.value) {
+      return;
+    }
+
+    goHome();
+  }
+
+  // 계좌 연결 하위 화면은 바로 전 화면으로 돌아가고, 그 외 화면에서는 홈으로 이동한다.
   function goBack() {
+    if (screen.value === 'wedding-fund') {
+      goToScreen('account-selection');
+      return;
+    }
+
     if (screen.value === 'account-selection') {
       goToScreen('account');
       return;
@@ -373,6 +392,8 @@ export function useOnboardingFlow() {
     cards,
     canContinueAccount,
     canContinueAccountSelection,
+    canContinueWeddingFund,
+    completeWeddingFund,
     connectAccount,
     continueFromCouple,
     goBack,
@@ -387,5 +408,6 @@ export function useOnboardingFlow() {
     selectedCardNumbers,
     toggleAccount,
     toggleCard,
+    weddingFundAmount,
   };
 }

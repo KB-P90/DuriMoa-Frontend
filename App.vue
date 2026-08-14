@@ -37,7 +37,7 @@ import AiChatFloatingWidget from '@/components/common/AiChatFloatingWidget.vue';
 
 const route = useRoute();
 
-const AI_CHAT_HIDDEN_ROUTES = new Set(['login', 'signup']);
+const AI_CHAT_HIDDEN_ROUTES = new Set(['login', 'signup', 'onboarding']);
 
 const isAiChatVisible = computed(() => {
   const routeName = String(route.name);
