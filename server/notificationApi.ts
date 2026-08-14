@@ -28,3 +28,15 @@ export const getUnreadNotificationCount = async () => {
   const { data } = await api.get<ApiResponse<number>>('/notifications/unread-count');
   return data.data;
 };
+
+export const deleteNotification = async (notificationId: number) => {
+  const { data } = await api.delete<ApiResponse<unknown>>(`/notifications/${notificationId}`);
+  return data.data;
+};
+
+export const deleteSelectedNotifications = async (noticeIds: number[]) => {
+  const { data } = await api.delete<ApiResponse<unknown>>('/notifications/batch', {
+    data: { noticeIds },
+  });
+  return data.data;
+};
