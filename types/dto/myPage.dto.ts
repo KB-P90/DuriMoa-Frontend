@@ -15,16 +15,18 @@ export interface MyPageProfileResponseDto {
   accountCount: number;
   partnerName: string | null;
   partnerRole: MyPageRoleDto | null;
+  partnerProfileImage: string | null;
   coupleCreatedAt: string | null;
   coupleStatus: MyPageCoupleStatusDto;
 }
 
 export interface MyPageProfileUpdateRequestDto {
-  id: number;
   name: string;
   role?: MyPageRoleDto;
   phone?: string | null;
+  removeProfileImage?: boolean;
   password?: string;
+  currentPassword?: string;
 }
 
 export interface MyPageLogoutResponseDto {
