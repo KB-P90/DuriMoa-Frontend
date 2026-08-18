@@ -1,11 +1,14 @@
 import { api } from '@/server/axios';
-import { ApiResponse } from '@/types/common';
-import { MonthlyExpenseResponse, MonthlySavingMissionResponse } from '@/types/expense';
+import type { ApiResponse } from '@/types/common';
+import type { MonthlyExpenseResponseDto } from '@/types/dto/expense.dto';
+import type { MonthlySavingMissionResponse } from '@/types/expense';
 
 export const getMonthlyExpense = async (year: number, month: number) => {
-  const { data } = await api.get<ApiResponse<MonthlyExpenseResponse>>('/expense/monthly', {
+  const { data } = await api.get<ApiResponse<MonthlyExpenseResponseDto>>('/expense/monthly', {
     params: { year, month },
   });
+
+  console.info('[월별 지출 관리 조회 성공]', data);
 
   return data.data;
 };

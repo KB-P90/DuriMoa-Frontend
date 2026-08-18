@@ -1,145 +1,57 @@
 <script setup lang="ts">
-import { Info } from '@lucide/vue';
-import DoughnutChart from './DoughnutChart.vue';
-import { useExpenseStore } from '@/stores/expenseStore.js';
-import { computed, ref, watch } from 'vue';
-import { ExpenseCategoryName, ExpenseCategoryColors } from '@/types/category';
+import { useExpenseComparison } from '@/composables/useExpenseComparison';
 
-const expenseStore = useExpenseStore();
+defineProps<{ month: number }>();
 
-const props = defineProps<{
-  month: number;
-}>();
-
-const selectedCategoryId = ref<number | null>(
-  expenseStore.monthlyExpense.expenseCategories[0]?.categoryId ?? null
-);
-
-const selectedCategory = computed(
-  () =>
-    expenseStore.monthlyExpense.expenseCategories.find(
-      (category) => category.categoryId === selectedCategoryId.value
-    ) ?? null
-);
-
-// 월 변경으로 데이터 새로 로드 시, 디폴트 선택 카테고리 초기화 (가장 많이 사용한 카테고리)
-watch(
-  () => expenseStore.monthlyExpense.expenseCategories,
-  (categories) => {
-    selectedCategoryId.value = categories[0]?.categoryId ?? null;
-  },
-  {
-    immediate: true,
-  }
-);
-
-const handleCategorySelect = (categoryId: number) => {
-  selectedCategoryId.value = categoryId;
-};
+const { rows, insight, isChartAnimated } = useExpenseComparison();
 </script>
 
 <template>
-  <section class="rounded-3xl border bg-pink-02 bg-white p-4 shadow-md">
-    <div class="flex items-center gap-2">
-      <h2 class="text-lg font-bold text-gray-800">카테고리별 지출</h2>
+  <section class="rounded-[20px] border border-pink-02 bg-white p-4 shadow-sm">
+    <h2 class="text-sm font-extrabold">카테고리별 지출</h2>
+    <p class="mt-1 text-[13px] text-dm-gray-dark">
+      <span class="font-bold text-pink-05">나</span>와
+      <span class="font-bold text-dm-mint-darker">상대</span>의 소득 대비 소비 비율을 비교해보세요.
+    </p>
 
-      <div class="relative group">
-        <button
-          type="button"
-          class="flex items-center justify-center text-dm-gray-dark cursor-pointer leading-none"
-        >
-          <Info
-            :size="20"
-            class="translate-y-px"
-          />
-        </button>
-
-        <div
-          class="pointer-events-none absolute left-28 top-2 z-10 w-52 -translate-x-1/2 rounded-xl bg-dm-gray px-3 py-2 text-xs text-white shadow-lg opacity-0 transition-opacity duration-200 group-hover:opacity-90"
-        >
-          각 카테고리를 선택하시면<br />
-          2030세대 평균 지출과 비교해드려요.
+    <div class="mt-6 space-y-5">
+      <div v-for="row in rows" :key="row.code" class="grid grid-cols-[76px_1fr] items-center gap-2">
+        <div class="flex items-center gap-2 text-sm font-extrabold leading-tight">
+          <span class="w-5 text-center text-xs" aria-hidden="true">{{ row.icon }}</span>
+          <span>{{ row.label }}</span>
         </div>
-      </div>
-    </div>
-
-    <div class="mt-8 flex justify-center">
-      <div class="flex w-full max-w-xl items-center justify-around">
-        <!-- 차트 -->
-        <div class="aspect-square w-[45%] max-w-56">
-          <DoughnutChart
-            :month="month"
-            :categories="expenseStore.monthlyExpense.expenseCategories"
-            :total-amount="expenseStore.monthlyExpense.totalAmount"
-            @select-category="handleCategorySelect"
-          />
-        </div>
-
-        <!-- 카드 -->
-        <div class="flex w-[40%] max-w-48 flex-col gap-4">
-          <div class="rounded-3xl border border-dm-rose bg-white p-4 shadow-md">
-            <div v-if="selectedCategory">
-              <p class="text-sm font-semibold">
-                {{ ExpenseCategoryName[selectedCategory.categoryCode] }}
-              </p>
-              <p class="mt-1 text-base font-bold text-right sm:text-lg">
-                {{ selectedCategory?.amount.toLocaleString() }}원
-              </p>
-            </div>
-
+        <div class="space-y-2">
+          <div class="h-3.5 overflow-hidden rounded-md bg-dm-gray-light">
             <div
-              v-else
-              class="opacity-50"
-            >
-              <p class="text-sm font-semibold text-dm-gray">카테고리</p>
-              <p class="mt-1 text-base font-bold text-dm-gray text-right sm:text-lg">0원</p>
-            </div>
+              class="h-full origin-left rounded-md bg-pink-05 transition-transform duration-700 ease-out"
+              :class="isChartAnimated ? 'scale-x-100' : 'scale-x-0'"
+              :style="{ width: row.mineWidth }"
+            />
           </div>
-
-          <div class="rounded-3xl border border-dm-rose bg-white p-4 shadow-md">
-            <div v-if="selectedCategory">
-              <p class="text-sm font-semibold">평균 대비</p>
-              <p class="mt-1 text-base font-bold text-brand text-right sm:text-lg">
-                {{ selectedCategory?.comparisonRate > 0 ? '+' : '' }}
-                {{ selectedCategory?.comparisonRate }}%
-              </p>
-            </div>
-
+          <div class="h-3.5 overflow-hidden rounded-md bg-dm-gray-light">
             <div
-              v-else
-              class="opacity-50"
-            >
-              <p class="text-sm font-semibold text-dm-gray">평균 대비</p>
-              <p class="mt-1 text-base font-bold text-brand text-right sm:text-lg">0%</p>
-            </div>
+              class="h-full origin-left rounded-md bg-dm-mint-darker transition-transform duration-700 ease-out"
+              :class="isChartAnimated ? 'scale-x-100' : 'scale-x-0'"
+              :style="{ width: row.partnerWidth }"
+            />
           </div>
         </div>
       </div>
     </div>
 
-    <div class="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-3">
-      <div
-        v-if="selectedCategory"
-        v-for="category in expenseStore.monthlyExpense.expenseCategories"
-        :key="category.categoryId"
-        class="flex items-center gap-2"
-      >
-        <div
-          class="h-3 w-8 rounded-full"
-          :style="{ backgroundColor: ExpenseCategoryColors[category.categoryCode] }"
-        />
-
-        <span class="text-xs text-dm-gray">
-          {{ ExpenseCategoryName[category.categoryCode] }}
-        </span>
-      </div>
-
-      <div
-        v-else
-        class="py-7"
-      >
-        <p class="text-sm font-semibold text-dm-gray">{{ month }}월 지출 내역이 없습니다.</p>
-      </div>
+    <div class="mt-6 rounded-[14px] border border-pink-04 px-4 py-4 text-center text-[13px] leading-6">
+      <template v-if="insight">
+        <p>
+          이번 달은
+          <span class="font-bold text-pink-05">{{ insight.higherSpenderName }}</span>의
+          소비가 더 많아요.
+        </p>
+        <p>
+          두 분의 지출액 차이가 가장 큰 카테고리는
+          <span class="border-b-2 border-pink-04 font-bold">{{ insight.categoryLabel }}</span>이에요.
+        </p>
+      </template>
+      <p v-else class="text-dm-gray-dark">{{ month }}월 지출 내역이 아직 없어요.</p>
     </div>
   </section>
 </template>

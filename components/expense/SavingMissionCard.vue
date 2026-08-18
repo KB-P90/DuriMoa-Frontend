@@ -1,134 +1,60 @@
 <script setup lang="ts">
-import { useExpenseStore } from '@/stores/expenseStore';
-import { computed } from 'vue';
-import { ExpenseCategoryName, ExpenseCategoryIcon } from '@/types/category.js';
-import { startSavingMission } from '@/server/expenseApi';
-import { SavingMission } from '@/types/expense';
+import { useSavingMissionList } from '@/composables/useSavingMissionList';
 
-const props = defineProps<{
-  year: number;
-  month: number;
-}>();
+defineProps<{ year: number; month: number }>();
 
-const expenseStore = useExpenseStore();
-
-const savingMissions = computed(() => expenseStore.savingMissions);
-
-// 절약 미션 style 관리
-const missionAmountStyles = {
-  available: 'text-btn-mt-dark',
-  started: 'text-dm-gray',
-  challenging: 'text-brand',
-};
-const missionButtonStyles = {
-  available: 'bg-btn-mt text-btn-mt-dark hover:bg-btn-mt-dark hover:text-white cursor-pointer',
-  started: 'bg-dm-gray text-white',
-  challenging: 'bg-brand text-white',
-};
-
-const getMissionButtonType = (mission: any) => {
-  if (mission.isStarted) {
-    return 'started';
-  }
-
-  if (mission.status === '도전중') {
-    return 'challenging';
-  }
-
-  return 'available';
-};
-
-const getMissionButtonText = (mission: any) => {
-  if (mission.isStarted) {
-    return '도전!';
-  }
-
-  return mission.status;
-};
-
-const handleStartMission = async (mission: SavingMission & { isStarted?: boolean }) => {
-  if (mission.status !== '도전하기') return;
-
-  try {
-    await startSavingMission(
-      mission.missionId,
-      `${props.year}-${String(props.month).padStart(2, '0')}`
-    );
-
-    mission.isStarted = true;
-  } catch (error) {
-    console.error('미션 도전 실패', error);
-  }
-};
+const { savingMissions, missions } = useSavingMissionList();
 </script>
 
 <template>
-  <section class="overflow-hidden rounded-3xl border border-dm-mint-dark bg-white shadow-md">
-    <div class="flex items-center justify-between p-4">
-      <h2 class="text-lg font-bold text-gray-800">이번 달 절약 미션</h2>
-
-      <span class="text-base font-bold text-brand">
+  <section class="overflow-hidden rounded-[20px] border border-brand-border bg-white">
+    <div class="flex items-center justify-between px-4 py-4">
+      <h2 class="text-sm font-extrabold text-gray-800">이번 달 절약 미션</h2>
+      <span class="text-sm font-extrabold text-[#EF826F]">
         +{{ savingMissions.totalExpectedSavingAmount.toLocaleString() }}원
+        <!-- TODO: 토큰 등록 검토 -->
       </span>
     </div>
 
     <div
-      v-for="mission in savingMissions.missions"
+      v-for="mission in missions"
       :key="mission.missionId"
-      class="flex items-center justify-between border-t border-dm-mint p-4"
+      class="flex min-h-[72px] items-center justify-between border-t border-divider px-4 py-3"
     >
-      <div class="flex items-center gap-4">
+      <div class="flex min-w-0 items-center gap-3">
         <div
-          class="flex h-10 w-10 items-center justify-center rounded-2xl bg-pink-01 text-lg sm:h-12 sm:w-12"
+          class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-pink-01 text-base"
+          aria-hidden="true"
         >
-          <component :is="ExpenseCategoryIcon[mission.categoryCode]" />
+          {{ mission.icon }}
         </div>
-
-        <div>
-          <div class="text-sm font-bold text-gray-800">
-            {{ ExpenseCategoryName[mission.categoryCode] }}
-          </div>
-
-          <div class="mt-1 text-xs text-gray-400">
+        <div class="min-w-0">
+          <p class="truncate text-sm font-extrabold text-gray-800">
+            {{ mission.categoryName }}
+          </p>
+          <p class="mt-1 truncate text-[11px] text-dm-gray-dark">
             {{ mission.title }}
-          </div>
+          </p>
         </div>
       </div>
 
-      <div class="flex flex-col items-end gap-3">
-        <span
-          :class="missionAmountStyles[getMissionButtonType(mission)]"
-          class="text-sm font-bold"
-        >
+      <div class="ml-3 flex shrink-0 flex-col items-end gap-1.5">
+        <span class="text-xs font-extrabold" :class="mission.amountClass">
           +{{ mission.expectedSavingAmount.toLocaleString() }}원
         </span>
-
         <button
-          class="rounded-full px-3 py-2 text-xs font-semibold transition"
-          :class="missionButtonStyles[getMissionButtonType(mission)]"
-          :disabled="getMissionButtonType(mission) !== 'available'"
-          @click="handleStartMission(mission)"
+          type="button"
+          class="rounded-full px-3 py-1 text-[10px] font-bold"
+          :class="mission.buttonClass"
+          :disabled="!mission.isSelectable"
         >
-          {{ getMissionButtonText(mission) }}
+          {{ mission.status }}
         </button>
       </div>
     </div>
 
-    <div class="bg-dm-mint-light p-4 text-xs font-semibold text-dm-mint-darker">
-      <div v-if="savingMissions.missions.length">
-        <p>
-          추천대로 실천하면 월
-          {{ Math.round(savingMissions.totalExpectedSavingAmount / 10000).toLocaleString() }}만원을
-          더 저축할 수 있어요!
-        </p>
-      </div>
-
-      <div
-        v-else
-        class="py-10"
-      >
-        <p class="text-sm text-center text-dm-gray">이번 달 추천 절약 미션이 없습니다.</p>
-      </div>
-    </div>
+    <p v-if="!missions.length" class="border-t border-divider px-4 py-8 text-center text-sm text-dm-gray-dark">
+      이번 달 추천 절약 미션이 없어요.
+    </p>
   </section>
 </template>
