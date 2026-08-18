@@ -26,19 +26,20 @@ const { rows, insight, isChartAnimated } = useExpenseComparison();
             aria-hidden="true"
             >{{ row.icon }}</span
           >
-          <span>{{ row.label }}</span>
+          <span v-if="row.code === 'CULTURE'">문화/<br />여가</span>
+          <span v-else>{{ row.label }}</span>
         </div>
         <div class="space-y-2">
-          <div class="h-3.5 overflow-hidden rounded-md bg-dm-gray-light">
+          <div class="h-4 overflow-hidden rounded-[5px] bg-dm-gray-light">
             <div
-              class="h-full origin-left rounded-md bg-pink-05 transition-transform duration-700 ease-out"
+              class="h-full origin-left rounded-[5px] bg-pink-05 transition-transform duration-700 ease-out"
               :class="isChartAnimated ? 'scale-x-100' : 'scale-x-0'"
               :style="{ width: row.mineWidth }"
             />
           </div>
-          <div class="h-3.5 overflow-hidden rounded-md bg-dm-gray-light">
+          <div class="h-4 overflow-hidden rounded-[5px] bg-dm-gray-light">
             <div
-              class="h-full origin-left rounded-md bg-dm-mint-darker transition-transform duration-700 ease-out"
+              class="h-full origin-left rounded-[5px] bg-dm-mint-darker transition-transform duration-700 ease-out"
               :class="isChartAnimated ? 'scale-x-100' : 'scale-x-0'"
               :style="{ width: row.partnerWidth }"
             />
@@ -48,7 +49,7 @@ const { rows, insight, isChartAnimated } = useExpenseComparison();
     </div>
 
     <div
-      class="mt-6 rounded-[14px] border border-pink-04 px-4 py-4 text-center text-[13px] leading-6"
+      class="mt-6 rounded-[14px] border border-pink-04 px-4 py-4 text-center text-[13px] font-semibold leading-6"
     >
       <template v-if="insight">
         <p>

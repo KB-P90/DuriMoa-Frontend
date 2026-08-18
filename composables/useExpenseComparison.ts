@@ -72,7 +72,9 @@ export function useExpenseComparison() {
 
     return {
       higherSpenderName: myTotal >= partnerTotal ? expense.me.name : expense.partner.name,
-      categoryLabel: largestDifference.categoryName,
+      categoryLabel:
+        DISPLAY_CATEGORIES.find((category) => category.code === largestDifference.categoryCode)
+          ?.label ?? largestDifference.categoryName,
     };
   });
 
