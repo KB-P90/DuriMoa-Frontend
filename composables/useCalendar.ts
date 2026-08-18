@@ -184,7 +184,11 @@ export function useCalendar() {
   }
 
   function openExpenseAnalysis() {
-    return router.push({ name: 'expense', params: { yearMonth: monthKey.value } });
+    return router.push({
+      name: 'expense',
+      params: { yearMonth: monthKey.value },
+      query: { from: 'calendar' },
+    });
   }
 
   function selectTransaction(transaction: Transaction) {

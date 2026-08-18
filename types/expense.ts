@@ -1,18 +1,37 @@
-import { ExpenseCategoryCode } from './category';
+import type { ExpenseCategoryCode } from './category';
+import type { MonthlyExpenseCategoryCodeDto } from './dto/expense.dto';
 
-export interface ExpenseCategory {
+export type MonthlyExpenseCategoryCode = MonthlyExpenseCategoryCodeDto;
+
+export interface MonthlyExpenseCategory {
   categoryId: number;
-  categoryCode: ExpenseCategoryCode;
+  categoryCode: MonthlyExpenseCategoryCode;
+  categoryName: string;
   amount: number;
-  comparisonRate: number;
-  expenseRate: number;
+  rate: number;
 }
 
-export interface MonthlyExpenseResponse {
+export interface MonthlyExpenseUser {
+  userId: number;
+  name: string;
+  expenseCategories: MonthlyExpenseCategory[];
+}
+
+export interface ExpenseFeedback {
+  feedbackId: number;
+  writerUserId: number;
+  writerName: string;
+  writerProfileImageUrl: string | null;
+  receiverId: number;
+  content: string;
+}
+
+export interface MonthlyExpense {
   year: number;
   month: number;
-  totalAmount: number;
-  expenseCategories: ExpenseCategory[];
+  me: MonthlyExpenseUser;
+  partner: MonthlyExpenseUser;
+  feedbacks: ExpenseFeedback[];
 }
 
 export interface SavingMission {
@@ -20,9 +39,11 @@ export interface SavingMission {
   categoryCode: ExpenseCategoryCode;
   title: string;
   expectedSavingAmount: number;
-  status: '도전하기' | '도전중';
+  status: SavingMissionStatus;
   isSelectable: boolean;
 }
+
+export type SavingMissionStatus = '도전하기' | '도전중' | '성공' | '실패' | '만료';
 
 export interface MonthlySavingMissionResponse {
   yearMonth: string;
