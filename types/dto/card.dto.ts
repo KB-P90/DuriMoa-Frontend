@@ -4,7 +4,7 @@ export interface BestCardDto {
   owner_name: string;
   company: string;
   card_name: string;
-  image: string;
+  image: string | null;
   expected_benefit_amount: number;
   benefit_rate: number;
   recommendable_status: string;
@@ -16,7 +16,7 @@ export interface OwnerCardDto {
   card_product_id: number;
   company: string;
   card_name: string;
-  image: string;
+  image: string | null;
   annual_fee: number;
   expected_benefit_amount: number;
   current_performance_amount: number;
@@ -66,7 +66,7 @@ export interface CardDetailResponseDto {
   card_product_id: number;
   company: string;
   card_name: string;
-  image: string;
+  image: string | null;
   annual_fee: number;
   benefits: CardBenefitItemDto[];
   condition: string;

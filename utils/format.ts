@@ -37,6 +37,22 @@ export function formatCompactWonAmount(amount: number): string {
 export const formatWon = (amount: number) =>
   `${new Intl.NumberFormat('ko-KR').format(amount / 10_000)}만원`;
 
+// 입력값에서 숫자만 남기고 010-1234-5678 형식으로 하이픈을 붙입니다.
+export function formatPhoneNumber(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+
+  if (digits.length < 4) {
+    return digits;
+  }
+  if (digits.length < 7) {
+    return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  }
+  if (digits.length < 11) {
+    return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+}
+
 // 'YYYY-MM-DD HH:mm:ss' 형식의 날짜를 'YYYY.MM.DD'로 표시합니다.
 export function formatDateDot(dateTime: string): string {
   return dateTime.slice(0, 10).replaceAll('-', '.');

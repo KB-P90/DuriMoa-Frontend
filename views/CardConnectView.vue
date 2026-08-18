@@ -17,6 +17,10 @@ function goToAssetOnboarding() {
   router.push({ name: ONBOARDING_ROUTE_NAMES.ONBOARDING, query: { screen: 'account' } });
 }
 
+function goBackToMyPage() {
+  router.push({ name: 'myinfo' });
+}
+
 onMounted(() => {
   void linkedAssetStore.fetchLinkedAssets();
 });
@@ -27,7 +31,10 @@ onMounted(() => {
     <section
       class="flex min-h-full w-full flex-1 flex-col bg-white text-foreground"
     >
-      <PageHeader title="카드 연결" />
+      <PageHeader
+        title="카드 연결"
+        :on-back="goBackToMyPage"
+      />
 
       <main class="flex flex-1 flex-col px-3 pt-5">
         <p class="px-1 text-xs font-medium leading-5 text-dm-gray-dark">

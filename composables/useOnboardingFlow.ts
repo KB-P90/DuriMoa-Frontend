@@ -147,11 +147,11 @@ export function useOnboardingFlow() {
     weddingFundErrorMessage.value = '';
   });
 
-  // 지정한 온보딩 화면으로 이동한다.
+  // 지정한 온보딩 화면으로 이동한다. 진입 출처(from)는 화면이 바뀌어도 유지한다.
   function goToScreen(nextScreen: ActiveOnboardingScreen) {
     router.push({
       name: ONBOARDING_ROUTE_NAMES.ONBOARDING,
-      query: { screen: nextScreen },
+      query: { screen: nextScreen, ...(route.query.from ? { from: route.query.from } : {}) },
     });
   }
 
@@ -383,7 +383,8 @@ export function useOnboardingFlow() {
     }
   }
 
-  // 계좌 연결 하위 화면은 바로 전 화면으로 돌아가고, 그 외 화면에서는 홈으로 이동한다.
+  // 계좌 연결 하위 화면은 바로 전 화면으로 돌아가고, 첫 화면은 진입 출처(마이페이지 등)로,
+  // 출처가 없으면 홈으로 이동한다.
   function goBack() {
     if (screen.value === 'wedding-fund') {
       goToScreen('account-selection');
@@ -392,6 +393,11 @@ export function useOnboardingFlow() {
 
     if (screen.value === 'account-selection') {
       goToScreen('account');
+      return;
+    }
+
+    if (screen.value === 'account' && route.query.from === 'myinfo') {
+      router.push({ name: 'myinfo' });
       return;
     }
 
