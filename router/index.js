@@ -71,7 +71,12 @@ const router = createRouter({
         },
         { path: 'goal', name: 'goal-list', component: GoalListView, props: { title: '예산 목록' } },
         { path: '/card/amount', name: 'card-amount', component: CardAmountInputView },
-        { path: '/myinfo/profile', name: 'myinfo-profile', component: ProfileEditView },
+        {
+          path: '/myinfo/profile',
+          name: 'myinfo-profile',
+          component: ProfileEditView,
+          meta: { hideBottomNav: true },
+        },
         { path: '/myinfo/accounts', name: 'myinfo-account-connect', component: AccountConnectView },
         { path: '/myinfo/cards', name: 'myinfo-card-connect', component: CardConnectView },
         { path: '/myinfo/couple', name: 'myinfo-couple-connect', component: CoupleConnectView },

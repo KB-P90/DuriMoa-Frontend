@@ -18,6 +18,7 @@ export interface MyPagePartner {
   role: CoupleRole;
   connectedSince: string;
   status: PartnerConnectionStatus;
+  profileImage: string | null;
 }
 
 export interface MyPageAssetSummary {

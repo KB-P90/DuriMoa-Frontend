@@ -83,7 +83,7 @@ function goProfileEdit() {
 
 function goAssetConnect(asset: AssetSummary) {
   if (asset.count === 0) {
-    router.push({ name: ONBOARDING_ROUTE_NAMES.ONBOARDING, query: { screen: 'account' } });
+    router.push({ name: ONBOARDING_ROUTE_NAMES.ONBOARDING, query: { screen: 'account', from: 'myinfo' } });
     return;
   }
 
@@ -115,7 +115,10 @@ onMounted(() => {
 
 <template>
   <div class="flex min-h-full flex-col">
-    <PageHeader title="마이페이지" />
+    <PageHeader
+      title="마이페이지"
+      :show-back="false"
+    />
     <div
       v-if="myPage"
       class="flex flex-1 flex-col justify-between gap-5 bg-gradient-to-b from-[#FFFBFC] to-white px-4 py-5 md:px-10 md:py-6"
@@ -168,8 +171,15 @@ onMounted(() => {
         v-if="isPartnerConnected && myPage.partner"
         class="flex items-center gap-3 rounded-2xl bg-pink-01 px-4 py-4"
       >
-        <div class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white">
+        <div class="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-white">
+          <img
+            v-if="myPage.partner.profileImage"
+            :src="myPage.partner.profileImage"
+            alt=""
+            class="h-full w-full object-cover"
+          />
           <UserRound
+            v-else
             class="h-5 w-5 text-[#292934]"
             :stroke-width="2"
           />
