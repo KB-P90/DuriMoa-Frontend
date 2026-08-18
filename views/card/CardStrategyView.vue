@@ -8,6 +8,7 @@ import CardDisclaimer from '@/components/card/CardDisclaimer.vue';
 import CardDetailModal from '@/components/card/CardDetailModal.vue';
 import CardStrategySkeleton from '@/components/skeleton/card/CardStrategySkeleton.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
+import CoupleConnectionRequired from '@/components/common/CoupleConnectionRequired.vue';
 import { useCardStore } from '@/stores/cardStore';
 import { formatWon } from '@/utils/format';
 import type { RecommendedCard } from '@/types/card';
@@ -71,6 +72,16 @@ onBeforeRouteLeave((to) => {
           다시 시도
         </button>
       </div>
+
+      <CoupleConnectionRequired
+        v-else-if="cardStore.hasNoOwnedCards"
+        eyebrow="CARD CONNECTION"
+        title="두 분의 카드를 먼저 연결해주세요"
+        description="보유 카드를 연결하면 결제 금액에 맞는 혜택을 비교해드려요."
+        route-name="onboarding"
+        :route-query="{ screen: 'account', from: 'card' }"
+        button-message="카드 연결하러 가기"
+      />
 
       <!-- Main Content -->
       <template v-else>

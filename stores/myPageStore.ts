@@ -1,10 +1,15 @@
 import { defineStore } from 'pinia';
+import axios from 'axios';
 import { getMyPageProfile, updateMyPageProfile, updateMyPageShare } from '@/server/myPageApi';
 import { logoutAuth } from '@/server/authApi';
 import { ACCESS_TOKEN_KEY } from '@/server/axios.js';
 import { disconnectNotificationStream } from '@/composables/useNotificationStream';
 import { toCoupleRole, toMyPage } from '@/models/MyPage';
+import { formatPhoneNumber } from '@/utils/format';
+import type { ApiErrorResponse } from '@/types/common';
 import type { MyPage, MyPageProfileForm } from '@/types/myPage';
+
+const DEFAULT_SAVE_ERROR_MESSAGE = '저장에 실패하였습니다. 다시 시도해주세요.';
 
 export const useMyPageStore = defineStore('myPage', {
   state: (): {
@@ -35,7 +40,11 @@ export const useMyPageStore = defineStore('myPage', {
         this.isLoading = false;
       }
     },
-    async saveProfile(form: MyPageProfileForm, imageFile: File | null = null) {
+    async saveProfile(
+      form: MyPageProfileForm,
+      imageFile: File | null = null,
+      removeImage: boolean = false
+    ) {
       if (!this.myPage) {
         return false;
       }
@@ -45,22 +54,28 @@ export const useMyPageStore = defineStore('myPage', {
 
       try {
         const formData = new FormData();
-        formData.append('id', String(this.myPage.user.id));
         formData.append('name', form.name);
         formData.append('role', form.role === 'GROOM' ? 'G' : 'B');
         formData.append('phone', form.phoneNumber);
         if (form.newPassword) {
           formData.append('password', form.newPassword);
+          formData.append('currentPassword', form.currentPassword);
         }
         if (imageFile) {
           formData.append('profileImage', imageFile);
+        } else if (removeImage) {
+          formData.append('removeProfileImage', 'true');
         }
 
         const updatedProfile = await updateMyPageProfile(formData);
         this.myPage = toMyPage(updatedProfile);
         return true;
-      } catch {
-        this.lastErrorMessage = '프로필을 저장하지 못했어요.';
+      } catch (error: unknown) {
+        if (axios.isAxiosError<ApiErrorResponse>(error) && error.response?.data.message) {
+          this.lastErrorMessage = error.response.data.message;
+        } else {
+          this.lastErrorMessage = DEFAULT_SAVE_ERROR_MESSAGE;
+        }
         return false;
       } finally {
         this.isSavingProfile = false;
@@ -99,7 +114,7 @@ export const useMyPageStore = defineStore('myPage', {
       return {
         name: this.myPage.user.name,
         role: toCoupleRole(this.myPage.user.role),
-        phoneNumber: this.myPage.user.phoneNumber,
+        phoneNumber: formatPhoneNumber(this.myPage.user.phoneNumber),
         currentPassword: '',
         newPassword: '',
         newPasswordConfirm: '',

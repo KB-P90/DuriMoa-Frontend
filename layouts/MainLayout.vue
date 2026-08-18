@@ -7,6 +7,7 @@ const route = useRoute();
 const router = useRouter();
 
 const active = computed(() => (typeof route.name === 'string' ? route.name : 'calendar'));
+const hideBottomNav = computed(() => Boolean(route.meta.hideBottomNav));
 
 function handleSelect(key: string) {
   router.push({ name: key });
@@ -16,6 +17,7 @@ function handleSelect(key: string) {
 <template>
   <DefaultLayout
     :active="active"
+    :hide-bottom-nav="hideBottomNav"
     @select="handleSelect"
   >
     <RouterView />

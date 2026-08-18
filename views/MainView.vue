@@ -89,7 +89,7 @@ const RECOMMENDATION_TIPS = [
     title: '서로의 지출을 보고\n한마디 남겨보세요',
     description: '상대방의 지출 내역에 짧은 응원과 피드백을 남길 수 있어요.',
     actionLabel: '지출 확인하러 가기',
-    to: { name: 'expense' },
+    to: { name: 'expense', query: { from: 'home' } },
     cardClass: 'bg-pink-06',
     ctaTextClass: 'text-pink-06',
   },
@@ -381,7 +381,7 @@ onMounted(() => {
 
         <RouterLink
           v-if="missions.length === 0"
-          :to="{ name: 'expense' }"
+          :to="{ name: 'expense', query: { from: 'home' } }"
           class="mission-empty mt-2 flex h-[62px] items-center gap-3 rounded-2xl border border-[#F0E7E5] bg-white px-4 text-left md:h-[72px]"
         >
           <span
