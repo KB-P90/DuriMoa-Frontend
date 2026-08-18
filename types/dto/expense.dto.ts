@@ -20,10 +20,27 @@ export interface MonthlyExpenseUserDto {
 }
 
 export interface ExpenseFeedbackDto {
-  feedbackId: number;
+  feedbackId: number | null;
   writerUserId: number;
   writerName: string;
   receiver_id: number;
+  content: string | null;
+}
+
+export interface ExpenseFeedbackUpsertRequestDto {
+  year: number;
+  month: number;
+  content: string;
+}
+
+export interface ExpenseFeedbackUpsertResponseDto {
+  feedbackId: number;
+  writerUserId: number;
+  writerName: string;
+  receiverUserId: number;
+  receiverName: string;
+  year: number;
+  month: number;
   content: string;
 }
 

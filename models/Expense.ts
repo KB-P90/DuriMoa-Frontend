@@ -1,5 +1,6 @@
 import type {
   ExpenseFeedbackDto,
+  ExpenseFeedbackUpsertResponseDto,
   MonthlyExpenseCategoryDto,
   MonthlyExpenseResponseDto,
   MonthlyExpenseUserDto,
@@ -29,6 +30,18 @@ export function toExpenseFeedback(dto: ExpenseFeedbackDto): ExpenseFeedback {
     writerUserId: dto.writerUserId,
     writerName: dto.writerName,
     receiverId: dto.receiver_id,
+    content: dto.content ?? '',
+  };
+}
+
+export function toUpsertedExpenseFeedback(
+  dto: ExpenseFeedbackUpsertResponseDto
+): ExpenseFeedback {
+  return {
+    feedbackId: dto.feedbackId,
+    writerUserId: dto.writerUserId,
+    writerName: dto.writerName,
+    receiverId: dto.receiverUserId,
     content: dto.content,
   };
 }

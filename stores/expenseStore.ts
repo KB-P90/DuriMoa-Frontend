@@ -1,6 +1,14 @@
 import { defineStore } from 'pinia';
-import { getMonthlyExpense, getMonthlySavingMissions } from '@/server/expenseApi';
-import { toExpenseFeedback, toMonthlyExpense } from '@/models/Expense';
+import {
+  getMonthlyExpense,
+  getMonthlySavingMissions,
+  upsertExpenseFeedback,
+} from '@/server/expenseApi';
+import {
+  toExpenseFeedback,
+  toMonthlyExpense,
+  toUpsertedExpenseFeedback,
+} from '@/models/Expense';
 import type { MonthlyExpense, MonthlySavingMissionResponse } from '@/types/expense';
 
 const EMPTY_MONTHLY_EXPENSE: MonthlyExpense = {
@@ -23,6 +31,7 @@ export const useExpenseStore = defineStore('expense', {
     savingMissions: EMPTY_SAVING_MISSIONS,
     expenseLoading: false,
     missionLoading: false,
+    feedbackSaving: false,
   }),
 
   actions: {
@@ -49,6 +58,24 @@ export const useExpenseStore = defineStore('expense', {
         console.error('절약 미션 조회 실패', error);
       } finally {
         this.missionLoading = false;
+      }
+    },
+
+    async saveFeedback(year: number, month: number, content: string) {
+      this.feedbackSaving = true;
+      try {
+        const data = await upsertExpenseFeedback({ year, month, content });
+        const otherFeedbacks = this.monthlyExpense.feedbacks.filter(
+          (feedback) => feedback.writerUserId !== data.writerUserId
+        );
+        this.monthlyExpense.feedbacks = data.content.trim()
+          ? [...otherFeedbacks, toUpsertedExpenseFeedback(data)]
+          : otherFeedbacks;
+      } catch (error) {
+        console.error('피드백 저장 실패', error);
+        throw error;
+      } finally {
+        this.feedbackSaving = false;
       }
     },
   },

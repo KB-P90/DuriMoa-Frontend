@@ -41,7 +41,7 @@ const { selectedMonth, expenseLoading, missionLoading, goHome } = useMonthlyExpe
       <ExpenseOverviewSkeleton v-if="expenseLoading" />
       <template v-else>
         <CategoryExpenseCard :month="selectedMonth.month" />
-        <CoupleFeedbackCard />
+        <CoupleFeedbackCard :year="selectedMonth.year" :month="selectedMonth.month" />
       </template>
       <SavingMissionSkeleton v-if="missionLoading" />
       <SavingMissionCard v-else :year="selectedMonth.year" :month="selectedMonth.month" />

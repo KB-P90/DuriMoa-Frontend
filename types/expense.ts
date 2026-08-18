@@ -18,7 +18,7 @@ export interface MonthlyExpenseUser {
 }
 
 export interface ExpenseFeedback {
-  feedbackId: number;
+  feedbackId: number | null;
   writerUserId: number;
   writerName: string;
   receiverId: number;

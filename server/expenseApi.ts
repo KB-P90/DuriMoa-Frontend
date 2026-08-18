@@ -1,6 +1,10 @@
 import { api } from '@/server/axios';
 import type { ApiResponse } from '@/types/common';
-import type { MonthlyExpenseResponseDto } from '@/types/dto/expense.dto';
+import type {
+  ExpenseFeedbackUpsertRequestDto,
+  ExpenseFeedbackUpsertResponseDto,
+  MonthlyExpenseResponseDto,
+} from '@/types/dto/expense.dto';
 import type { MonthlySavingMissionResponse } from '@/types/expense';
 
 export const getMonthlyExpense = async (year: number, month: number) => {
@@ -19,6 +23,15 @@ export const getMonthlySavingMissions = async (year: number, month: number) => {
     {
       params: { year, month },
     }
+  );
+
+  return data.data;
+};
+
+export const upsertExpenseFeedback = async (request: ExpenseFeedbackUpsertRequestDto) => {
+  const { data } = await api.post<ApiResponse<ExpenseFeedbackUpsertResponseDto>>(
+    '/expense/feedback',
+    request
   );
 
   return data.data;
