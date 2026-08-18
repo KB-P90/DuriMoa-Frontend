@@ -51,6 +51,7 @@ async function handleSubmit() {
           :is-valid="cardStore.isValidAmount"
           :min-amount="cardStore.MIN_AMOUNT"
           @add-amount="cardStore.addAmount"
+          @reset="cardStore.setAmount(0)"
           @submit="handleSubmit"
         />
       </section>
