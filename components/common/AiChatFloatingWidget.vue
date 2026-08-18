@@ -20,8 +20,25 @@ const props = withDefaults(
 
 const messages = defineModel<AiChatMessage[]>('messages', { default: () => [] });
 
-const { canSend, draft, isOpen, isSending, openChat, sendMessage, updateOpen } =
-  useAiChat(messages);
+const {
+  applyWeddingBudgetRecommendation,
+  canSend,
+  confirmWeddingDate,
+  confirmWeddingRegion,
+  draft,
+  isFlowInputLocked,
+  isOpen,
+  isSending,
+  openChat,
+  recommendation,
+  sendMessage,
+  updateOpen,
+  updateWeddingDate,
+  updateWeddingRegion,
+  weddingBudgetStep,
+  weddingDate,
+  weddingRegion,
+} = useAiChat(messages);
 </script>
 
 <template>
@@ -61,7 +78,17 @@ const { canSend, draft, isOpen, isSending, openChat, sendMessage, updateOpen } =
     :messages="messages"
     :can-send="canSend"
     :is-sending="isSending"
+    :is-flow-input-locked="isFlowInputLocked"
+    :wedding-budget-step="weddingBudgetStep"
+    :wedding-date="weddingDate"
+    :wedding-region="weddingRegion"
+    :recommendation="recommendation"
     @submit="sendMessage"
     @update:open="updateOpen"
+    @update:wedding-date="updateWeddingDate"
+    @update:wedding-region="updateWeddingRegion"
+    @confirm-wedding-date="confirmWeddingDate"
+    @confirm-wedding-region="confirmWeddingRegion"
+    @apply-wedding-budget="applyWeddingBudgetRecommendation"
   />
 </template>
