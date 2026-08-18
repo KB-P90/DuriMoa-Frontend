@@ -1,5 +1,5 @@
 import { computed, toValue, watch, type MaybeRefOrGetter } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useExpenseStore } from '@/stores/expenseStore';
 import { storeToRefs } from 'pinia';
@@ -23,6 +23,7 @@ function parseYearMonth(value?: string): YearMonth {
 
 export function useMonthlyExpense(yearMonth: MaybeRefOrGetter<string | undefined>) {
   useAuthCheck();
+  const route = useRoute();
   const router = useRouter();
   const expenseStore = useExpenseStore();
   const { expenseLoading, missionLoading } = storeToRefs(expenseStore);
@@ -39,9 +40,10 @@ export function useMonthlyExpense(yearMonth: MaybeRefOrGetter<string | undefined
     { immediate: true }
   );
 
-  function goHome() {
-    void router.push({ name: 'home' });
+  function goBack() {
+    const routeName = route.query.from === 'home' ? 'home' : 'calendar';
+    void router.push({ name: routeName });
   }
 
-  return { selectedMonth, expenseLoading, missionLoading, goHome };
+  return { selectedMonth, expenseLoading, missionLoading, goBack };
 }

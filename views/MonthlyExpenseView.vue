@@ -12,7 +12,7 @@ const props = defineProps<{
   yearMonth?: string;
 }>();
 
-const { selectedMonth, expenseLoading, missionLoading, goHome } = useMonthlyExpense(
+const { selectedMonth, expenseLoading, missionLoading, goBack } = useMonthlyExpense(
   () => props.yearMonth
 );
 </script>
@@ -24,13 +24,14 @@ const { selectedMonth, expenseLoading, missionLoading, goHome } = useMonthlyExpe
         type="button"
         aria-label="홈으로 돌아가기"
         class="grid h-8 w-8 place-items-center"
-        @click="goHome"
+        @click="goBack"
       >
-        <ChevronLeft class="h-5 w-5" :stroke-width="2.4" />
+        <ChevronLeft
+          class="h-5 w-5"
+          :stroke-width="2.4"
+        />
       </button>
-      <h1 class="ml-1 flex-1 text-[17px] font-extrabold">
-        {{ selectedMonth.month }}월 지출 관리
-      </h1>
+      <h1 class="ml-1 flex-1 text-[17px] font-extrabold">{{ selectedMonth.month }}월 지출 관리</h1>
       <MonthPicker
         :year="selectedMonth.year"
         :month="selectedMonth.month"
@@ -41,10 +42,17 @@ const { selectedMonth, expenseLoading, missionLoading, goHome } = useMonthlyExpe
       <ExpenseOverviewSkeleton v-if="expenseLoading" />
       <template v-else>
         <CategoryExpenseCard :month="selectedMonth.month" />
-        <CoupleFeedbackCard :year="selectedMonth.year" :month="selectedMonth.month" />
+        <CoupleFeedbackCard
+          :year="selectedMonth.year"
+          :month="selectedMonth.month"
+        />
       </template>
       <SavingMissionSkeleton v-if="missionLoading" />
-      <SavingMissionCard v-else :year="selectedMonth.year" :month="selectedMonth.month" />
+      <SavingMissionCard
+        v-else
+        :year="selectedMonth.year"
+        :month="selectedMonth.month"
+      />
     </main>
   </div>
 </template>
