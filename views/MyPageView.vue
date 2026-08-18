@@ -6,6 +6,7 @@ import { BookOpenText, ChevronRight, CreditCard, UserRound } from '@lucide/vue';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useMyPageStore } from '@/stores/myPageStore';
 import { useNotificationStore } from '@/stores/notificationStore';
+import { ONBOARDING_ROUTE_NAMES } from '@/constants/onboard';
 import type { ShareScope } from '@/types/myPage';
 import PageHeader from '@/components/common/PageHeader.vue';
 
@@ -80,8 +81,13 @@ function goProfileEdit() {
   router.push({ name: 'myinfo-profile' });
 }
 
-function goAssetConnect(id: AssetSummary['id']) {
-  router.push({ name: id === 'accounts' ? 'myinfo-account-connect' : 'myinfo-card-connect' });
+function goAssetConnect(asset: AssetSummary) {
+  if (asset.count === 0) {
+    router.push({ name: ONBOARDING_ROUTE_NAMES.ONBOARDING, query: { screen: 'account' } });
+    return;
+  }
+
+  router.push({ name: asset.id === 'accounts' ? 'myinfo-account-connect' : 'myinfo-card-connect' });
 }
 
 function goCoupleConnect() {
@@ -145,9 +151,6 @@ onMounted(() => {
                 >{{ roleLabels[myPage.user.role] }}</span
               >
             </div>
-            <p class="text-xs leading-4 text-dm-gray-dark">
-              {{ myPage.user.phoneNumber ? myPage.user.phoneNumber : '카카오 로그인' }}
-            </p>
           </div>
           <div class="ml-auto shrink-0">
             <button
@@ -221,7 +224,7 @@ onMounted(() => {
               :key="item.id"
               type="button"
               class="flex flex-1 items-center gap-2.5 rounded-xl bg-dm-mint-light p-3.5 text-left first:bg-[#E6F2F1]"
-              @click="goAssetConnect(item.id)"
+              @click="goAssetConnect(item)"
             >
               <component
                 :is="item.icon"
