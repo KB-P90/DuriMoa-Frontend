@@ -11,6 +11,7 @@ const props = withDefaults(
     title?: string;
     description?: string;
     routeName?: string;
+    routeQuery?: Record<string, string>;
     buttonMessage?: string;
   }>(),
   {
@@ -19,12 +20,13 @@ const props = withDefaults(
     title: '둘이 함께할 준비가 필요해요',
     description: '',
     routeName: 'myinfo-couple-connect',
+    routeQuery: () => ({}),
     buttonMessage: '연결하러 가기',
   }
 );
 
 function goCoupleConnect() {
-  router.push({ name: props.routeName });
+  router.push({ name: props.routeName, query: props.routeQuery });
 }
 </script>
 
@@ -38,7 +40,7 @@ function goCoupleConnect() {
     <h2 class="mt-2 text-[19px] font-extrabold leading-[24px] text-[#292934]">
       {{ title }}
     </h2>
-    <p class="mt-2 text-[12.5px] leading-[18px] text-dm-gray-dark">
+    <p class="mt-2 break-keep text-[12.5px] leading-[18px] text-dm-gray-dark">
       {{ description || `${props.message} 모든 서비스를 사용할 수 있어요.` }}
     </p>
 

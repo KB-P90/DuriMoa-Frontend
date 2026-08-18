@@ -75,11 +75,12 @@ onBeforeRouteLeave((to) => {
 
       <CoupleConnectionRequired
         v-else-if="cardStore.hasNoOwnedCards"
-        eyebrow="CARD RECOMMENDATION"
-        title="맞춤 카드 추천을 준비해볼까요?"
-        description="계좌를 연결하면 두 분에게 맞는 카드를 추천해드려요."
-        route-name="myinfo-account-connect"
-        button-message="계좌 연결하러 가기"
+        eyebrow="CARD CONNECTION"
+        title="두 분의 카드를 먼저 연결해주세요"
+        description="보유 카드를 연결하면 결제 금액에 맞는 혜택을 비교해드려요."
+        route-name="onboarding"
+        :route-query="{ screen: 'account', from: 'card' }"
+        button-message="카드 연결하러 가기"
       />
 
       <!-- Main Content -->
