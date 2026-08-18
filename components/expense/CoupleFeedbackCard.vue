@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { SquarePen } from '@lucide/vue';
 import { useExpenseFeedback } from '@/composables/useExpenseFeedback';
+import ProfileAvatar from '@/components/common/ProfileAvatar.vue';
 
 const props = defineProps<{ year: number; month: number }>();
 
@@ -14,19 +15,34 @@ const {
   openEditor,
   closeEditor,
   submitFeedback,
-} = useExpenseFeedback(() => props.year, () => props.month);
+} = useExpenseFeedback(
+  () => props.year,
+  () => props.month
+);
 </script>
 
 <template>
   <section class="rounded-[20px] border border-brand-border bg-white p-4">
     <div class="flex items-center justify-between">
       <h2 class="text-sm font-extrabold">상대방에게 피드백 남기기</h2>
-      <button type="button" aria-label="피드백 작성 또는 수정" class="text-deep-green" @click="openEditor">
-        <SquarePen class="h-5 w-5" :stroke-width="2.3" />
+      <button
+        type="button"
+        aria-label="피드백 작성 또는 수정"
+        class="text-deep-green"
+        @click="openEditor"
+      >
+        <SquarePen
+          class="h-5 w-5"
+          :stroke-width="2.3"
+        />
       </button>
     </div>
 
-    <form v-if="isEditing" class="mt-4" @submit.prevent="submitFeedback">
+    <form
+      v-if="isEditing"
+      class="mt-4"
+      @submit.prevent="submitFeedback"
+    >
       <textarea
         v-model="draftContent"
         rows="3"
@@ -35,7 +51,10 @@ const {
         class="w-full resize-none rounded-xl border border-dm-mint px-3 py-3 text-sm outline-none focus:border-dm-mint-darker"
         :disabled="feedbackSaving"
       />
-      <p v-if="saveErrorMessage" class="mt-1 text-xs font-medium text-red">
+      <p
+        v-if="saveErrorMessage"
+        class="mt-1 text-xs font-medium text-red"
+      >
         {{ saveErrorMessage }}
       </p>
       <div class="mt-2 flex justify-end">
@@ -59,21 +78,36 @@ const {
       </div>
     </form>
 
-    <div v-else-if="feedbacks.length" class="mt-4 space-y-4">
+    <div
+      v-else-if="feedbacks.length"
+      class="mt-4 space-y-4"
+    >
       <div
         v-for="(feedback, index) in feedbacks"
         :key="`${feedback.feedbackId}-${feedback.writerUserId}-${index}`"
         class="flex items-center gap-3"
         :class="feedback.isMine ? 'justify-end' : 'justify-start'"
       >
-        <div v-if="!feedback.isMine" class="h-10 w-10 shrink-0 rounded-full bg-disable" aria-hidden="true" />
+        <ProfileAvatar
+          v-if="!feedback.isMine"
+          :src="feedback.writerProfileImageUrl"
+          :name="feedback.writerName"
+          class="h-10 w-10"
+        />
         <p
           class="max-w-[calc(100%-52px)] rounded-[15px] px-5 py-3 text-[13px] font-semibold text-white"
-          :class="feedback.isMine ? 'rounded-br-none bg-pink-06' : 'rounded-bl-none bg-dm-mint-darker'"
+          :class="
+            feedback.isMine ? 'rounded-br-none bg-pink-06' : 'rounded-bl-none bg-dm-mint-darker'
+          "
         >
           {{ feedback.content }}
         </p>
-        <div v-if="feedback.isMine" class="h-10 w-10 shrink-0 rounded-full bg-disable" aria-hidden="true" />
+        <ProfileAvatar
+          v-if="feedback.isMine"
+          :src="feedback.writerProfileImageUrl"
+          :name="feedback.writerName"
+          class="h-10 w-10"
+        />
       </div>
     </div>
 

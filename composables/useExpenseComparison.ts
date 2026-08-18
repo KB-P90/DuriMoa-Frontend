@@ -8,12 +8,12 @@ const DISPLAY_CATEGORIES = [
   { code: 'FOOD', label: '식비' },
   { code: 'LIVING', label: '생활' },
   { code: 'SHOPPING', label: '쇼핑' },
-  { code: 'CULTURE', label: '문화/여가' },
+  { code: 'CULTURE_TRAVEL', label: '문화/여가' },
   { code: 'ETC', label: '기타' },
 ] as const satisfies ReadonlyArray<{
   code: MonthlyExpenseCategoryCode;
   label: string;
-}>; 
+}>;
 
 export function useExpenseComparison() {
   const expenseStore = useExpenseStore();
@@ -23,10 +23,7 @@ export function useExpenseComparison() {
 
   const rows = computed(() => {
     const myCategories = new Map(
-      monthlyExpense.value.me.expenseCategories.map((category) => [
-        category.categoryCode,
-        category,
-      ])
+      monthlyExpense.value.me.expenseCategories.map((category) => [category.categoryCode, category])
     );
     const partnerCategories = new Map(
       monthlyExpense.value.partner.expenseCategories.map((category) => [
@@ -59,7 +56,10 @@ export function useExpenseComparison() {
     const partnerCategories = new Map(
       expense.partner.expenseCategories.map((category) => [category.categoryCode, category])
     );
-    const myTotal = expense.me.expenseCategories.reduce((sum, category) => sum + category.amount, 0);
+    const myTotal = expense.me.expenseCategories.reduce(
+      (sum, category) => sum + category.amount,
+      0
+    );
     const partnerTotal = expense.partner.expenseCategories.reduce(
       (sum, category) => sum + category.amount,
       0

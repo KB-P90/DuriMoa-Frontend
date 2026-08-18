@@ -13,7 +13,10 @@ import type {
 } from '@/types/expense';
 
 export function toMonthlyExpenseCategory(dto: MonthlyExpenseCategoryDto): MonthlyExpenseCategory {
-  return { ...dto };
+  return {
+    ...dto,
+    categoryCode: dto.categoryCode === 'CULTURE' ? 'CULTURE_TRAVEL' : dto.categoryCode,
+  };
 }
 
 export function toMonthlyExpenseUser(dto: MonthlyExpenseUserDto): MonthlyExpenseUser {
@@ -29,18 +32,18 @@ export function toExpenseFeedback(dto: ExpenseFeedbackDto): ExpenseFeedback {
     feedbackId: dto.feedbackId,
     writerUserId: dto.writerUserId,
     writerName: dto.writerName,
-    receiverId: dto.receiver_id,
-    content: dto.content ?? '',
+    writerProfileImageUrl: dto.writerProfileImageUrl ?? null,
+    receiverId: dto.receiverUserId,
+    content: dto.content,
   };
 }
 
-export function toUpsertedExpenseFeedback(
-  dto: ExpenseFeedbackUpsertResponseDto
-): ExpenseFeedback {
+export function toUpsertedExpenseFeedback(dto: ExpenseFeedbackUpsertResponseDto): ExpenseFeedback {
   return {
     feedbackId: dto.feedbackId,
     writerUserId: dto.writerUserId,
     writerName: dto.writerName,
+    writerProfileImageUrl: null,
     receiverId: dto.receiverUserId,
     content: dto.content,
   };

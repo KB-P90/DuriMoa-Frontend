@@ -82,11 +82,18 @@ export const useExpenseStore = defineStore('expense', {
       this.feedbackSaving = true;
       try {
         const data = await upsertExpenseFeedback({ year, month, content });
+        const existingFeedback = this.monthlyExpense.feedbacks.find(
+          (feedback) => feedback.writerUserId === data.writerUserId
+        );
         const otherFeedbacks = this.monthlyExpense.feedbacks.filter(
           (feedback) => feedback.writerUserId !== data.writerUserId
         );
+        const upsertedFeedback = {
+          ...toUpsertedExpenseFeedback(data),
+          writerProfileImageUrl: existingFeedback?.writerProfileImageUrl ?? null,
+        };
         this.monthlyExpense.feedbacks = data.content.trim()
-          ? [...otherFeedbacks, toUpsertedExpenseFeedback(data)]
+          ? [...otherFeedbacks, upsertedFeedback]
           : otherFeedbacks;
       } catch (error) {
         console.error('피드백 저장 실패', error);

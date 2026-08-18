@@ -1,9 +1,5 @@
 export type MonthlyExpenseCategoryCodeDto =
-  | 'FOOD'
-  | 'LIVING'
-  | 'SHOPPING'
-  | 'CULTURE'
-  | 'ETC';
+  'FOOD' | 'LIVING' | 'SHOPPING' | 'CULTURE' | 'CULTURE_TRAVEL' | 'ETC';
 
 export interface MonthlyExpenseCategoryDto {
   categoryId: number;
@@ -20,11 +16,12 @@ export interface MonthlyExpenseUserDto {
 }
 
 export interface ExpenseFeedbackDto {
-  feedbackId: number | null;
+  feedbackId: number;
   writerUserId: number;
   writerName: string;
-  receiver_id: number;
-  content: string | null;
+  writerProfileImageUrl?: string | null;
+  receiverUserId: number;
+  content: string;
 }
 
 export interface ExpenseFeedbackUpsertRequestDto {

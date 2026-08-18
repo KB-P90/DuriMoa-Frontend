@@ -18,9 +18,10 @@ export interface MonthlyExpenseUser {
 }
 
 export interface ExpenseFeedback {
-  feedbackId: number | null;
+  feedbackId: number;
   writerUserId: number;
   writerName: string;
+  writerProfileImageUrl: string | null;
   receiverId: number;
   content: string;
 }

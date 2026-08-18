@@ -15,9 +15,17 @@ const { rows, insight, isChartAnimated } = useExpenseComparison();
     </p>
 
     <div class="mt-6 space-y-5">
-      <div v-for="row in rows" :key="row.code" class="grid grid-cols-[76px_1fr] items-center gap-2">
+      <div
+        v-for="row in rows"
+        :key="row.code"
+        class="grid grid-cols-[76px_1fr] items-center gap-2"
+      >
         <div class="flex items-center gap-2 text-sm font-extrabold leading-tight">
-          <span class="w-5 text-center text-xs" aria-hidden="true">{{ row.icon }}</span>
+          <span
+            class="w-5 text-center text-xs"
+            aria-hidden="true"
+            >{{ row.icon }}</span
+          >
           <span>{{ row.label }}</span>
         </div>
         <div class="space-y-2">
@@ -39,19 +47,31 @@ const { rows, insight, isChartAnimated } = useExpenseComparison();
       </div>
     </div>
 
-    <div class="mt-6 rounded-[14px] border border-pink-04 px-4 py-4 text-center text-[13px] leading-6">
+    <div
+      class="mt-6 rounded-[14px] border border-pink-04 px-4 py-4 text-center text-[13px] leading-6"
+    >
       <template v-if="insight">
         <p>
           이번 달은
-          <span class="font-bold text-pink-05">{{ insight.higherSpenderName }}</span>의
-          소비가 더 많아요.
+          <span class="font-bold text-pink-05">{{ insight.higherSpenderName }}</span
+          >의 소비가 더 많아요.
         </p>
         <p>
-          두 분의 지출액 차이가 가장 큰 카테고리는
-          <span class="border-b-2 border-pink-04 font-bold">{{ insight.categoryLabel }}</span>이에요.
+          <span class="inline-block whitespace-nowrap"
+            >두 분의 지출액 차이가 가장 큰 카테고리는</span
+          >
+          <span class="ml-1 inline-block whitespace-nowrap">
+            <span class="border-b-2 border-pink-04 font-bold">{{ insight.categoryLabel }}</span
+            >이에요.
+          </span>
         </p>
       </template>
-      <p v-else class="text-dm-gray-dark">{{ month }}월 지출 내역이 아직 없어요.</p>
+      <p
+        v-else
+        class="text-dm-gray-dark"
+      >
+        {{ month }}월 지출 내역이 아직 없어요.
+      </p>
     </div>
   </section>
 </template>
