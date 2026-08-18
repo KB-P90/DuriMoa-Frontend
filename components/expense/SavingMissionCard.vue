@@ -3,7 +3,7 @@ import { useSavingMissionList } from '@/composables/useSavingMissionList';
 
 defineProps<{ year: number; month: number }>();
 
-const { savingMissions, missions } = useSavingMissionList();
+const { savingMissions, missions, challengeMission } = useSavingMissionList();
 </script>
 
 <template>
@@ -39,21 +39,28 @@ const { savingMissions, missions } = useSavingMissionList();
       </div>
 
       <div class="ml-3 flex shrink-0 flex-col items-end gap-1.5">
-        <span class="text-xs font-extrabold" :class="mission.amountClass">
+        <span
+          class="text-xs font-extrabold"
+          :class="mission.amountClass"
+        >
           +{{ mission.expectedSavingAmount.toLocaleString() }}원
         </span>
         <button
           type="button"
           class="rounded-full px-3 py-1 text-[10px] font-bold"
           :class="mission.buttonClass"
-          :disabled="!mission.isSelectable"
+          :disabled="!mission.canChallenge"
+          @click="challengeMission(mission.missionId)"
         >
-          {{ mission.status }}
+          {{ mission.statusLabel }}
         </button>
       </div>
     </div>
 
-    <p v-if="!missions.length" class="border-t border-divider px-4 py-8 text-center text-sm text-dm-gray-dark">
+    <p
+      v-if="!missions.length"
+      class="border-t border-divider px-4 py-8 text-center text-sm text-dm-gray-dark"
+    >
       이번 달 추천 절약 미션이 없어요.
     </p>
   </section>

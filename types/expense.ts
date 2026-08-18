@@ -38,9 +38,11 @@ export interface SavingMission {
   categoryCode: ExpenseCategoryCode;
   title: string;
   expectedSavingAmount: number;
-  status: '도전하기' | '도전중';
+  status: SavingMissionStatus;
   isSelectable: boolean;
 }
+
+export type SavingMissionStatus = '도전하기' | '도전중' | '성공' | '실패' | '만료';
 
 export interface MonthlySavingMissionResponse {
   yearMonth: string;

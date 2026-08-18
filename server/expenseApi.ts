@@ -38,7 +38,7 @@ export const upsertExpenseFeedback = async (request: ExpenseFeedbackUpsertReques
 };
 
 export const startSavingMission = async (missionId: number, yearMonth: string): Promise<void> => {
-  await api.post(`/expense/saving-missions/${missionId}`, {
+  await api.post<ApiResponse<null>>(`/expense/saving-missions/${missionId}`, {
     yearMonth,
   });
 };

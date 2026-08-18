@@ -2,13 +2,10 @@ import { defineStore } from 'pinia';
 import {
   getMonthlyExpense,
   getMonthlySavingMissions,
+  startSavingMission,
   upsertExpenseFeedback,
 } from '@/server/expenseApi';
-import {
-  toExpenseFeedback,
-  toMonthlyExpense,
-  toUpsertedExpenseFeedback,
-} from '@/models/Expense';
+import { toExpenseFeedback, toMonthlyExpense, toUpsertedExpenseFeedback } from '@/models/Expense';
 import type { MonthlyExpense, MonthlySavingMissionResponse } from '@/types/expense';
 
 const EMPTY_MONTHLY_EXPENSE: MonthlyExpense = {
@@ -31,6 +28,7 @@ export const useExpenseStore = defineStore('expense', {
     savingMissions: EMPTY_SAVING_MISSIONS,
     expenseLoading: false,
     missionLoading: false,
+    challengingMissionId: null as number | null,
     feedbackSaving: false,
   }),
 
@@ -58,6 +56,25 @@ export const useExpenseStore = defineStore('expense', {
         console.error('절약 미션 조회 실패', error);
       } finally {
         this.missionLoading = false;
+      }
+    },
+
+    async challengeSavingMission(missionId: number) {
+      const mission = this.savingMissions.missions.find((item) => item.missionId === missionId);
+      if (!mission || mission.status !== '도전하기' || this.challengingMissionId !== null)
+        return false;
+
+      this.challengingMissionId = missionId;
+      try {
+        await startSavingMission(missionId, this.savingMissions.yearMonth);
+        mission.status = '도전중';
+        mission.isSelectable = false;
+        return true;
+      } catch (error) {
+        console.error('절약 미션 도전 실패', error);
+        throw error;
+      } finally {
+        this.challengingMissionId = null;
       }
     },
 
