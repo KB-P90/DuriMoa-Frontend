@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Bot, Send, X } from '@lucide/vue';
+import { nextTick, ref, watch } from 'vue';
 import {
   DialogClose,
   DialogContent,
@@ -11,15 +12,17 @@ import {
 } from 'reka-ui';
 import type { AiChatMessage } from '@/types/aiChat';
 
-defineProps<{
+const props = defineProps<{
   open: boolean;
   title: string;
   description: string;
   messages: readonly AiChatMessage[];
   canSend: boolean;
+  isSending: boolean;
 }>();
 
 const draft = defineModel<string>('draft', { required: true });
+const messageViewport = ref<HTMLElement | null>(null);
 
 const emit = defineEmits<{
   'update:open': [value: boolean];
@@ -31,6 +34,17 @@ function handleComposerKeydown(event: KeyboardEvent) {
   event.preventDefault();
   emit('submit');
 }
+
+watch(
+  () => [props.messages.length, props.isSending],
+  async () => {
+    await nextTick();
+    messageViewport.value?.scrollTo({
+      top: messageViewport.value.scrollHeight,
+      behavior: 'smooth',
+    });
+  }
+);
 </script>
 
 <template>
@@ -81,8 +95,10 @@ function handleComposerKeydown(event: KeyboardEvent) {
         </header>
 
         <div
+          ref="messageViewport"
           class="flex min-h-0 flex-1 flex-col overflow-y-auto bg-dm-gray-light/55 px-4 py-5 scrollbar-none"
           aria-live="polite"
+          :aria-busy="isSending"
           aria-label="대화 메시지"
         >
           <div
@@ -123,6 +139,16 @@ function handleComposerKeydown(event: KeyboardEvent) {
                 "
               >
                 {{ message.content }}
+              </p>
+            </li>
+            <li
+              v-if="isSending"
+              class="flex justify-start"
+            >
+              <p
+                class="rounded-2xl rounded-bl-md border border-dm-gray/25 bg-white px-3.5 py-2.5 text-sm text-dm-gray-dark shadow-sm"
+              >
+                답변을 작성하고 있어요...
               </p>
             </li>
           </ol>

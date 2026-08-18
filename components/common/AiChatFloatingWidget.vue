@@ -18,16 +18,10 @@ const props = withDefaults(
   }
 );
 
-const emit = defineEmits<{
-  send: [message: AiChatMessage];
-}>();
-
 const messages = defineModel<AiChatMessage[]>('messages', { default: () => [] });
 
-const { canSend, draft, isOpen, openChat, sendMessage, updateOpen } = useAiChat({
-  messages,
-  onSend: (message) => emit('send', message),
-});
+const { canSend, draft, isOpen, isSending, openChat, sendMessage, updateOpen } =
+  useAiChat(messages);
 </script>
 
 <template>
@@ -66,6 +60,7 @@ const { canSend, draft, isOpen, openChat, sendMessage, updateOpen } = useAiChat(
     :description="chatDescription"
     :messages="messages"
     :can-send="canSend"
+    :is-sending="isSending"
     @submit="sendMessage"
     @update:open="updateOpen"
   />
