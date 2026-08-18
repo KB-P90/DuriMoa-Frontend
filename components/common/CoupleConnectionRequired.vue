@@ -7,11 +7,17 @@ const router = useRouter();
 const props = withDefaults(
   defineProps<{
     message?: string;
+    eyebrow?: string;
+    title?: string;
+    description?: string;
     routeName?: string;
     buttonMessage?: string;
   }>(),
   {
     message: '커플을 연결하면',
+    eyebrow: 'NOT CONNECTED',
+    title: '둘이 함께할 준비가 필요해요',
+    description: '',
     routeName: 'myinfo-couple-connect',
     buttonMessage: '연결하러 가기',
   }
@@ -27,13 +33,13 @@ function goCoupleConnect() {
     class="flex h-full min-h-[500px] w-full flex-col items-center justify-center bg-white px-6 text-center"
   >
     <span class="text-[11px] font-extrabold tracking-[0.14em] text-brand-dark">
-      NOT CONNECTED
+      {{ eyebrow }}
     </span>
     <h2 class="mt-2 text-[19px] font-extrabold leading-[24px] text-[#292934]">
-      둘이 함께할 준비가 필요해요
+      {{ title }}
     </h2>
     <p class="mt-2 text-[12.5px] leading-[18px] text-dm-gray-dark">
-      {{ props.message }} 모든 서비스를 사용할 수 있어요.
+      {{ description || `${props.message} 모든 서비스를 사용할 수 있어요.` }}
     </p>
 
     <button

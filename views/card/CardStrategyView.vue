@@ -8,6 +8,7 @@ import CardDisclaimer from '@/components/card/CardDisclaimer.vue';
 import CardDetailModal from '@/components/card/CardDetailModal.vue';
 import CardStrategySkeleton from '@/components/skeleton/card/CardStrategySkeleton.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
+import CoupleConnectionRequired from '@/components/common/CoupleConnectionRequired.vue';
 import { useCardStore } from '@/stores/cardStore';
 import { formatWon } from '@/utils/format';
 import type { RecommendedCard } from '@/types/card';
@@ -71,6 +72,15 @@ onBeforeRouteLeave((to) => {
           다시 시도
         </button>
       </div>
+
+      <CoupleConnectionRequired
+        v-else-if="cardStore.hasNoOwnedCards"
+        eyebrow="CARD RECOMMENDATION"
+        title="맞춤 카드 추천을 준비해볼까요?"
+        description="계좌를 연결하면 두 분에게 맞는 카드를 추천해드려요."
+        route-name="myinfo-account-connect"
+        button-message="계좌 연결하러 가기"
+      />
 
       <!-- Main Content -->
       <template v-else>
