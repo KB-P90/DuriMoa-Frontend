@@ -8,7 +8,7 @@ const DISPLAY_CATEGORIES = [
   { code: 'FOOD', label: '식비' },
   { code: 'LIVING', label: '생활' },
   { code: 'SHOPPING', label: '쇼핑' },
-  { code: 'CULTURE_TRAVEL', label: '문화/여가' },
+  { code: 'CULTURE', label: '문화/여가' },
   { code: 'ETC', label: '기타' },
 ] as const satisfies ReadonlyArray<{
   code: MonthlyExpenseCategoryCode;

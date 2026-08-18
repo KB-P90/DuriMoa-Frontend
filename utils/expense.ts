@@ -2,7 +2,7 @@ const MONTHLY_EXPENSE_CATEGORY_ICONS: Readonly<Record<string, string>> = {
   FOOD: '☕',
   LIVING: '🍽️',
   SHOPPING: '🏠',
-  CULTURE_TRAVEL: '🚗',
+  CULTURE: '🚗',
   ETC: '🛍️',
 };
 

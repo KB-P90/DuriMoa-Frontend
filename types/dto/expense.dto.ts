@@ -1,5 +1,4 @@
-export type MonthlyExpenseCategoryCodeDto =
-  'FOOD' | 'LIVING' | 'SHOPPING' | 'CULTURE' | 'CULTURE_TRAVEL' | 'ETC';
+export type MonthlyExpenseCategoryCodeDto = 'FOOD' | 'LIVING' | 'SHOPPING' | 'CULTURE' | 'ETC';
 
 export interface MonthlyExpenseCategoryDto {
   categoryId: number;

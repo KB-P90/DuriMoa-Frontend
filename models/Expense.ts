@@ -13,10 +13,7 @@ import type {
 } from '@/types/expense';
 
 export function toMonthlyExpenseCategory(dto: MonthlyExpenseCategoryDto): MonthlyExpenseCategory {
-  return {
-    ...dto,
-    categoryCode: dto.categoryCode === 'CULTURE' ? 'CULTURE_TRAVEL' : dto.categoryCode,
-  };
+  return { ...dto };
 }
 
 export function toMonthlyExpenseUser(dto: MonthlyExpenseUserDto): MonthlyExpenseUser {
