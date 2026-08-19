@@ -1,5 +1,5 @@
 import { computed, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import {
   createRecord,
   deleteRecord,
@@ -30,6 +30,20 @@ function pad(value: number) {
 
 function toMonthKey(date: Date) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}`;
+}
+
+function toRouteMonthKey(date: Date) {
+  return toMonthKey(date).replace('-', '');
+}
+
+function parseRouteMonth(value: unknown) {
+  if (typeof value !== 'string' || !/^\d{6}$/.test(value)) return null;
+
+  const year = Number(value.slice(0, 4));
+  const month = Number(value.slice(4, 6));
+  if (month < 1 || month > 12) return null;
+
+  return new Date(year, month - 1, 1);
 }
 
 function toDateKey(year: number, monthIndex: number, date: number) {
@@ -91,10 +105,13 @@ function createCalendarDays(
 }
 
 export function useCalendar() {
+  const route = useRoute();
   const router = useRouter();
   const today = new Date();
+  const initialMonth =
+    parseRouteMonth(route.query.month) ?? new Date(today.getFullYear(), today.getMonth(), 1);
   const mode = ref<CalendarMode>('wedding');
-  const visibleMonth = ref(new Date(today.getFullYear(), today.getMonth(), 1));
+  const visibleMonth = ref(initialMonth);
   const selectedDate = ref(getInitialDate(visibleMonth.value));
   const selectedTransaction = ref<Transaction | null>(null);
   const isEditorOpen = ref(false);
@@ -186,7 +203,7 @@ export function useCalendar() {
   function openExpenseAnalysis() {
     return router.push({
       name: 'expense',
-      params: { yearMonth: monthKey.value },
+      params: { yearMonth: toRouteMonthKey(visibleMonth.value) },
       query: { from: 'calendar' },
     });
   }
@@ -244,6 +261,31 @@ export function useCalendar() {
       isSubmitting.value = false;
     }
   }
+
+  watch(
+    () => route.query.month,
+    (value) => {
+      const routeMonth = parseRouteMonth(value);
+      if (!routeMonth || toMonthKey(routeMonth) === monthKey.value) return;
+
+      selectedDate.value = getInitialDate(routeMonth);
+      visibleMonth.value = routeMonth;
+    }
+  );
+
+  watch(
+    monthKey,
+    () => {
+      const routeMonth = toRouteMonthKey(visibleMonth.value);
+      if (route.query.month === routeMonth) return;
+
+      void router.replace({
+        name: 'calendar',
+        query: { ...route.query, month: routeMonth },
+      });
+    },
+    { immediate: true }
+  );
 
   watch([mode, monthKey], fetchMonth, { immediate: true });
 

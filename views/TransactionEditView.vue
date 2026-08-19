@@ -46,6 +46,9 @@ const recordDate = ref(props.transaction?.date ?? props.defaultDate);
 const memo = ref(props.transaction?.memo ?? '');
 const deleteConfirmationVisible = ref(false);
 const isEditMode = computed(() => props.transaction !== null);
+const isCodefTransaction = computed(
+  () => props.transaction !== null && !props.transaction.isUserCreated
+);
 const MAX_AMOUNT_DIGITS = 10;
 const isFormValid = computed(() => {
   const parsedAmount = parseFormattedAmount(amount.value);
@@ -115,6 +118,7 @@ const TRANSACTION_TYPE_STYLES: Record<TransactionType, string> = {
 };
 
 function selectType(type: TransactionType) {
+  if (isCodefTransaction.value) return;
   if (selectedType.value === type) return;
   selectedType.value = type;
   category.value = '';
@@ -154,7 +158,7 @@ function save() {
         :show-back="true"
       />
       <button
-        v-if="isEditMode"
+        v-if="isEditMode && !isCodefTransaction"
         type="button"
         class="absolute right-4 top-0 flex h-[50px] items-center text-sm font-semibold text-brand"
         :disabled="isSubmitting"
@@ -171,7 +175,7 @@ function save() {
       class="space-y-5 px-4 pb-20 pt-5 sm:px-5"
       @submit.prevent="save"
     >
-      <fieldset :disabled="isSubmitting">
+      <fieldset :disabled="isSubmitting || isCodefTransaction">
         <legend class="mb-2 text-sm font-semibold">구분</legend>
         <div class="grid grid-cols-3 gap-2">
           <button
@@ -180,7 +184,9 @@ function save() {
             type="button"
             class="relative rounded-2xl border py-3.5 text-sm font-semibold"
             :class="
-              selectedType === type.key
+              isCodefTransaction
+                ? 'cursor-not-allowed border-dm-gray/30 bg-dm-gray-light text-dm-gray-dark'
+                : selectedType === type.key
                 ? TRANSACTION_TYPE_STYLES[type.key]
                 : 'border-dm-gray/30 text-gray-600'
             "
@@ -248,14 +254,17 @@ function save() {
 
       <label class="block">
         <span class="mb-2 block text-sm font-semibold">금액</span>
-        <span class="flex items-center rounded-2xl border border-dm-gray/30 px-4 py-3.5">
+        <span
+          class="flex items-center rounded-2xl border border-dm-gray/30 px-4 py-3.5"
+          :class="isCodefTransaction && 'bg-dm-gray-light text-dm-gray-dark'"
+        >
           <input
             :value="amount"
             inputmode="numeric"
             pattern="[0-9,]+"
             maxlength="13"
-            class="min-w-0 flex-1 text-right text-base font-semibold outline-none"
-            :disabled="isSubmitting"
+            class="min-w-0 flex-1 bg-transparent text-right text-base font-semibold outline-none disabled:cursor-not-allowed"
+            :disabled="isSubmitting || isCodefTransaction"
             required
             @input="handleAmountInput"
           />
@@ -275,7 +284,8 @@ function save() {
           v-model="recordDate"
           title="날짜 선택"
           :allow-past="true"
-          :disabled="isSubmitting"
+          class="disabled:cursor-not-allowed disabled:border-dm-gray/30 disabled:bg-dm-gray-light disabled:text-dm-gray-dark disabled:hover:border-dm-gray/30 disabled:focus:ring-0"
+          :disabled="isSubmitting || isCodefTransaction"
         />
       </div>
 

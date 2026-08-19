@@ -81,6 +81,8 @@ export function toTransaction(dto: DailyRecordDto, date: string): Transaction {
     title: dto.category,
     category: TYPE_LABELS[type],
     owner: dto.owner,
+    isMine: dto.isMine,
+    isUserCreated: dto.isUserCreated,
     type,
     amount: type === 'income' ? dto.amount : -Math.abs(dto.amount),
     icon: '',
