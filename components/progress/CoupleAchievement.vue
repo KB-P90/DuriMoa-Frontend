@@ -36,37 +36,39 @@ function handleViewMonthlyProgress() {
 </script>
 
 <template>
-  <section class="rounded-3xl bg-pink-01 p-4">
-    <div class="flex items-start justify-between">
-      <p class="text-base font-bold">공동 예산 달성률</p>
-      <p class="text-xl font-bold text-brand">{{ progressRateLabel }}%</p>
-    </div>
+  <section class="flex flex-col gap-3">
+    <div class="rounded-3xl bg-pink-01 px-6 py-4">
+      <div class="mb-3 mr-2 flex items-center justify-between">
+        <h2 class="text-base font-bold text-brand">공동 예산 달성률</h2>
+        <p class="text-base font-bold text-brand">{{ progressRateLabel }}%</p>
+      </div>
 
-    <div
-      class="mt-4 h-5 w-full overflow-hidden rounded-full border border-1 border-pink-03 bg-dm-gray-light"
-    >
       <div
-        class="h-full rounded-full bg-brand transition-all duration-1000"
-        :style="{ width: `${progressBarWidth}%` }"
-      />
-    </div>
-
-    <div
-      v-if="props.showDetail"
-      class="mt-3 flex justify-between align-center"
-    >
-      <span class="flex gap-1 text-sm font-semibold">
-        <p>{{ formatManWon(overallProgress.currentAmount) }}</p>
-        <p class="text-dm-gray-dark">/ {{ formatManWon(overallProgress.targetAmount) }}</p>
-      </span>
-
-      <button
-        type="button"
-        class="flex cursor-pointer items-center text-sm font-semibold text-brand"
-        @click="handleViewMonthlyProgress"
+        class="h-5 w-full overflow-hidden rounded-full border border-1 border-pink-03 bg-dm-gray-light"
       >
-        월별 예산 달성 현황 보기 <ChevronRight :size="20" />
-      </button>
+        <div
+          class="h-full rounded-full bg-brand transition-all duration-1000"
+          :style="{ width: `${progressBarWidth}%` }"
+        />
+      </div>
+
+      <div
+        v-if="props.showDetail"
+        class="mt-3 flex justify-between align-center"
+      >
+        <span class="flex gap-1 text-sm font-semibold">
+          <p>{{ formatManWon(overallProgress.currentAmount) }}</p>
+          <p class="text-dm-gray-dark">/ {{ formatManWon(overallProgress.targetAmount) }}</p>
+        </span>
+
+        <button
+          type="button"
+          class="flex cursor-pointer items-center text-sm font-semibold text-brand"
+          @click="handleViewMonthlyProgress"
+        >
+          월별 예산 달성 현황 보기 <ChevronRight :size="20" />
+        </button>
+      </div>
     </div>
   </section>
 </template>
