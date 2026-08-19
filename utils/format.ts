@@ -37,8 +37,9 @@ export function formatCompactWonAmount(amount: number): string {
 export const formatWon = (amount: number) =>
   `${new Intl.NumberFormat('ko-KR').format(amount / 10_000)}만원`;
 
-// 금액을 만원 단위로 반올림하여 표시
+// 금액을 만원 단위로 반올림하여 표시 (억원 초과시 억원으로 표시)
 export function formatManWon(amount: number): string {
+  if (amount > 100_000_000) return `${formatAmount(Math.round(amount / 100_000_000))}억 원`;
   return ` ${formatAmount(Math.round(amount / 10_000))}만원`;
 }
 
