@@ -208,7 +208,7 @@ const {
 
       <!-- 모바일에서 항상 접근하기 쉬운 하단 가입 버튼 -->
       <div
-        class="sticky bottom-0 -mx-5 mt-auto bg-gradient-to-b from-dm-gray-light/30 via-dm-gray-light to-dm-gray-light px-5 pb-[max(18px,env(safe-area-inset-bottom))] pt-3 sm:-mx-10 sm:px-10 lg:-mx-16 lg:px-16"
+        class="sticky bottom-0 -mx-5 mt-auto px-5 pb-[max(18px,env(safe-area-inset-bottom))] pt-3 sm:-mx-10 sm:px-10 lg:-mx-16 lg:px-16"
       >
         <p
           v-if="signupError"
