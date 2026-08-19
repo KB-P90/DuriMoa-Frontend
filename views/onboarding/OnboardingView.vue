@@ -99,10 +99,8 @@ const {
       "
     />
 
-    <!-- 공통 헤더와 하단 내비게이션을 사용하지 않는 온보딩 전용 화면 -->
-    <div
-      class="mx-auto flex min-h-full w-full max-w-[480px] flex-1 flex-col overflow-hidden bg-white sm:border-x sm:border-dm-gray/20"
-    >
+    <!-- 전역 body 너비를 그대로 따르는 온보딩 화면 -->
+    <div class="flex min-h-full flex-1 flex-col overflow-hidden bg-white">
       <PageHeader
         :title="onboardingHeaderTitle"
         :on-back="goBack"
