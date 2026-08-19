@@ -42,7 +42,7 @@ async function handleToggleCompletion(item: ChecklistItem) {
 
 <template>
   <section class="flex flex-col gap-3">
-    <div class="flex items-center justify-between px-1">
+    <div class="px-2 flex items-center justify-between px-1">
       <h2 class="text-base font-bold">카테고리별 체크리스트</h2>
       <span
         class="rounded-full bg-dm-mint-light px-3 py-1 text-xs font-semibold text-dm-mint-darker"
@@ -50,22 +50,22 @@ async function handleToggleCompletion(item: ChecklistItem) {
         {{ overallProgress.completedItemCount }} / {{ overallProgress.totalItemCount }} 완료
       </span>
     </div>
-    <p class="text-sm text-dm-gray-dark px-2">
+    <p class="px-2 text-xs text-dm-gray-dark">
       모든 계약이 완료된 카테고리를 체크해 진행 상황을 확인하세요.
     </p>
 
-    <div class="overflow-hidden rounded-3xl border border-dm-mint-dark bg-white">
+    <div class="overflow-hidden rounded-3xl border border-brand-border bg-white">
       <div
         v-for="item in checklistItems"
         :key="item.key"
-        class="flex items-center gap-3 border-b border-dm-gray-light p-4 last:border-b-0"
+        class="flex items-center gap-3 border-b border-dm-gray-light px-6 py-4 last:border-b-0"
         :class="{
           'bg-dm-gray-light text-dm-gray': item.targetAmount === 0,
           'bg-dm-mint-light': item.targetAmount !== 0 && item.completed,
         }"
       >
         <div
-          class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md"
+          class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md"
           :class="{
             'border-2': item.targetAmount == 0,
             'bg-dm-mint-darker': item.targetAmount != 0 && item.completed,
@@ -75,7 +75,7 @@ async function handleToggleCompletion(item: ChecklistItem) {
         >
           <svg
             v-if="item.completed"
-            class="h-3.5 w-3.5 text-white"
+            class="h-3 w-3 text-white"
             viewBox="0 0 16 16"
             fill="none"
           >
@@ -98,7 +98,7 @@ async function handleToggleCompletion(item: ChecklistItem) {
           </p>
           <p
             v-if="item.targetAmount != 0"
-            class="mt-0.5 text-sm text-dm-gray-dark"
+            class="mt-0.5 text-xs text-dm-gray-dark"
           >
             목표 {{ formatManWon(item.targetAmount) }} / {{ formatManWon(item.currentAmount) }} 사용
           </p>
@@ -109,7 +109,7 @@ async function handleToggleCompletion(item: ChecklistItem) {
           class="flex-shrink-0"
         >
           <span
-            class="rounded-3xl bg-dm-mint-light px-3 py-1 text-sm font-semibold text-dm-mint-darker"
+            class="rounded-3xl bg-dm-mint-light px-3 py-1 text-xs font-semibold text-dm-mint-darker"
           >
             {{ Math.round(item.progressRate ?? 0) }}%
           </span>
