@@ -151,7 +151,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
       <input
         id="couple-invite-code"
         v-model="inviteCode"
-        class="h-[52px] min-w-0 rounded-[13px] border px-4 font-mono text-[14px] font-extrabold uppercase tracking-[0.12em] text-black outline-none transition placeholder:font-sans placeholder:text-[12px] placeholder:font-medium placeholder:normal-case placeholder:tracking-normal placeholder:text-black"
+        class="h-[52px] min-w-0 rounded-[13px] border px-4 font-mono text-[14px] font-extrabold uppercase tracking-[0.12em] text-black outline-none transition placeholder:font-sans placeholder:text-[12px] placeholder:font-medium placeholder:normal-case placeholder:tracking-normal placeholder:text-dm-gray"
         :class="[
           useWhiteInput ? 'bg-white' : 'bg-dm-gray-light',
           hasInviteCodeError || errorMessage
