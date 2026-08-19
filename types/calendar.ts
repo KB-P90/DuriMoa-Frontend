@@ -18,6 +18,8 @@ export interface Transaction {
   title: string;
   category: string;
   owner: string;
+  isMine: boolean;
+  isUserCreated: boolean;
   type: TransactionType;
   amount: number;
   icon: string;

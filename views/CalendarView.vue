@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronRight } from 'lucide-vue-next';
+import { ChevronRight, Info } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 import CalendarSummary from '@/components/calendar/CalendarSummary.vue';
@@ -34,13 +34,22 @@ const emit = defineEmits<{
 }>();
 
 const CALENDAR_MODE_OPTIONS = [
-  { value: 'wedding', label: '결혼비용' },
-  { value: 'personal', label: '개인소비' },
+  {
+    value: 'wedding',
+    label: '결혼비용',
+    description: '결혼비용은 두 사람이 함께 확인할 수 있어요.',
+  },
+  {
+    value: 'personal',
+    label: '개인소비',
+    description: '개인 소비 내역은 나만 볼 수 있어요.',
+  },
 ] as const;
 
-const activeCalendarLabel = computed(
-  () => CALENDAR_MODE_OPTIONS.find((item) => item.value === props.mode)?.label ?? ''
+const activeCalendar = computed(
+  () => CALENDAR_MODE_OPTIONS.find((item) => item.value === props.mode) ?? CALENDAR_MODE_OPTIONS[0]
 );
+const activeCalendarLabel = computed(() => activeCalendar.value.label);
 </script>
 
 <template>
@@ -49,27 +58,40 @@ const activeCalendarLabel = computed(
       title="캘린더"
       :show-back="false"
     />
-    <div class="flex items-center justify-end p-4">
-      <div
-        class="flex shrink-0 rounded-2xl bg-gray-100 p-1 text-xs font-medium text-dm-gray-dark sm:text-sm"
+    <div class="mx-4 mb-4 mt-4">
+      <nav
+        class="flex border-b border-dm-gray"
+        role="tablist"
+        aria-label="캘린더 전환"
       >
         <button
           v-for="item in CALENDAR_MODE_OPTIONS"
           :key="item.value"
           type="button"
-          class="rounded-xl px-2.5 py-2.5 sm:px-4"
-          :class="
+          role="tab"
+          :aria-selected="mode === item.value"
+          class="relative flex-1 cursor-pointer whitespace-nowrap pb-5 text-base font-bold transition-colors"
+          :class="[
             mode === item.value
-              ? item.value === 'wedding'
-                ? 'bg-background text-brand shadow-sm'
-                : 'bg-background text-btn-mt-dark shadow-sm'
-              : ''
-          "
+              ? `text-brand after:absolute after:-bottom-px after:left-0 after:h-[4px] after:w-full after:bg-brand after:content-['']`
+              : 'text-dm-gray-dark hover:bg-dm-gray-light/60',
+          ]"
           @click="emit('update:mode', item.value)"
         >
           {{ item.label }}
         </button>
-      </div>
+      </nav>
+      <p
+        class="mt-2 flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-dm-gray-light/60 px-4 py-1.5 text-center text-sm font-normal leading-5 text-dm-gray-dark"
+        aria-live="polite"
+      >
+        <Info
+          class="h-3.5 w-3.5 shrink-0 text-dm-gray"
+          :stroke-width="1.8"
+          aria-hidden="true"
+        />
+        {{ activeCalendar.description }}
+      </p>
     </div>
 
     <div class="p-4 pt-0">

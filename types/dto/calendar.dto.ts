@@ -38,6 +38,9 @@ export interface DailyRecordDto {
   amount: number;
   memo: string | null;
   owner: string;
+  ownerId: number;
+  isMine: boolean;
+  isUserCreated: boolean;
 }
 
 export interface DailyCalendarResponseDto {

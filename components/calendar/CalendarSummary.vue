@@ -25,7 +25,7 @@ const LABEL_COLORS = {
     <article
       v-for="item in items"
       :key="item.label"
-      class="min-w-0 rounded-2xl border border-dm-gray/30 bg-background px-3 py-3 shadow-sm sm:px-4"
+      class="min-w-0 rounded-2xl border border-dm-gray/30 bg-background px-3 py-3 sm:px-4"
     >
       <div
         class="flex items-center gap-1.5 text-xs font-medium"

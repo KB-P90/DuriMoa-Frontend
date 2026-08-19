@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { toast } from 'vue-sonner';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useCalendar } from '@/composables/useCalendar';
-import type { TransactionForm } from '@/types/calendar';
+import type { Transaction, TransactionForm } from '@/types/calendar';
 import CalendarView from '@/views/CalendarView.vue';
 import TransactionEditView from '@/views/TransactionEditView.vue';
 
@@ -38,6 +38,15 @@ const createCalendarLabel = ref('');
 function handleOpenCreateTransaction(calendarLabel: string) {
   createCalendarLabel.value = calendarLabel;
   openCreateTransaction();
+}
+
+function handleSelectTransaction(transaction: Transaction) {
+  if (!transaction.isMine) {
+    toast.error('상대방의 내역은 수정할 수 없어요.');
+    return;
+  }
+
+  selectTransaction(transaction);
 }
 
 async function handleSaveTransaction(form: TransactionForm) {
@@ -91,7 +100,7 @@ async function handleRemoveTransaction() {
     @update:mode="mode = $event"
     @select-date="selectDate"
     @change-month="changeMonth"
-    @select-transaction="selectTransaction"
+    @select-transaction="handleSelectTransaction"
     @create-transaction="handleOpenCreateTransaction"
     @view-expense-analysis="openExpenseAnalysis"
   />
