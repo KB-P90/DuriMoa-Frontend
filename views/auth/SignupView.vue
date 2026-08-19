@@ -8,6 +8,7 @@ import { useSignup } from '@/composables/useSignup';
 // 회원가입 API를 주입해 입력 검증 이후 서버 요청을 실행한다.
 const {
   isSubmitting,
+  notificationAgreed,
   marketingTermsAgreed,
   name,
   password,
@@ -191,9 +192,11 @@ const {
         </div>
       </div>
 
-      <!-- 약관 카드와 전문 화면 이동 -->
+      <!-- 약관 카드와 전문 화면 이동. 알림 동의는 가입 시점엔 계정이 없어 반영 못 하고,
+           가입 직후 첫 로그인 때 반영된다 -->
       <TermsAgreementCard
         v-model:marketing-terms-agreed="marketingTermsAgreed"
+        v-model:notification-agreed="notificationAgreed"
         v-model:privacy-terms-agreed="privacyTermsAgreed"
         v-model:service-terms-agreed="serviceTermsAgreed"
       />

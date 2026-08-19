@@ -3,6 +3,7 @@ import { isAxiosError } from 'axios';
 import { useRouter } from 'vue-router';
 import type { SignupRequestDto, SignupResponseDto, SignupRoleDto } from '@/types/dto/auth.dto';
 import { formatPhoneNumber } from '@/utils/phone';
+import { PENDING_NOTIFICATION_CONSENT_KEY } from '@/constants/notificationConsent';
 
 export type SignupGateway = (request: SignupRequestDto) => Promise<SignupResponseDto>;
 
@@ -31,6 +32,7 @@ export function useSignup(signupGateway?: SignupGateway) {
   const serviceTermsAgreed = ref(false);
   const privacyTermsAgreed = ref(false);
   const marketingTermsAgreed = ref(false);
+  const notificationAgreed = ref(false);
   const signupError = ref('');
   const signupResponse = ref<SignupResponseDto | null>(null);
   const isSubmitting = ref(false);
@@ -99,6 +101,8 @@ export function useSignup(signupGateway?: SignupGateway) {
         signupResponse.value = await signupGateway(request);
       }
 
+      localStorage.setItem(PENDING_NOTIFICATION_CONSENT_KEY, String(notificationAgreed.value));
+
       await router.replace({ name: LOGIN_ROUTE_NAME });
     } catch (error: unknown) {
       signupError.value =
@@ -112,6 +116,7 @@ export function useSignup(signupGateway?: SignupGateway) {
 
   return {
     isSubmitting,
+    notificationAgreed,
     marketingTermsAgreed,
     name,
     password,

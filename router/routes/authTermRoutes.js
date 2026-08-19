@@ -9,7 +9,7 @@ const TERM_PAGE_MODULES = import.meta.glob('../../constants/authTerms.ts', {
 const TERM_PAGES = Object.values(TERM_PAGE_MODULES)[0]?.default ?? {};
 
 // 약관 본문 데이터와 관계없이 유지할 회원가입 약관 식별자다.
-const TERM_IDS = ['service', 'privacy', 'finance'];
+const TERM_IDS = ['service', 'privacy', 'finance', 'notification'];
 
 // 테스트 데이터가 없을 때 약관 화면에 전달할 기본 구조다.
 const EMPTY_TERM_PAGE = {
