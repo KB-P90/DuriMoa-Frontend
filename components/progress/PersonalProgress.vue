@@ -53,13 +53,15 @@ const members = computed(() => progressStore.personalProgress.members);
           v-if="member.assetShared && member.currentAmount != null"
           class="text-sm font-bold"
         >
-          {{ Math.round(member.currentAmount / 10000).toLocaleString() }}만원
+          {{ formatManWon(member.currentAmount) }}
         </span>
         <span
           v-else
-          class="flex gap-2 text-dm-gray font-semibold"
-          ><LockKeyhole :size="25"
-        /></span>
+          class="flex gap-2 text-sm text-dm-gray font-semibold"
+        >
+          <LockKeyhole :size="25" />
+          <span v-if="index == 0">{{ formatManWon(member.currentAmount ?? 0) }}</span>
+        </span>
       </div>
 
       <p class="mt-3 text-xs text-dm-gray">선택한 공개 범위에 따라 자산 실 금액이 공유돼요.</p>
