@@ -13,18 +13,9 @@ const props = defineProps<{
   yearMonth?: string;
 }>();
 
-const router = useRouter();
-
-const { selectedMonth, expenseLoading, missionLoading } = useMonthlyExpense(() => props.yearMonth);
-
-function changeMonth({ year, month }: { year: number; month: number }) {
-  void router.replace({
-    name: 'expense',
-    params: {
-      yearMonth: `${year}-${String(month).padStart(2, '0')}`,
-    },
-  });
-}
+const { selectedMonth, expenseLoading, missionLoading, changeMonth, goBack } = useMonthlyExpense(
+  () => props.yearMonth
+);
 </script>
 
 <template>
@@ -32,7 +23,7 @@ function changeMonth({ year, month }: { year: number; month: number }) {
     <PageHeader
       :title="`${selectedMonth.year}년 ${selectedMonth.month}월 지출 관리`"
       :show-back="true"
-      :on-back="() => router.push({ name: 'calendar' })"
+      :on-back="goBack"
     />
 
     <div class="flex items-center justify-center p-4">

@@ -15,9 +15,13 @@ function currentYearMonth(): YearMonth {
 }
 
 function parseYearMonth(value?: string): YearMonth {
-  if (!value || !/^\d{4}-\d{2}$/.test(value)) return currentYearMonth();
-  const [year, month] = value.split('-').map(Number);
+  if (!value || !/^\d{6}$/.test(value)) return currentYearMonth();
+
+  const year = Number(value.slice(0, 4));
+  const month = Number(value.slice(4, 6));
+
   if (month < 1 || month > 12) return currentYearMonth();
+
   return { year, month };
 }
 
@@ -40,10 +44,20 @@ export function useMonthlyExpense(yearMonth: MaybeRefOrGetter<string | undefined
     { immediate: true }
   );
 
+  function changeMonth({ year, month }: { year: number; month: number }) {
+    void router.replace({
+      name: 'expense',
+      params: {
+        yearMonth: `${year}${String(month).padStart(2, '0')}`,
+      },
+      query: route.query.from ? { from: route.query.from } : undefined,
+    });
+  }
+
   function goBack() {
     const routeName = route.query.from === 'home' ? 'home' : 'calendar';
     void router.push({ name: routeName });
   }
 
-  return { selectedMonth, expenseLoading, missionLoading, goBack };
+  return { selectedMonth, expenseLoading, missionLoading, changeMonth, goBack };
 }

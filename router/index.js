@@ -47,6 +47,15 @@ const router = createRouter({
         { path: '', name: 'home', component: MainView },
         { path: 'calendar', name: 'calendar', component: CalendarPageView },
         {
+          path: 'calendar/expense/:yearMonth(\\d{6})?',
+          name: 'expense',
+          component: MonthlyExpenseView,
+          props: (route) => ({
+            title: '월별 지출 관리',
+            yearMonth: route.params.yearMonth,
+          }),
+        },
+        {
           path: 'progress',
           name: 'progress',
           component: ProgressView,
@@ -60,15 +69,6 @@ const router = createRouter({
         },
         { path: 'myinfo', name: 'myinfo', component: MyPageView },
         { path: 'card', name: 'card', component: CardStrategyView, props: { title: '카드추천' } },
-        {
-          path: 'expense/:yearMonth(\\d{4}-\\d{2})?',
-          name: 'expense',
-          component: MonthlyExpenseView,
-          props: (route) => ({
-            title: '월별 지출 관리',
-            yearMonth: route.params.yearMonth,
-          }),
-        },
         { path: 'goal', name: 'goal-list', component: GoalListView, props: { title: '예산 목록' } },
         { path: '/card/amount', name: 'card-amount', component: CardAmountInputView },
         {
