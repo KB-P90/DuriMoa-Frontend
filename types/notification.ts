@@ -29,6 +29,10 @@ export interface AppNotification {
   content: string;
   isRead: boolean;
   createdAt: string;
+  // 아이콘/클릭 시 이동 경로는 세부 이벤트명(type)이 아니라 이 카테고리 값(GOAL/COUPLE/MISSION)
+  // 기준으로 결정한다.
+  targetType: string | null;
+  targetId: number | null;
 }
 
 // SSE로 실시간 수신하는 알림 이벤트. 엔드포인트/이벤트명은 백엔드 미구현 상태라 가정값이다.

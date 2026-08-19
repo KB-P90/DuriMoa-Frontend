@@ -39,5 +39,6 @@ function handleBack() {
       />
     </button>
     <h1 class="flex-1 truncate text-lg font-extrabold leading-[18px]">{{ title }}</h1>
+    <slot />
   </header>
 </template>

@@ -32,7 +32,9 @@ const categoryIndex = computed(() =>
   GOAL_CATEGORIES.findIndex((item) => item.code === props.categoryCode)
 );
 const category = computed(() => GOAL_CATEGORIES[categoryIndex.value]);
-const step = computed(() => `${categoryIndex.value + 1}/${GOAL_CATEGORIES.length}`);
+// 전체 흐름 8단계 중 1단계는 결혼 예정일/지역(goal-schedule), 2단계는 유형별 평균 예산
+// (goal-budget-type)이라 카테고리 화면은 3단계부터 시작한다.
+const step = computed(() => `${categoryIndex.value + 3}/8`);
 
 const amount = ref(goalStore.draft.items[props.categoryCode] ?? 0);
 
@@ -87,6 +89,22 @@ function saveCurrentAmount() {
 function goToCategory(code: GoalCategoryCode) {
   saveCurrentAmount();
   router.push({ name: 'goal-category-budget', params: { categoryCode: code } });
+}
+
+const prevCategory = computed(() => GOAL_CATEGORIES[categoryIndex.value - 1]);
+
+// 뒤로가기는 브라우저 히스토리(어디서 들어왔는지)와 무관하게 항상 이전 단계로
+// 고정한다 (3/8 → 2/8, 4/8 → 3/8, ...).
+function handleHeaderBack() {
+  saveCurrentAmount();
+  if (prevCategory.value) {
+    router.push({
+      name: 'goal-category-budget',
+      params: { categoryCode: prevCategory.value.code },
+    });
+  } else {
+    router.push({ name: 'goal-budget-type' });
+  }
 }
 
 watch(
@@ -166,6 +184,7 @@ function handleExclude() {
   <PageHeader
     title="결혼 목표 설정"
     :showBack="true"
+    :on-back="handleHeaderBack"
   />
   <div class="p-4 pb-[calc(9rem+env(safe-area-inset-bottom))]">
     <div class="mb-4 flex items-center justify-between">
