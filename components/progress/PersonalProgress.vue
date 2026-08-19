@@ -22,7 +22,7 @@ const members = computed(() => progressStore.personalProgress.members);
           <div class="flex items-center gap-3">
             <div
               class="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-xl"
-              :class="index === 0 ? 'bg-dm-mint' : 'bg-pink-02'"
+              :class="index === 0 ? 'bg-pink-02' : 'bg-dm-mint'"
             >
               <img
                 v-if="member.profileImage"
@@ -32,8 +32,8 @@ const members = computed(() => progressStore.personalProgress.members);
               />
               <UserRound
                 v-else
-                class="h-6 w-6 text-[#292934]"
-                :class="index === 0 ? 'text-btn-mt-dark' : 'text-brand'"
+                class="h-6 w-6"
+                :class="index === 0 ? 'text-brand' : 'text-btn-mt-dark'"
               />
             </div>
 
@@ -83,7 +83,7 @@ const members = computed(() => progressStore.personalProgress.members);
             <div class="flex items-center gap-1">
               <div
                 class="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-xl"
-                :class="index === 0 ? 'bg-dm-mint' : 'bg-pink-02'"
+                :class="index === 0 ? 'bg-pink-02' : 'bg-dm-mint'"
               >
                 <img
                   v-if="member.profileImage"
@@ -94,7 +94,7 @@ const members = computed(() => progressStore.personalProgress.members);
                 <UserRound
                   v-else
                   class="h-6 w-6 text-[#292934]"
-                  :class="index === 0 ? 'text-btn-mt-dark' : 'text-brand'"
+                  :class="index === 0 ? 'text-brand' : 'text-btn-mt-dark'"
                 />
               </div>
 
@@ -114,7 +114,7 @@ const members = computed(() => progressStore.personalProgress.members);
             <div class="h-4 rounded-full bg-gray-100">
               <div
                 class="h-full rounded-full transition-all duration-1000"
-                :class="index === 0 ? 'bg-dm-mint-darker' : 'bg-brand'"
+                :class="index === 0 ? 'bg-brand' : 'bg-dm-mint-darker'"
                 :style="{ width: `${member.progressRate}%` }"
               />
             </div>
