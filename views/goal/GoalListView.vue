@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { isAxiosError } from 'axios';
+import { storeToRefs } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useRouter } from 'vue-router';
 
@@ -16,6 +17,7 @@ import {
   requestMainProposal,
 } from '@/server/goalApi';
 import { useGoalStore } from '@/stores/goalStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 import type {
   BudgetProposalStatus,
   GoalProposal,
@@ -29,6 +31,7 @@ useAuthCheck();
 
 const router = useRouter();
 const goalStore = useGoalStore();
+const { lastRealtimeNotification } = storeToRefs(useNotificationStore());
 
 const proposals = ref<GoalProposal[]>([]);
 
@@ -94,6 +97,13 @@ async function loadProposals() {
 }
 
 onMounted(loadProposals);
+
+// 이 화면이 떠있는 동안 결혼 시안 관련 실시간 알림이 오면 목록을 다시 불러온다.
+watch(lastRealtimeNotification, (notification) => {
+  if (notification?.category === 'GOAL') {
+    void loadProposals();
+  }
+});
 
 const dialogOpen = ref(false);
 const dialogMode = ref<'request' | 'accept'>('request');

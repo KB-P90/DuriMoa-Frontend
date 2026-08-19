@@ -2,6 +2,7 @@ import { computed, toValue, watch, type MaybeRefOrGetter } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useExpenseStore } from '@/stores/expenseStore';
+import { useNotificationStore } from '@/stores/notificationStore';
 import { storeToRefs } from 'pinia';
 
 interface YearMonth {
@@ -27,18 +28,25 @@ export function useMonthlyExpense(yearMonth: MaybeRefOrGetter<string | undefined
   const router = useRouter();
   const expenseStore = useExpenseStore();
   const { expenseLoading, missionLoading } = storeToRefs(expenseStore);
+  const { lastRealtimeNotification } = storeToRefs(useNotificationStore());
   const selectedMonth = computed(() => parseYearMonth(toValue(yearMonth)));
 
-  watch(
-    selectedMonth,
-    ({ year, month }) => {
-      void Promise.all([
-        expenseStore.fetchMonthlyExpense(year, month),
-        expenseStore.fetchSavingMissions(year, month),
-      ]);
-    },
-    { immediate: true }
-  );
+  function refetchExpense() {
+    const { year, month } = selectedMonth.value;
+    void Promise.all([
+      expenseStore.fetchMonthlyExpense(year, month),
+      expenseStore.fetchSavingMissions(year, month),
+    ]);
+  }
+
+  watch(selectedMonth, refetchExpense, { immediate: true });
+
+  // 이 화면이 떠있는 동안 절약 미션 관련 실시간 알림이 오면 지출/미션을 다시 불러온다.
+  watch(lastRealtimeNotification, (notification) => {
+    if (notification?.category === 'MISSION') {
+      refetchExpense();
+    }
+  });
 
   function goBack() {
     const routeName = route.query.from === 'home' ? 'home' : 'calendar';

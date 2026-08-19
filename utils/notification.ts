@@ -23,3 +23,11 @@ export function routeForNotificationType(targetType: string | null) {
   if (!targetType) return null;
   return NOTIFICATION_ROUTES[targetType] ?? null;
 }
+
+// SSE 실시간 알림은 세부 이벤트명(NotificationType, 예: GOAL_CHANGED)만 내려주고
+// targetType(카테고리)은 안 내려준다. 이름 접두사로 카테고리를 추정한다.
+export function categoryForNotificationType(type: string | null | undefined): string | null {
+  if (!type) return null;
+  const [category] = type.split('_');
+  return category || null;
+}
