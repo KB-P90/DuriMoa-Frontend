@@ -12,11 +12,13 @@ const props = withDefaults(
     title?: string;
     placeholder?: string;
     allowPast?: boolean;
+    excludeToday?: boolean;
   }>(),
   {
     title: '날짜선택',
     placeholder: '날짜를 선택해주세요',
     allowPast: false,
+    excludeToday: false,
   }
 );
 
@@ -56,7 +58,7 @@ function isPast(year: number, month: number, day: number) {
   if (props.allowPast) return false;
   if (year !== CURRENT_YEAR) return year < CURRENT_YEAR;
   if (month !== CURRENT_MONTH) return month < CURRENT_MONTH;
-  return day < CURRENT_DAY;
+  return props.excludeToday ? day <= CURRENT_DAY : day < CURRENT_DAY;
 }
 
 const isOpen = ref(false);

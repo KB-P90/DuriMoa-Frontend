@@ -9,7 +9,7 @@ import { useSignup } from '@/composables/useSignup';
 const {
   financeTermsAgreed,
   isSubmitting,
-  marketingTermsAgreed,
+  notificationAgreed,
   name,
   password,
   passwordConfirm,
@@ -196,10 +196,11 @@ const {
         </div>
       </div>
 
-      <!-- 약관 카드와 전문 화면 이동 -->
+      <!-- 약관 카드와 전문 화면 이동. 알림 동의는 가입 시점엔 계정이 없어 반영 못 하고,
+           가입 직후 첫 로그인 때 반영된다 -->
       <TermsAgreementCard
         v-model:finance-terms-agreed="financeTermsAgreed"
-        v-model:marketing-terms-agreed="marketingTermsAgreed"
+        v-model:notification-agreed="notificationAgreed"
         v-model:privacy-terms-agreed="privacyTermsAgreed"
         v-model:service-terms-agreed="serviceTermsAgreed"
         class="!bg-white [&_input:not(:checked)+span]:!bg-white"
@@ -207,7 +208,7 @@ const {
 
       <!-- 모바일에서 항상 접근하기 쉬운 하단 가입 버튼 -->
       <div
-        class="sticky bottom-0 -mx-5 mt-auto bg-gradient-to-b from-dm-gray-light/30 via-dm-gray-light to-dm-gray-light px-5 pb-[max(18px,env(safe-area-inset-bottom))] pt-3 sm:-mx-10 sm:px-10 lg:-mx-16 lg:px-16"
+        class="sticky bottom-0 -mx-5 mt-auto px-5 pb-[max(18px,env(safe-area-inset-bottom))] pt-3 sm:-mx-10 sm:px-10 lg:-mx-16 lg:px-16"
       >
         <p
           v-if="signupError"

@@ -1,10 +1,12 @@
 import { computed, ref, watch, type Ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import {
   acceptMyPageCouple,
   getMyPageCoupleStatus,
   getMyPageInviteCode,
   inviteMyPageCouple,
 } from '@/server/myPageApi';
+import { useNotificationStore } from '@/stores/notificationStore';
 import type { MyPageCouplePartnerResponseDto } from '@/types/dto/myPage.dto';
 import type { OnboardingCoupleRequest } from '@/types/onboarding';
 
@@ -180,7 +182,7 @@ export function useMyInfoCouple(isActive: Readonly<Ref<boolean>>) {
 
       feedbackMessage.value =
         invitationResponse.status === 'CONNECTED'
-          ? '파트너 연결이 완료되었어요.'
+          ? '상대 연결이 완료되었어요.'
           : `${invitationResponse.name}님에게 연결 요청을 보냈어요.`;
       await loadCoupleStatus();
     } catch {
@@ -211,7 +213,7 @@ export function useMyInfoCouple(isActive: Readonly<Ref<boolean>>) {
         upsertRequest(acceptedRequest);
       }
 
-      feedbackMessage.value = '파트너 연결이 완료되었어요.';
+      feedbackMessage.value = '상대 연결이 완료되었어요.';
       await loadCoupleStatus();
     } catch {
       errorMessage.value = ERROR_MESSAGES.ACCEPT;
@@ -233,6 +235,14 @@ export function useMyInfoCouple(isActive: Readonly<Ref<boolean>>) {
     },
     { immediate: true }
   );
+
+  // 이 화면이 떠있는 동안 커플 연결 관련 실시간 알림이 오면 연결 상태를 다시 불러온다.
+  const { lastRealtimeNotification } = storeToRefs(useNotificationStore());
+  watch(lastRealtimeNotification, (notification) => {
+    if (isActive.value && notification?.category === 'COUPLE') {
+      void loadCoupleStatus();
+    }
+  });
 
   return {
     acceptRequest,

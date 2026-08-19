@@ -11,7 +11,6 @@ export const useSignupStore = defineStore('signup', () => {
   const passwordConfirm = ref('');
   const serviceTermsAgreed = ref(false);
   const privacyTermsAgreed = ref(false);
-  const marketingTermsAgreed = ref(false);
   const financeTermsAgreed = ref(false);
 
   function reset() {
@@ -22,13 +21,11 @@ export const useSignupStore = defineStore('signup', () => {
     passwordConfirm.value = '';
     serviceTermsAgreed.value = false;
     privacyTermsAgreed.value = false;
-    marketingTermsAgreed.value = false;
     financeTermsAgreed.value = false;
   }
 
   return {
     financeTermsAgreed,
-    marketingTermsAgreed,
     name,
     password,
     passwordConfirm,

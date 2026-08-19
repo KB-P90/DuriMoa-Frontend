@@ -61,6 +61,7 @@ function handleNext() {
           id="goal-wedding-date"
           v-model="weddingDate"
           title="결혼 예정일"
+          exclude-today
         />
       </div>
 

@@ -2,7 +2,6 @@
 import { computed } from 'vue';
 import { PiggyBank } from '@lucide/vue';
 import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFooter.vue';
-import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
 import { formatAmount } from '@/utils/format';
 
 const MAX_WON_AMOUNT_DIGITS = 15;
@@ -15,9 +14,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  back: [];
   next: [];
-  skip: [];
   'update:amountInWon': [amountInWon: number | null];
 }>();
 
@@ -34,21 +31,14 @@ function handleAmountInput(event: Event) {
 
 <template>
   <section class="flex min-h-0 flex-1 flex-col overflow-hidden">
-    <OnboardingProgress
-      :current-step="2"
-      :show-step-indicator="false"
-      :total-steps="2"
-      @back="$emit('back')"
-    />
-
     <div
       class="min-h-0 flex-1 overflow-y-auto scrollbar-none overscroll-y-contain px-4 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:px-3 sm:px-5"
     >
-      <h1
+      <h2
         class="break-keep text-[21px] font-extrabold leading-tight tracking-[-0.055em] min-[360px]:text-[23px]"
       >
         현재까지 모은 결혼자금을 알려주세요
-      </h1>
+      </h2>
       <p class="mt-2 break-keep text-[12px] leading-5 text-dm-gray-dark">
         결혼 목표 달성률과 앞으로 필요한 저축 금액을 계산할 때 사용해요
       </p>
@@ -74,7 +64,7 @@ function handleAmountInput(event: Event) {
         </label>
 
         <div
-          class="relative mt-3 flex h-[60px] items-center rounded-[14px] border border-dm-gray/35 bg-dm-gray-light px-4 focus-within:border-pink-03 focus-within:ring-3 focus-within:ring-brand/10"
+          class="relative mt-3 flex h-[60px] items-center rounded-[14px] border border-dm-gray/35 bg-white px-4 focus-within:border-pink-03 focus-within:ring-3 focus-within:ring-brand/10"
         >
           <input
             id="onboarding-wedding-fund"
@@ -116,11 +106,8 @@ function handleAmountInput(event: Event) {
 
     <OnboardingActionFooter
       :label="isLoading ? '결혼자금 저장하는 중...' : '입력 완료'"
-      secondary-label="다음에 하기"
       :disabled="!canContinue || isLoading"
-      :secondary-disabled="isLoading"
       @primary="$emit('next')"
-      @secondary="$emit('skip')"
     />
   </section>
 </template>

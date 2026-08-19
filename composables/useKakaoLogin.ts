@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { isAxiosError } from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 import { loginWithKakao, signupWithKakao } from '@/server/authApi';
@@ -166,17 +166,9 @@ export function useKakaoSignup() {
   const role = ref<SignupRoleDto | ''>('');
   const serviceTermsAgreed = ref(false);
   const privacyTermsAgreed = ref(false);
-  const marketingTermsAgreed = ref(false);
+  const financeTermsAgreed = ref(false);
   const signupError = ref('');
   const isSubmitting = ref(false);
-
-  const canSubmit = computed(
-    () =>
-      Boolean(role.value) &&
-      serviceTermsAgreed.value &&
-      privacyTermsAgreed.value &&
-      !isSubmitting.value
-  );
 
   async function validateSignupSession() {
     const signupToken = sessionStorage.getItem(KAKAO_SESSION_KEYS.SIGNUP_TOKEN);
@@ -198,7 +190,11 @@ export function useKakaoSignup() {
       signupError.value = '역할을 선택해주세요.';
       return;
     }
-    if (!serviceTermsAgreed.value || !privacyTermsAgreed.value) {
+    if (
+      !serviceTermsAgreed.value ||
+      !privacyTermsAgreed.value ||
+      !financeTermsAgreed.value
+    ) {
       signupError.value = REQUIRED_TERMS_MESSAGE;
       return;
     }
@@ -212,7 +208,7 @@ export function useKakaoSignup() {
         role: role.value,
         serviceTermsAgreed: serviceTermsAgreed.value,
         privacyTermsAgreed: privacyTermsAgreed.value,
-        marketingTermsAgreed: marketingTermsAgreed.value,
+        financeTermsAgreed: financeTermsAgreed.value,
       });
       if (!saveAccessToken(response.accessToken)) {
         signupError.value = KAKAO_LOGIN_ERROR_MESSAGE;
@@ -231,9 +227,8 @@ export function useKakaoSignup() {
   }
 
   return {
-    canSubmit,
+    financeTermsAgreed,
     isSubmitting,
-    marketingTermsAgreed,
     name,
     privacyTermsAgreed,
     profileImage,

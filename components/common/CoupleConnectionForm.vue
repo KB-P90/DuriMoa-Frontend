@@ -19,6 +19,7 @@ defineProps<{
   myInviteCodeErrorMessage: string;
   requests: OnboardingCoupleRequest[];
   statusErrorMessage: string;
+  useWhiteInput?: boolean;
 }>();
 
 defineEmits<{
@@ -128,13 +129,13 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
       v-else
       class="mt-2 text-[11px] leading-4 text-dm-gray-dark"
     >
-      파트너에게 내 코드를 공유해주세요.
+      상대에게 내 코드를 공유해주세요.
     </p>
   </section>
 
   <form
     class="mt-5"
-    aria-label="파트너 초대 코드 확인"
+    aria-label="상대 초대 코드 확인"
     @submit.prevent="$emit('confirm')"
   >
     <label
@@ -150,12 +151,13 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
       <input
         id="couple-invite-code"
         v-model="inviteCode"
-        class="h-[52px] min-w-0 rounded-[13px] border bg-dm-gray-light px-4 font-mono text-[14px] font-extrabold uppercase tracking-[0.12em] text-black outline-none transition placeholder:font-sans placeholder:text-[12px] placeholder:font-medium placeholder:normal-case placeholder:tracking-normal placeholder:text-black"
-        :class="
+        class="h-[52px] min-w-0 rounded-[13px] border px-4 font-mono text-[14px] font-extrabold uppercase tracking-[0.12em] text-black outline-none transition placeholder:font-sans placeholder:text-[12px] placeholder:font-medium placeholder:normal-case placeholder:tracking-normal placeholder:text-dm-gray"
+        :class="[
+          useWhiteInput ? 'bg-white' : 'bg-dm-gray-light',
           hasInviteCodeError || errorMessage
             ? 'border-pink-03-dark focus:ring-3 focus:ring-brand/15'
-            : 'border-dm-gray/35 focus:border-pink-03 focus:ring-3 focus:ring-brand/10'
-        "
+            : 'border-dm-gray/35 focus:border-pink-03 focus:ring-3 focus:ring-brand/10',
+        ]"
         name="inviteCode"
         type="text"
         inputmode="text"
@@ -281,7 +283,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
       class="h-4 w-4"
       aria-hidden="true"
     />
-    파트너 연결이 완료되었어요.
+    상대 연결이 완료되었어요.
   </div>
 
   <p class="mt-3 text-center text-[11px] leading-4 text-dm-gray-dark">
