@@ -15,7 +15,7 @@ export function parseFormattedAmount(amount: string): number {
 }
 
 export const formatWon = (amount: number) =>
-  `${new Intl.NumberFormat('ko-KR').format(amount / 10_000)}만원`;
+  `${new Intl.NumberFormat('ko-KR').format(Math.round(amount / 10_000))}만원`;
 
 // 'YYYY-MM-DD HH:mm:ss' 형식의 날짜를 'YYYY.MM.DD'로 표시합니다.
 export function formatDateDot(dateTime: string): string {
