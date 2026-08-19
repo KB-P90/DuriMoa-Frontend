@@ -183,42 +183,6 @@ const allAgreed = computed<boolean>({
         </span>
         <span>알림 수신</span>
         <em
-          class="rounded-full bg-pink-01 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-brand"
-        >
-          필수
-        </em>
-      </label>
-      <RouterLink
-        class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
-        :to="{ path: '/signup/terms/notification', query: { returnTo } }"
-        aria-label="알림 수신 안내 보기"
-      >
-        보기
-        <span
-          class="pl-0.5 text-sm"
-          aria-hidden="true"
-          >›</span
-        >
-      </RouterLink>
-    </div>
-
-    <!-- 선택: 알림 수신 동의 -->
-    <div class="flex min-h-9 items-center justify-between gap-2">
-      <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
-        <input
-          v-model="notificationAgreed"
-          class="peer sr-only"
-          type="checkbox"
-          name="notificationAgreed"
-        />
-        <span
-          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
-          aria-hidden="true"
-        >
-          ✓
-        </span>
-        <span>알림 수신</span>
-        <em
           class="rounded-full bg-dm-gray/20 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-dm-gray-dark"
         >
           선택
