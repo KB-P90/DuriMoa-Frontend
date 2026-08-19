@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Check, CreditCard, Landmark } from '@lucide/vue';
 import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFooter.vue';
-import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
 import type { OnboardingAccount } from '@/types/onboarding';
 
 // 조회된 계좌·카드 목록과 API 저장 상태를 표시한다.
@@ -19,9 +18,7 @@ defineProps<{
 
 // 이전·다음 이동, 계좌·카드 선택 변경과 온보딩 건너뛰기를 상위 화면에 요청한다.
 defineEmits<{
-  back: [];
   next: [];
-  skip: [];
   toggle: [accountNumber: string];
   toggleCard: [cardNumber: string];
 }>();
@@ -29,19 +26,12 @@ defineEmits<{
 
 <template>
   <section class="flex min-h-0 flex-1 flex-col overflow-hidden">
-    <OnboardingProgress
-      :current-step="2"
-      :show-step-indicator="false"
-      :total-steps="2"
-      @back="$emit('back')"
-    />
-
     <div
       class="min-h-0 flex-1 overflow-y-auto scrollbar-none overscroll-y-contain px-4 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:px-3 sm:px-5"
     >
-      <h1 class="text-[21px] font-extrabold tracking-[-0.055em] min-[360px]:text-[23px]">
+      <h2 class="text-[21px] font-extrabold tracking-[-0.055em] min-[360px]:text-[23px]">
         사용할 계좌와 카드를 선택해주세요
-      </h1>
+      </h2>
       <p class="mt-1.5 text-[12px] leading-5 text-dm-gray-dark">
         계좌나 카드 중 하나 이상 선택하면 연결할 수 있어요
       </p>
@@ -217,11 +207,8 @@ defineEmits<{
 
     <OnboardingActionFooter
       :label="isLoading ? '자산 저장하는 중...' : '계좌·카드 선택하기'"
-      secondary-label="다음에 하기"
       :disabled="!canContinue || isLoading"
-      :secondary-disabled="isLoading"
       @primary="$emit('next')"
-      @secondary="$emit('skip')"
     />
   </section>
 </template>

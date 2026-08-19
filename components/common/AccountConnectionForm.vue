@@ -70,7 +70,7 @@ const normalizedProviderOptions = computed(() => props.providerOptions ?? defaul
         <select
           :id="`${formIdPrefix}-provider`"
           v-model="bank"
-          class="h-[52px] w-full appearance-none rounded-[13px] border border-dm-gray/35 bg-dm-gray-light pl-11 pr-11 text-[14px] font-bold outline-none transition focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
+          class="h-[52px] w-full appearance-none rounded-[13px] border border-dm-gray/35 bg-white pl-11 pr-11 text-[14px] font-bold outline-none transition focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
           name="provider"
           :disabled="disabled"
         >
@@ -100,7 +100,7 @@ const normalizedProviderOptions = computed(() => props.providerOptions ?? defaul
       <input
         :id="`${formIdPrefix}-login-id`"
         v-model="internetBankingId"
-        class="h-[52px] w-full rounded-[13px] border border-dm-gray/35 bg-dm-gray-light px-4 text-[14px] font-semibold outline-none transition focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
+        class="h-[52px] w-full rounded-[13px] border border-dm-gray/35 bg-white px-4 text-[14px] font-semibold outline-none transition focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
         name="loginId"
         type="text"
         autocomplete="username"
@@ -125,7 +125,7 @@ const normalizedProviderOptions = computed(() => props.providerOptions ?? defaul
       <input
         :id="`${formIdPrefix}-login-password`"
         v-model="internetBankingPassword"
-        class="h-[52px] w-full rounded-[13px] border border-dm-gray/35 bg-dm-gray-light px-4 text-[14px] font-semibold outline-none transition focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
+        class="h-[52px] w-full rounded-[13px] border border-dm-gray/35 bg-white px-4 text-[14px] font-semibold outline-none transition focus:border-pink-03 focus:ring-3 focus:ring-brand/10"
         name="loginPassword"
         type="password"
         autocomplete="current-password"

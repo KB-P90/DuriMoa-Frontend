@@ -46,7 +46,7 @@ export function useOnboardingCouplePublishing() {
   // 형식에 맞는 초대 코드가 입력되었는지 나타낸다.
   const canConfirm = computed(() => inviteCode.value.length > 0 && !hasInviteCodeError.value);
 
-  // 한 명의 파트너와 이미 연결되었는지 나타낸다.
+  // 한 명의 상대와 이미 연결되었는지 나타낸다.
   const isConnected = computed(() =>
     requests.value.some((request) => request.status === 'CONNECTED')
   );

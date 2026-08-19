@@ -86,7 +86,7 @@ export const ONBOARDING_INVITE_CODE_PATTERN = /^[A-Z0-9]{6}$/;
 // 커플 연결 상태에서 반복해서 사용하는 고정 안내 문구다.
 export const ONBOARDING_COUPLE_MESSAGES = {
   ALREADY_CONNECTED: '이미 다른 커플과 연결되어 있어요',
-  CONNECTED: '파트너 연결이 완료되었어요',
+  CONNECTED: '상대 연결이 완료되었어요',
   INVALID_CODE: '유효하지 않거나 만료된 초대 코드예요',
   NO_PENDING_REQUEST: '대기 중인 연결 요청이 없어요',
 } as const;

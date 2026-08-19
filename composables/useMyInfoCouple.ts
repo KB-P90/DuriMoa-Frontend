@@ -180,7 +180,7 @@ export function useMyInfoCouple(isActive: Readonly<Ref<boolean>>) {
 
       feedbackMessage.value =
         invitationResponse.status === 'CONNECTED'
-          ? '파트너 연결이 완료되었어요.'
+          ? '상대 연결이 완료되었어요.'
           : `${invitationResponse.name}님에게 연결 요청을 보냈어요.`;
       await loadCoupleStatus();
     } catch {
@@ -211,7 +211,7 @@ export function useMyInfoCouple(isActive: Readonly<Ref<boolean>>) {
         upsertRequest(acceptedRequest);
       }
 
-      feedbackMessage.value = '파트너 연결이 완료되었어요.';
+      feedbackMessage.value = '상대 연결이 완료되었어요.';
       await loadCoupleStatus();
     } catch {
       errorMessage.value = ERROR_MESSAGES.ACCEPT;

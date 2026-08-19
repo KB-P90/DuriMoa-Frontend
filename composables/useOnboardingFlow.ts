@@ -322,6 +322,43 @@ export function useOnboardingFlow() {
     selectedNumbers.value = [];
   }
 
+  // 저장 API가 실패 응답을 반환했더라도 서버에 반영되었는지 다시 조회해 화면 상태를 맞춘다.
+  async function reconcileSelectedAssets(
+    company: string,
+    assets: Ref<OnboardingAccount[]>,
+    selectedNumbers: Ref<string[]>,
+    requestedNumbers: readonly string[]
+  ) {
+    if (requestedNumbers.length === 0) {
+      return true;
+    }
+
+    const areAllRequestedAssetsRegistered = () =>
+      requestedNumbers.every((requestedNumber) =>
+        assets.value.some(
+          (asset) => asset.accountNumber === requestedNumber && asset.isRegistered
+        )
+      );
+
+    if (!areAllRequestedAssetsRegistered()) {
+      try {
+        const response = await getOnboardingAccounts(company);
+        assets.value = response.itemList.map(toOnboardingAccount);
+      } catch {
+        return false;
+      }
+    }
+
+    const registeredNumbers = new Set(
+      assets.value.filter((asset) => asset.isRegistered).map((asset) => asset.accountNumber)
+    );
+    selectedNumbers.value = selectedNumbers.value.filter(
+      (selectedNumber) => !registeredNumbers.has(selectedNumber)
+    );
+
+    return areAllRequestedAssetsRegistered();
+  }
+
   // 선택한 신규 계좌와 카드를 기관별로 저장한 뒤 결혼자금 입력 화면으로 이동한다.
   async function selectConnectedAccounts() {
     if (!canContinueAccountSelection.value) {
@@ -330,6 +367,8 @@ export function useOnboardingFlow() {
 
     isSelectingAccounts.value = true;
     accountSelectionErrorMessage.value = '';
+    const requestedAccountNumbers = [...selectedAccountNumbers.value];
+    const requestedCardNumbers = [...selectedCardNumbers.value];
 
     try {
       await saveSelectedAssets(selectedCompany.value, accounts, selectedAccountNumbers);
@@ -339,6 +378,30 @@ export function useOnboardingFlow() {
         goToScreen('wedding-fund');
       }
     } catch (error: unknown) {
+      const [areAccountsRegistered, areCardsRegistered] = await Promise.all([
+        reconcileSelectedAssets(
+          selectedCompany.value,
+          accounts,
+          selectedAccountNumbers,
+          requestedAccountNumbers
+        ),
+        reconcileSelectedAssets(
+          cardCompany.value,
+          cards,
+          selectedCardNumbers,
+          requestedCardNumbers
+        ),
+      ]);
+
+      if (
+        areAccountsRegistered &&
+        areCardsRegistered &&
+        isCurrentOnboardingScreen('account-selection')
+      ) {
+        goToScreen('wedding-fund');
+        return;
+      }
+
       accountSelectionErrorMessage.value = getOnboardingApiErrorMessage(
         error,
         '선택한 계좌와 카드를 저장하지 못했어요. 다시 시도해주세요.'
