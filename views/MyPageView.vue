@@ -273,7 +273,7 @@ onMounted(async () => {
             v-for="item in assetSummaries"
             :key="item.id"
             type="button"
-            class="flex flex-1 items-center gap-2.5 rounded-xl bg-dm-mint-light p-3.5 text-left h-[80px]"
+            class="flex flex-1 items-center gap-5 rounded-xl bg-dm-mint-light p-5 text-left h-[80px]"
             @click="goAssetConnect(item)"
           >
             <component
@@ -281,8 +281,8 @@ onMounted(async () => {
               class="h-6 w-6 shrink-0 text-dm-mint-darker"
               :stroke-width="1.4"
             />
-            <span class="flex min-w-0 flex-1 flex-col">
-              <span class="text-xs font-medium leading-4 text-dm-mint-darker">{{
+            <span class="flex min-w-0 flex-1 flex-col gap-2">
+              <span class="text-sm font-medium leading-4 text-dm-mint-darker">{{
                 item.label
               }}</span>
               <div class="flex items-baseline gap-0.5">
@@ -325,7 +325,7 @@ onMounted(async () => {
           </button>
         </div>
         <p
-          class="flex min-h-8 items-center justify-center rounded-lg bg-dm-mint-light px-2.5 py-1.5 text-center text-xs leading-4 text-dm-mint-darker"
+          class="flex min-h-12 items-center justify-center rounded-lg bg-dm-mint-light px-2.5 py-1.5 text-center text-sm leading-4 text-dm-mint-darker h-[30px]"
         >
           {{ selectedShareCaption }}
         </p>
