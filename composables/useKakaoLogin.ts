@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { isAxiosError } from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 import { loginWithKakao, signupWithKakao } from '@/server/authApi';
@@ -170,15 +170,6 @@ export function useKakaoSignup() {
   const signupError = ref('');
   const isSubmitting = ref(false);
 
-  const canSubmit = computed(
-    () =>
-      Boolean(role.value) &&
-      serviceTermsAgreed.value &&
-      privacyTermsAgreed.value &&
-      financeTermsAgreed.value &&
-      !isSubmitting.value
-  );
-
   async function validateSignupSession() {
     const signupToken = sessionStorage.getItem(KAKAO_SESSION_KEYS.SIGNUP_TOKEN);
     if (!signupToken || !name.value) {
@@ -236,7 +227,6 @@ export function useKakaoSignup() {
   }
 
   return {
-    canSubmit,
     financeTermsAgreed,
     isSubmitting,
     name,
