@@ -10,6 +10,7 @@ import { getNotificationSettings, updateNotificationSettings } from '@/server/no
 import { ALL_NOTIFICATION_SETTING_TYPES } from '@/constants/notificationConsent';
 import type { ShareScope } from '@/types/myPage';
 import PageHeader from '@/components/common/PageHeader.vue';
+import { MyPageSkeleton } from '@/components/skeleton/myPage';
 
 type AssetSummary = {
   id: 'accounts' | 'cards';
@@ -22,7 +23,7 @@ useAuthCheck();
 
 const router = useRouter();
 const myPageStore = useMyPageStore();
-const { isUpdatingShare, myPage } = storeToRefs(myPageStore);
+const { isLoading, isUpdatingShare, myPage } = storeToRefs(myPageStore);
 const notificationStore = useNotificationStore();
 
 const roleLabels = {
@@ -142,8 +143,9 @@ onMounted(async () => {
 <template>
   <div class="flex min-h-full flex-col">
     <PageHeader title="마이페이지" />
+    <MyPageSkeleton v-if="isLoading && !myPage" />
     <div
-      v-if="myPage"
+      v-else-if="myPage"
       class="flex flex-1 flex-col justify-between gap-5 bg-white px-4 py-5 md:px-10 md:py-6"
     >
       <article
