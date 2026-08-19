@@ -33,7 +33,7 @@ defineProps({
 </script>
 
 <template>
-  <AuthScreen>
+  <AuthScreen class="!bg-white [&>section]:!bg-white">
     <AuthHeader
       :title="title"
       :back-to="backTo"

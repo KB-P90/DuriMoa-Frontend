@@ -11,22 +11,16 @@ defineProps({
 // 백엔드 회원가입 요청에 전달할 약관 동의 상태다.
 const serviceAgreed = defineModel<boolean>('serviceTermsAgreed', { default: false });
 const privacyAgreed = defineModel<boolean>('privacyTermsAgreed', { default: false });
-const marketingAgreed = defineModel<boolean>('marketingTermsAgreed', { default: false });
 
 // 금융정보 연동 동의는 회원가입 DTO와 별개이며, 부모가 연결하지 않으면 화면 내부에서 관리한다.
 const financeAgreed = defineModel<boolean>('financeTermsAgreed', { default: false });
 
 // 전체 동의 선택 시 모든 약관을 같은 값으로 변경하고, 개별 상태도 전체 동의에 반영한다.
 const allAgreed = computed<boolean>({
-  get: () =>
-    serviceAgreed.value &&
-    privacyAgreed.value &&
-    marketingAgreed.value &&
-    financeAgreed.value,
+  get: () => serviceAgreed.value && privacyAgreed.value && financeAgreed.value,
   set: (checked) => {
     serviceAgreed.value = checked;
     privacyAgreed.value = checked;
-    marketingAgreed.value = checked;
     financeAgreed.value = checked;
   },
 });
@@ -52,7 +46,7 @@ const allAgreed = computed<boolean>({
         ✓
       </span>
       <!-- TODO: #232631 진한 제목 색상 토큰 등록 검토 -->
-      <strong class="text-sm font-extrabold text-[#232631]">약관 전체 동의</strong>
+      <strong class="text-sm font-extrabold text-[#232631]">약관 및 알림 전체 동의</strong>
     </label>
 
     <div class="my-3 h-px bg-dm-gray/20"></div>
@@ -131,30 +125,6 @@ const allAgreed = computed<boolean>({
       </RouterLink>
     </div>
 
-    <!-- 선택: 마케팅 정보 수신 동의 -->
-    <div class="flex min-h-9 items-center justify-between gap-2">
-      <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
-        <input
-          v-model="marketingAgreed"
-          class="peer sr-only"
-          type="checkbox"
-          name="marketingTermsAgreed"
-        />
-        <span
-          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
-          aria-hidden="true"
-        >
-          ✓
-        </span>
-        <span>마케팅 정보 수신</span>
-        <em
-          class="rounded-full bg-dm-gray/20 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-dm-gray-dark"
-        >
-          선택
-        </em>
-      </label>
-    </div>
-
     <!-- 선택: 금융정보 연동 약관 -->
     <div class="flex min-h-9 items-center justify-between gap-2">
       <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
@@ -172,9 +142,9 @@ const allAgreed = computed<boolean>({
         </span>
         <span>금융정보 연동 약관</span>
         <em
-          class="rounded-full bg-dm-gray/20 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-dm-gray-dark"
+          class="rounded-full bg-pink-01 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-brand"
         >
-          선택
+          필수
         </em>
       </label>
       <RouterLink

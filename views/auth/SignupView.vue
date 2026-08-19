@@ -9,7 +9,6 @@ import { useSignup } from '@/composables/useSignup';
 const {
   financeTermsAgreed,
   isSubmitting,
-  marketingTermsAgreed,
   name,
   password,
   passwordConfirm,
@@ -199,7 +198,6 @@ const {
       <!-- 약관 카드와 전문 화면 이동 -->
       <TermsAgreementCard
         v-model:finance-terms-agreed="financeTermsAgreed"
-        v-model:marketing-terms-agreed="marketingTermsAgreed"
         v-model:privacy-terms-agreed="privacyTermsAgreed"
         v-model:service-terms-agreed="serviceTermsAgreed"
         class="!bg-white [&_input:not(:checked)+span]:!bg-white"

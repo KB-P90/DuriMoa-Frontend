@@ -28,7 +28,6 @@ export function useSignup(signupGateway?: SignupGateway) {
   const signupStore = useSignupStore();
   const {
     financeTermsAgreed,
-    marketingTermsAgreed,
     name,
     password,
     passwordConfirm,
@@ -59,7 +58,6 @@ export function useSignup(signupGateway?: SignupGateway) {
       passwordConfirm,
       serviceTermsAgreed,
       privacyTermsAgreed,
-      marketingTermsAgreed,
       financeTermsAgreed,
     ],
     () => {
@@ -78,7 +76,7 @@ export function useSignup(signupGateway?: SignupGateway) {
       role: role.value,
       serviceTermsAgreed: serviceTermsAgreed.value,
       privacyTermsAgreed: privacyTermsAgreed.value,
-      marketingTermsAgreed: marketingTermsAgreed.value,
+      marketingTermsAgreed: false,
     };
   }
 
@@ -121,7 +119,6 @@ export function useSignup(signupGateway?: SignupGateway) {
   return {
     financeTermsAgreed,
     isSubmitting,
-    marketingTermsAgreed,
     name,
     password,
     passwordConfirm,

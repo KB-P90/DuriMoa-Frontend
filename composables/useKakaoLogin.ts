@@ -166,7 +166,6 @@ export function useKakaoSignup() {
   const role = ref<SignupRoleDto | ''>('');
   const serviceTermsAgreed = ref(false);
   const privacyTermsAgreed = ref(false);
-  const marketingTermsAgreed = ref(false);
   const signupError = ref('');
   const isSubmitting = ref(false);
 
@@ -212,7 +211,7 @@ export function useKakaoSignup() {
         role: role.value,
         serviceTermsAgreed: serviceTermsAgreed.value,
         privacyTermsAgreed: privacyTermsAgreed.value,
-        marketingTermsAgreed: marketingTermsAgreed.value,
+        marketingTermsAgreed: false,
       });
       if (!saveAccessToken(response.accessToken)) {
         signupError.value = KAKAO_LOGIN_ERROR_MESSAGE;
@@ -233,7 +232,6 @@ export function useKakaoSignup() {
   return {
     canSubmit,
     isSubmitting,
-    marketingTermsAgreed,
     name,
     privacyTermsAgreed,
     profileImage,
