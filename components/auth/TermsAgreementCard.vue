@@ -11,17 +11,21 @@ defineProps({
 // 백엔드 회원가입 요청에 전달할 약관 동의 상태다.
 const serviceAgreed = defineModel<boolean>('serviceTermsAgreed', { default: false });
 const privacyAgreed = defineModel<boolean>('privacyTermsAgreed', { default: false });
+const marketingAgreed = defineModel<boolean>('marketingTermsAgreed', { default: false });
+const notificationAgreed = defineModel<boolean>('notificationAgreed', { default: false });
 
 // 금융정보 연동 동의는 프론트에서 필수로 검증하고 회원가입 DTO에 전달한다.
 const financeAgreed = defineModel<boolean>('financeTermsAgreed', { default: false });
 
 // 전체 동의 선택 시 모든 약관을 같은 값으로 변경하고, 개별 상태도 전체 동의에 반영한다.
 const allAgreed = computed<boolean>({
-  get: () => serviceAgreed.value && privacyAgreed.value && financeAgreed.value,
+  get: () =>
+    serviceAgreed.value && privacyAgreed.value && marketingAgreed.value && financeAgreed.value,
   set: (checked) => {
     serviceAgreed.value = checked;
     privacyAgreed.value = checked;
     financeAgreed.value = checked;
+    notificationAgreed.value = checked;
   },
 });
 </script>
@@ -152,6 +156,42 @@ const allAgreed = computed<boolean>({
         class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
         :to="{ path: '/signup/terms/finance', query: { returnTo } }"
         aria-label="금융정보 연동 약관 전문 보기"
+      >
+        보기
+        <span
+          class="pl-0.5 text-sm"
+          aria-hidden="true"
+          >›</span
+        >
+      </RouterLink>
+    </div>
+
+    <!-- 선택: 알림 수신 동의 -->
+    <div class="flex min-h-9 items-center justify-between gap-2">
+      <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
+        <input
+          v-model="notificationAgreed"
+          class="peer sr-only"
+          type="checkbox"
+          name="notificationAgreed"
+        />
+        <span
+          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
+          aria-hidden="true"
+        >
+          ✓
+        </span>
+        <span>알림 수신</span>
+        <em
+          class="rounded-full bg-dm-gray/20 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-dm-gray-dark"
+        >
+          선택
+        </em>
+      </label>
+      <RouterLink
+        class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
+        :to="{ path: '/signup/terms/notification', query: { returnTo } }"
+        aria-label="알림 수신 안내 보기"
       >
         보기
         <span

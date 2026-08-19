@@ -1,10 +1,12 @@
 import { computed, ref, watch, type Ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import {
   acceptMyPageCouple,
   getMyPageCoupleStatus,
   getMyPageInviteCode,
   inviteMyPageCouple,
 } from '@/server/myPageApi';
+import { useNotificationStore } from '@/stores/notificationStore';
 import type { MyPageCouplePartnerResponseDto } from '@/types/dto/myPage.dto';
 import type { OnboardingCoupleRequest } from '@/types/onboarding';
 
@@ -233,6 +235,14 @@ export function useMyInfoCouple(isActive: Readonly<Ref<boolean>>) {
     },
     { immediate: true }
   );
+
+  // 이 화면이 떠있는 동안 커플 연결 관련 실시간 알림이 오면 연결 상태를 다시 불러온다.
+  const { lastRealtimeNotification } = storeToRefs(useNotificationStore());
+  watch(lastRealtimeNotification, (notification) => {
+    if (isActive.value && notification?.category === 'COUPLE') {
+      void loadCoupleStatus();
+    }
+  });
 
   return {
     acceptRequest,

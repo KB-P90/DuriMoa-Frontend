@@ -42,3 +42,33 @@ export interface NotificationStreamEvent {
   message: string;
   occurredAt: string;
 }
+
+// PATCH /api/notification-settings에서 다루는 알림 종류. 백엔드 NotificationType enum과 동일하다.
+export type NotificationSettingType =
+  | 'GOAL_CREATED'
+  | 'GOAL_CHANGED'
+  | 'GOAL_APPROVAL_REQUESTED'
+  | 'GOAL_APPROVED'
+  | 'GOAL_REJECTED'
+  | 'COUPLE_REQUESTED'
+  | 'COUPLE_ACCEPTED'
+  | 'COUPLE_DISCONNECTED';
+
+export interface NotificationSettingUpdateRequestDto {
+  type: NotificationSettingType;
+  pushEnabled: boolean;
+}
+
+// PATCH /api/notification-settings는 한 번에 여러 알림 종류를 같이 저장한다.
+export interface NotificationSettingBatchUpdateRequestDto {
+  settings: NotificationSettingUpdateRequestDto[];
+}
+
+// GET /api/notification-settings 응답의 개별 항목
+export interface NotificationSettingResponseDto {
+  id: number;
+  userId: number;
+  type: NotificationSettingType;
+  pushEnabled: boolean;
+  createdAt: string;
+}
