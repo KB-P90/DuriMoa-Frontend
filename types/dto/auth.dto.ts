@@ -27,7 +27,7 @@ export interface SignupRequestDto {
   role: SignupRoleDto;
   serviceTermsAgreed: boolean;
   privacyTermsAgreed: boolean;
-  marketingTermsAgreed: boolean;
+  financeTermsAgreed: boolean;
 }
 
 export interface SignupResponseDto {
@@ -58,5 +58,5 @@ export interface KakaoSignupRequestDto {
   role: SignupRoleDto;
   serviceTermsAgreed: boolean;
   privacyTermsAgreed: boolean;
-  marketingTermsAgreed: boolean;
+  financeTermsAgreed: boolean;
 }

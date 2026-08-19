@@ -29,8 +29,36 @@ export const useHomeStore = defineStore('home', {
     dashboard: EMPTY_DASHBOARD,
     missions: [] as SavingMission[],
     isLoading: false,
+    isRefreshingDashboard: false,
+    hasPendingDashboardRefresh: false,
   }),
   actions: {
+    // 실시간 알림 수신 시 홈 대시보드만 다시 조회한다. 연속 요청은 한 번 더 갱신하도록 합친다.
+    async refreshDashboard() {
+      if (this.isRefreshingDashboard) {
+        this.hasPendingDashboardRefresh = true;
+        return;
+      }
+
+      this.isRefreshingDashboard = true;
+
+      try {
+        do {
+          this.hasPendingDashboardRefresh = false;
+
+          try {
+            const dashboard = await getHomeDashboard();
+            if (dashboard) {
+              this.dashboard = toHomeDashboard(dashboard);
+            }
+          } catch {
+            // 실시간 갱신 실패 시 현재 홈 데이터를 유지한다.
+          }
+        } while (this.hasPendingDashboardRefresh);
+      } finally {
+        this.isRefreshingDashboard = false;
+      }
+    },
     async fetchHome(year = 2026, month = 7) {
       this.isLoading = true;
 
