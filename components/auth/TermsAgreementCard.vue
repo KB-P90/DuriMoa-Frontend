@@ -12,7 +12,7 @@ defineProps({
 const serviceAgreed = defineModel<boolean>('serviceTermsAgreed', { default: false });
 const privacyAgreed = defineModel<boolean>('privacyTermsAgreed', { default: false });
 
-// 금융정보 연동 동의는 회원가입 DTO와 별개이며, 부모가 연결하지 않으면 화면 내부에서 관리한다.
+// 금융정보 연동 동의는 프론트에서 필수로 검증하고 회원가입 DTO에 전달한다.
 const financeAgreed = defineModel<boolean>('financeTermsAgreed', { default: false });
 
 // 전체 동의 선택 시 모든 약관을 같은 값으로 변경하고, 개별 상태도 전체 동의에 반영한다.
@@ -125,7 +125,7 @@ const allAgreed = computed<boolean>({
       </RouterLink>
     </div>
 
-    <!-- 선택: 금융정보 연동 약관 -->
+    <!-- 필수: 금융정보 연동 약관 -->
     <div class="flex min-h-9 items-center justify-between gap-2">
       <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
         <input
@@ -133,6 +133,7 @@ const allAgreed = computed<boolean>({
           class="peer sr-only"
           type="checkbox"
           name="financeTermsAgreed"
+          required
         />
         <span
           class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"

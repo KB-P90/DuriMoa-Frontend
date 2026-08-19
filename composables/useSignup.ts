@@ -76,7 +76,7 @@ export function useSignup(signupGateway?: SignupGateway) {
       role: role.value,
       serviceTermsAgreed: serviceTermsAgreed.value,
       privacyTermsAgreed: privacyTermsAgreed.value,
-      marketingTermsAgreed: false,
+      financeTermsAgreed: financeTermsAgreed.value,
     };
   }
 
@@ -88,7 +88,11 @@ export function useSignup(signupGateway?: SignupGateway) {
       return;
     }
 
-    if (!serviceTermsAgreed.value || !privacyTermsAgreed.value) {
+    if (
+      !serviceTermsAgreed.value ||
+      !privacyTermsAgreed.value ||
+      !financeTermsAgreed.value
+    ) {
       signupError.value = REQUIRED_TERMS_MESSAGE;
       return;
     }

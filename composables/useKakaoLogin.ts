@@ -166,6 +166,7 @@ export function useKakaoSignup() {
   const role = ref<SignupRoleDto | ''>('');
   const serviceTermsAgreed = ref(false);
   const privacyTermsAgreed = ref(false);
+  const financeTermsAgreed = ref(false);
   const signupError = ref('');
   const isSubmitting = ref(false);
 
@@ -174,6 +175,7 @@ export function useKakaoSignup() {
       Boolean(role.value) &&
       serviceTermsAgreed.value &&
       privacyTermsAgreed.value &&
+      financeTermsAgreed.value &&
       !isSubmitting.value
   );
 
@@ -197,7 +199,11 @@ export function useKakaoSignup() {
       signupError.value = '역할을 선택해주세요.';
       return;
     }
-    if (!serviceTermsAgreed.value || !privacyTermsAgreed.value) {
+    if (
+      !serviceTermsAgreed.value ||
+      !privacyTermsAgreed.value ||
+      !financeTermsAgreed.value
+    ) {
       signupError.value = REQUIRED_TERMS_MESSAGE;
       return;
     }
@@ -211,7 +217,7 @@ export function useKakaoSignup() {
         role: role.value,
         serviceTermsAgreed: serviceTermsAgreed.value,
         privacyTermsAgreed: privacyTermsAgreed.value,
-        marketingTermsAgreed: false,
+        financeTermsAgreed: financeTermsAgreed.value,
       });
       if (!saveAccessToken(response.accessToken)) {
         signupError.value = KAKAO_LOGIN_ERROR_MESSAGE;
@@ -231,6 +237,7 @@ export function useKakaoSignup() {
 
   return {
     canSubmit,
+    financeTermsAgreed,
     isSubmitting,
     name,
     privacyTermsAgreed,

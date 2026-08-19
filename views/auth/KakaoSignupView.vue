@@ -7,6 +7,7 @@ import { useKakaoSignup } from '@/composables/useKakaoLogin';
 
 const {
   canSubmit,
+  financeTermsAgreed,
   isSubmitting,
   name,
   privacyTermsAgreed,
@@ -90,6 +91,7 @@ onMounted(validateSignupSession);
       </fieldset>
 
       <TermsAgreementCard
+        v-model:finance-terms-agreed="financeTermsAgreed"
         v-model:privacy-terms-agreed="privacyTermsAgreed"
         v-model:service-terms-agreed="serviceTermsAgreed"
         return-to="/auth/kakao/signup"
