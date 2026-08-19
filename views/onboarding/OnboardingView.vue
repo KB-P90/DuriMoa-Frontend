@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import AuthScreen from '@/components/auth/AuthScreen.vue';
+import Loading from '@/components/common/Loading.vue';
+import PageHeader from '@/components/common/PageHeader.vue';
 import AccountConnectionStep from '@/components/onboarding/AccountConnectionStep.vue';
 import AccountSelectionStep from '@/components/onboarding/AccountSelectionStep.vue';
 import CoupleConnectionStep from '@/components/onboarding/CoupleConnectionStep.vue';
+import WeddingFundStep from '@/components/onboarding/WeddingFundStep.vue';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useOnboardingCouple } from '@/composables/useOnboardingCouple';
 import { useOnboardingFlow } from '@/composables/useOnboardingFlow';
@@ -23,13 +26,15 @@ const {
   cards,
   canContinueAccount,
   canContinueAccountSelection,
+  canContinueWeddingFund,
   connectAccount,
+  completeWeddingFund,
   continueFromCouple,
   goBack,
-  goHome,
   internetBankingId,
   internetBankingPassword,
   isConnectingAccount,
+  isSavingWeddingFund,
   isSelectingAccounts,
   screen,
   selectConnectedAccounts,
@@ -37,10 +42,23 @@ const {
   selectedCardNumbers,
   toggleAccount,
   toggleCard,
+  weddingFundAmountInWon,
+  weddingFundErrorMessage,
 } = useOnboardingFlow();
 
 // 현재 커플 연결 단계가 화면에 표시되고 있는지 나타낸다.
 const isCoupleStepActive = computed(() => screen.value === 'couple');
+
+// 현재 온보딩 단계에 맞는 공통 헤더 제목이다.
+const onboardingHeaderTitle = computed(
+  () =>
+    ({
+      account: '계좌·카드 연결',
+      'account-selection': '계좌·카드 선택',
+      couple: '커플 연결',
+      'wedding-fund': '결혼자금 입력',
+    })[screen.value]
+);
 
 // 커플 연결 단계에서 사용하는 서버 상태와 API 동작이다.
 const {
@@ -69,11 +87,27 @@ const {
 </script>
 
 <template>
-  <AuthScreen>
+  <AuthScreen class="!bg-white [&>section]:!bg-white">
+    <Loading
+      v-if="isConnectingAccount || isSelectingAccounts || isSavingWeddingFund"
+      :label="
+        isConnectingAccount
+          ? '계좌와 카드를 불러오는 중이에요'
+          : isSelectingAccounts
+            ? '선택한 계좌와 카드를 저장하는 중이에요'
+            : '결혼자금을 저장하는 중이에요'
+      "
+    />
+
     <!-- 공통 헤더와 하단 내비게이션을 사용하지 않는 온보딩 전용 화면 -->
     <div
-      class="mx-auto flex min-h-full w-full max-w-[480px] flex-1 flex-col overflow-hidden bg-dm-gray-light sm:border-x sm:border-dm-gray/20"
+      class="mx-auto flex min-h-full w-full max-w-[480px] flex-1 flex-col overflow-hidden bg-white sm:border-x sm:border-dm-gray/20"
     >
+      <PageHeader
+        :title="onboardingHeaderTitle"
+        :on-back="goBack"
+      />
+
       <CoupleConnectionStep
         v-if="screen === 'couple'"
         v-model:invite-code="inviteCode"
@@ -93,12 +127,10 @@ const {
         :requests="requests"
         :status-error-message="statusErrorMessage"
         @accept="acceptRequest"
-        @back="goBack"
         @confirm="confirmInviteCode"
         @copy-my-invite-code="copyMyInviteCode"
         @retry-my-invite-code="loadMyInviteCode"
         @retry-status="loadCoupleStatus"
-        @skip="goHome"
         @next="continueFromCouple"
       />
 
@@ -114,9 +146,7 @@ const {
         :can-continue="canContinueAccount"
         :connection-error-message="accountConnectionErrorMessage"
         :is-loading="isConnectingAccount"
-        @back="goBack"
         @connect="connectAccount"
-        @skip="goHome"
       />
 
       <AccountSelectionStep
@@ -130,11 +160,18 @@ const {
         :is-loading="isSelectingAccounts"
         :selected-account-numbers="selectedAccountNumbers"
         :selected-card-numbers="selectedCardNumbers"
-        @back="goBack"
-        @skip="goHome"
         @toggle="toggleAccount"
         @toggle-card="toggleCard"
         @next="selectConnectedAccounts"
+      />
+
+      <WeddingFundStep
+        v-else-if="screen === 'wedding-fund'"
+        v-model:amount-in-won="weddingFundAmountInWon"
+        :can-continue="canContinueWeddingFund"
+        :error-message="weddingFundErrorMessage"
+        :is-loading="isSavingWeddingFund"
+        @next="completeWeddingFund"
       />
     </div>
   </AuthScreen>

@@ -89,7 +89,7 @@ const RECOMMENDATION_TIPS = [
     title: '서로의 지출을 보고\n한마디 남겨보세요',
     description: '상대방의 지출 내역에 짧은 응원과 피드백을 남길 수 있어요.',
     actionLabel: '지출 확인하러 가기',
-    to: { name: 'expense' },
+    to: { name: 'expense', query: { from: 'home' } },
     cardClass: 'bg-pink-06',
     ctaTextClass: 'text-pink-06',
   },
@@ -121,8 +121,25 @@ const heroCtaTo = computed(() => {
   return STEP_DEFS[currentStepIndex.value].to;
 });
 
-// 체크 표시는 홈 API가 알려준 현재 단계에 맞춰 이동한다.
-const checklistActiveIndex = computed(() => (isLoggedIn ? Math.max(currentStepIndex.value, 0) : 0));
+// 완료 표시는 홈 API의 단계별 completed 값만 사용한다.
+const checklistCompletedSteps = computed(() =>
+  STEP_DEFS.map((stepDefinition) => {
+    if (!isLoggedIn) {
+      return false;
+    }
+
+    return (
+      dashboard.value.setupChecklist.steps.find(
+        (checklistStep) => checklistStep.code === stepDefinition.code
+      )?.completed ?? false
+    );
+  })
+);
+
+// 홈 API가 알려준 첫 미완료 단계를 현재 진행할 단계로 표시한다.
+const checklistCurrentIndex = computed(() =>
+  isLoggedIn ? Math.max(currentStepIndex.value, 0) : 0
+);
 const checklistSettingsTo = computed(() => heroCtaTo.value ?? { name: 'goal-list' });
 
 // 비로그인이거나 홈 API의 현재 단계가 1~3단계면 예산 미리보기를 보여준다.
@@ -265,7 +282,8 @@ onMounted(() => {
       <template v-if="!isOnboardingComplete">
         <HomeChecklistCard
           :steps="stepLabels"
-          :active-index="checklistActiveIndex"
+          :completed-steps="checklistCompletedSteps"
+          :current-index="checklistCurrentIndex"
           :settings-to="checklistSettingsTo"
         />
         <HomeBudgetPreview
@@ -284,6 +302,7 @@ onMounted(() => {
           v-if="dashboard.savingAlert"
           type="button"
           class="saving-alert flex h-[39px] w-full items-center gap-2 rounded-[11px] bg-pink-01 px-[13px] text-left md:h-11"
+          @click="notificationStore.openPanel()"
         >
           <span class="text-[10px] font-extrabold leading-3 text-brand">알림</span>
           <span class="truncate text-[11.5px] font-medium leading-[14px] text-[#5A5B69]">{{
@@ -363,7 +382,7 @@ onMounted(() => {
 
         <RouterLink
           v-if="missions.length === 0"
-          :to="{ name: 'expense' }"
+          :to="{ name: 'expense', query: { from: 'home' } }"
           class="mission-empty mt-2 flex h-[62px] items-center gap-3 rounded-2xl border border-[#F0E7E5] bg-white px-4 text-left md:h-[72px]"
         >
           <span

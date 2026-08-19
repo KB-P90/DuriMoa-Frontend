@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 defineProps({
   returnTo: {
@@ -14,21 +14,16 @@ const privacyAgreed = defineModel<boolean>('privacyTermsAgreed', { default: fals
 const marketingAgreed = defineModel<boolean>('marketingTermsAgreed', { default: false });
 const notificationAgreed = defineModel<boolean>('notificationAgreed', { default: false });
 
-// 금융정보 연동 동의는 회원가입 DTO와 별개의 화면 상태다.
-const financeAgreed = ref(false);
+// 금융정보 연동 동의는 프론트에서 필수로 검증하고 회원가입 DTO에 전달한다.
+const financeAgreed = defineModel<boolean>('financeTermsAgreed', { default: false });
 
 // 전체 동의 선택 시 모든 약관을 같은 값으로 변경하고, 개별 상태도 전체 동의에 반영한다.
 const allAgreed = computed<boolean>({
   get: () =>
-    serviceAgreed.value &&
-    privacyAgreed.value &&
-    marketingAgreed.value &&
-    financeAgreed.value &&
-    notificationAgreed.value,
+    serviceAgreed.value && privacyAgreed.value && marketingAgreed.value && financeAgreed.value,
   set: (checked) => {
     serviceAgreed.value = checked;
     privacyAgreed.value = checked;
-    marketingAgreed.value = checked;
     financeAgreed.value = checked;
     notificationAgreed.value = checked;
   },
@@ -55,7 +50,7 @@ const allAgreed = computed<boolean>({
         ✓
       </span>
       <!-- TODO: #232631 진한 제목 색상 토큰 등록 검토 -->
-      <strong class="text-sm font-extrabold text-[#232631]">약관 전체 동의</strong>
+      <strong class="text-sm font-extrabold text-[#232631]">약관 및 알림 전체 동의</strong>
     </label>
 
     <div class="my-3 h-px bg-dm-gray/20"></div>
@@ -134,31 +129,7 @@ const allAgreed = computed<boolean>({
       </RouterLink>
     </div>
 
-    <!-- 선택: 마케팅 정보 수신 동의 -->
-    <div class="flex min-h-9 items-center justify-between gap-2">
-      <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
-        <input
-          v-model="marketingAgreed"
-          class="peer sr-only"
-          type="checkbox"
-          name="marketingTermsAgreed"
-        />
-        <span
-          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
-          aria-hidden="true"
-        >
-          ✓
-        </span>
-        <span>마케팅 정보 수신</span>
-        <em
-          class="rounded-full bg-dm-gray/20 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-dm-gray-dark"
-        >
-          선택
-        </em>
-      </label>
-    </div>
-
-    <!-- 선택: 금융정보 연동 약관 -->
+    <!-- 필수: 금융정보 연동 약관 -->
     <div class="flex min-h-9 items-center justify-between gap-2">
       <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
         <input
@@ -166,6 +137,7 @@ const allAgreed = computed<boolean>({
           class="peer sr-only"
           type="checkbox"
           name="financeTermsAgreed"
+          required
         />
         <span
           class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
@@ -175,15 +147,51 @@ const allAgreed = computed<boolean>({
         </span>
         <span>금융정보 연동 약관</span>
         <em
-          class="rounded-full bg-dm-gray/20 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-dm-gray-dark"
+          class="rounded-full bg-pink-01 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-brand"
         >
-          선택
+          필수
         </em>
       </label>
       <RouterLink
         class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
         :to="{ path: '/signup/terms/finance', query: { returnTo } }"
         aria-label="금융정보 연동 약관 전문 보기"
+      >
+        보기
+        <span
+          class="pl-0.5 text-sm"
+          aria-hidden="true"
+          >›</span
+        >
+      </RouterLink>
+    </div>
+
+    <!-- 선택: 알림 수신 동의 -->
+    <div class="flex min-h-9 items-center justify-between gap-2">
+      <label class="flex min-w-0 cursor-pointer items-center gap-2 text-xs text-dm-gray-dark">
+        <input
+          v-model="notificationAgreed"
+          class="peer sr-only"
+          type="checkbox"
+          name="notificationAgreed"
+        />
+        <span
+          class="grid h-[19px] w-[19px] shrink-0 place-items-center rounded-md border border-dm-gray/50 bg-dm-gray-light text-[11px] font-black text-transparent peer-checked:border-pink-03 peer-checked:bg-brand peer-checked:text-dm-gray-light"
+          aria-hidden="true"
+        >
+          ✓
+        </span>
+        <span>알림 수신</span>
+        <em
+          class="rounded-full bg-pink-01 px-1.5 py-0.5 text-[9px] font-extrabold not-italic text-brand"
+        >
+          필수
+        </em>
+      </label>
+      <RouterLink
+        class="shrink-0 px-1 py-1.5 text-[11px] text-dm-gray-dark no-underline hover:text-brand-dark"
+        :to="{ path: '/signup/terms/notification', query: { returnTo } }"
+        aria-label="알림 수신 안내 보기"
       >
         보기
         <span

@@ -164,6 +164,7 @@ onMounted(() => {
         v-if="dashboard.savingAlert"
         type="button"
         class="saving-alert flex h-[39px] w-full items-center gap-2 rounded-[11px] bg-pink-01 px-[13px] text-left md:h-11"
+        @click="notificationStore.openPanel()"
       >
         <span class="text-[10px] font-extrabold leading-3 text-brand">알림</span>
         <span class="truncate text-[11.5px] font-medium leading-[14px] text-[#5A5B69]">{{
@@ -218,7 +219,7 @@ onMounted(() => {
 
       <RouterLink
         v-else
-        :to="{ name: 'expense' }"
+        :to="{ name: 'expense', query: { from: 'home' } }"
         class="mission-empty mt-2 flex h-[62px] items-center gap-2 rounded-2xl border border-[#F0E7E5] bg-white px-4 text-left md:h-[72px]"
       >
         <span class="grid h-8 w-8 shrink-0 place-items-center rounded-[11px] bg-pink-01 text-brand"

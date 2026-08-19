@@ -39,6 +39,7 @@ export const toMyPage = (profile: MyPageProfileResponseDto): MyPage => {
             role: toCoupleRole(profile.partnerRole),
             connectedSince: toDisplayDate(profile.coupleCreatedAt),
             status: profile.coupleStatus,
+            profileImage: profile.partnerProfileImage,
           }
         : null,
     assetSummary: {

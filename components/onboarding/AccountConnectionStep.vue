@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import AccountConnectionForm from '@/components/common/AccountConnectionForm.vue';
 import OnboardingActionFooter from '@/components/onboarding/OnboardingActionFooter.vue';
-import OnboardingProgress from '@/components/onboarding/OnboardingProgress.vue';
-
-const CARD_PROVIDER_OPTIONS = ['KB카드', '신한카드', '삼성카드', '현대카드'] as const;
+import { ONBOARDING_CARD_OPTIONS } from '@/constants/onboard';
 
 const props = defineProps<{
   cardConnectionErrorMessage: string;
@@ -12,7 +10,7 @@ const props = defineProps<{
   isLoading: boolean;
 }>();
 
-const emit = defineEmits<{ back: []; connect: []; skip: [] }>();
+const emit = defineEmits<{ connect: [] }>();
 
 const bank = defineModel<string>('bank', { required: true });
 const cardCompany = defineModel<string>('cardCompany', { required: true });
@@ -36,19 +34,12 @@ function handleSubmit() {
 
 <template>
   <section class="flex min-h-0 flex-1 flex-col overflow-hidden">
-    <OnboardingProgress
-      :current-step="2"
-      :show-step-indicator="false"
-      :total-steps="2"
-      @back="$emit('back')"
-    />
-
     <div
       class="min-h-0 flex-1 overflow-y-auto scrollbar-none overscroll-y-contain px-4 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:px-3 sm:px-5"
     >
-      <h1 class="text-[21px] font-extrabold tracking-[-0.055em] min-[360px]:text-[23px]">
+      <h2 class="text-[21px] font-extrabold tracking-[-0.055em] min-[360px]:text-[23px]">
         계좌와 카드를 연결해주세요
-      </h1>
+      </h2>
       <p class="mt-1.5 text-[12px] leading-5 text-dm-gray-dark">
         결혼 준비에 사용할 계좌와 카드를 안전하게 불러올게요
       </p>
@@ -93,7 +84,7 @@ function handleSubmit() {
             helper-text="기존에 연결한 카드사는 아이디와 비밀번호를 다시 입력하지 않아도 돼요"
             :connection-error-message="cardConnectionErrorMessage"
             :disabled="isLoading"
-            :provider-options="CARD_PROVIDER_OPTIONS"
+            :provider-options="ONBOARDING_CARD_OPTIONS"
             @submit="handleSubmit"
           />
         </section>
@@ -102,11 +93,8 @@ function handleSubmit() {
 
     <OnboardingActionFooter
       :label="isLoading ? '자산 불러오는 중...' : '계좌·카드 불러오기'"
-      secondary-label="다음에 하기"
       :disabled="!canContinue || isLoading"
-      :secondary-disabled="isLoading"
       @primary="handleSubmit"
-      @secondary="$emit('skip')"
     />
   </section>
 </template>

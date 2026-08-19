@@ -9,7 +9,7 @@ export const CALENDAR_CATEGORIES = {
   wedding: {
     income: ['축의금'],
     expense: ['예식장', '스튜디오', '메이크업', '드레스', '예비비'],
-    saving: ['결혼 저축'],
+    saving: ['결혼 자금'],
   },
 } as const satisfies Record<CalendarMode, Record<TransactionType, readonly string[]>>;
 

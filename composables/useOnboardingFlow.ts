@@ -4,7 +4,7 @@ import type { Ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   ONBOARDING_API_ERROR_MESSAGES,
-  ONBOARDING_BANK_OPTIONS,
+  ONBOARDING_CARD_OPTIONS,
   ONBOARDING_DEFAULT_VALUES,
   ONBOARDING_ROUTE_NAMES,
 } from '@/constants/onboard';
@@ -14,15 +14,17 @@ import { getOnboardingApiErrorMessage } from '@/utils/onboardingApiError';
 import {
   getOnboardingAccounts,
   registerOnboardingAccount,
+  saveOnboardingWeddingFund,
   selectOnboardingAccounts,
 } from '@/server/onboardingApi';
 
-type ActiveOnboardingScreen = 'account' | 'account-selection' | 'couple';
+type ActiveOnboardingScreen = 'account' | 'account-selection' | 'couple' | 'wedding-fund';
 
 const ACTIVE_ONBOARDING_SCREENS = [
   'account',
   'account-selection',
   'couple',
+  'wedding-fund',
 ] as const satisfies readonly ActiveOnboardingScreen[];
 const DEFAULT_ACTIVE_ONBOARDING_SCREEN: ActiveOnboardingScreen = 'couple';
 
@@ -61,7 +63,7 @@ export function useOnboardingFlow() {
 
   // 계좌 연결과 이후 설정 화면에서 사용하는 입력 상태다.
   const bank = ref<string>(ONBOARDING_DEFAULT_VALUES.bank);
-  const cardCompany = ref('KB카드');
+  const cardCompany = ref<string>(ONBOARDING_CARD_OPTIONS[0]);
   const cardLoginId = ref('');
   const cardLoginPassword = ref('');
   const internetBankingId = ref('');
@@ -74,19 +76,15 @@ export function useOnboardingFlow() {
   const isCardConnected = ref(false);
   const isConnectingAccount = ref(false);
   const isSelectingAccounts = ref(false);
+  const isSavingWeddingFund = ref(false);
+  const weddingFundAmountInWon = ref<number | null>(null);
   const accountConnectionErrorMessage = ref('');
   const cardConnectionErrorMessage = ref('');
   const accountSelectionErrorMessage = ref('');
+  const weddingFundErrorMessage = ref('');
 
-  // 선택한 은행명에 대응하는 API 요청용 은행 정보다.
-  const selectedBankOption = computed(
-    () =>
-      ONBOARDING_BANK_OPTIONS.find((bankOption) => bankOption.label === bank.value) ??
-      ONBOARDING_BANK_OPTIONS[0]
-  );
-
-  // 백엔드 금융기관 Enum에 맞춘 API 요청용 기관명이다.
-  const selectedCompany = computed(() => selectedBankOption.value.company);
+  // 화면에서 선택한 백엔드 등록 은행명을 API 요청에 그대로 사용한다.
+  const selectedCompany = computed(() => bank.value);
 
   // URL 쿼리를 검증해 현재 온보딩 화면을 계산한다.
   const screen = computed(() => toOnboardingScreen(route.query.screen));
@@ -121,6 +119,11 @@ export function useOnboardingFlow() {
       !isSelectingAccounts.value
   );
 
+  // 결혼자금이 입력되고 저장 요청 중이 아닐 때 완료 버튼을 활성화한다.
+  const canContinueWeddingFund = computed(
+    () => weddingFundAmountInWon.value !== null && !isSavingWeddingFund.value
+  );
+
   // 계좌 연결 정보가 변경되면 이전 연결 완료 상태를 해제한다.
   watch([bank, internetBankingId, internetBankingPassword], () => {
     accounts.value = [];
@@ -139,11 +142,16 @@ export function useOnboardingFlow() {
     accountSelectionErrorMessage.value = '';
   });
 
-  // 지정한 온보딩 화면으로 이동한다.
+  // 결혼자금을 다시 입력하면 이전 저장 오류 안내를 제거한다.
+  watch(weddingFundAmountInWon, () => {
+    weddingFundErrorMessage.value = '';
+  });
+
+  // 지정한 온보딩 화면으로 이동한다. 진입 출처(from)는 화면이 바뀌어도 유지한다.
   function goToScreen(nextScreen: ActiveOnboardingScreen) {
     router.push({
       name: ONBOARDING_ROUTE_NAMES.ONBOARDING,
-      query: { screen: nextScreen },
+      query: { screen: nextScreen, ...(route.query.from ? { from: route.query.from } : {}) },
     });
   }
 
@@ -314,7 +322,44 @@ export function useOnboardingFlow() {
     selectedNumbers.value = [];
   }
 
-  // 선택한 신규 계좌와 카드를 기관별로 저장한 뒤 온보딩을 종료한다.
+  // 저장 API가 실패 응답을 반환했더라도 서버에 반영되었는지 다시 조회해 화면 상태를 맞춘다.
+  async function reconcileSelectedAssets(
+    company: string,
+    assets: Ref<OnboardingAccount[]>,
+    selectedNumbers: Ref<string[]>,
+    requestedNumbers: readonly string[]
+  ) {
+    if (requestedNumbers.length === 0) {
+      return true;
+    }
+
+    const areAllRequestedAssetsRegistered = () =>
+      requestedNumbers.every((requestedNumber) =>
+        assets.value.some(
+          (asset) => asset.accountNumber === requestedNumber && asset.isRegistered
+        )
+      );
+
+    if (!areAllRequestedAssetsRegistered()) {
+      try {
+        const response = await getOnboardingAccounts(company);
+        assets.value = response.itemList.map(toOnboardingAccount);
+      } catch {
+        return false;
+      }
+    }
+
+    const registeredNumbers = new Set(
+      assets.value.filter((asset) => asset.isRegistered).map((asset) => asset.accountNumber)
+    );
+    selectedNumbers.value = selectedNumbers.value.filter(
+      (selectedNumber) => !registeredNumbers.has(selectedNumber)
+    );
+
+    return areAllRequestedAssetsRegistered();
+  }
+
+  // 선택한 신규 계좌와 카드를 기관별로 저장한 뒤 결혼자금 입력 화면으로 이동한다.
   async function selectConnectedAccounts() {
     if (!canContinueAccountSelection.value) {
       return;
@@ -322,15 +367,41 @@ export function useOnboardingFlow() {
 
     isSelectingAccounts.value = true;
     accountSelectionErrorMessage.value = '';
+    const requestedAccountNumbers = [...selectedAccountNumbers.value];
+    const requestedCardNumbers = [...selectedCardNumbers.value];
 
     try {
       await saveSelectedAssets(selectedCompany.value, accounts, selectedAccountNumbers);
       await saveSelectedAssets(cardCompany.value, cards, selectedCardNumbers);
 
       if (isCurrentOnboardingScreen('account-selection')) {
-        goHome();
+        goToScreen('wedding-fund');
       }
     } catch (error: unknown) {
+      const [areAccountsRegistered, areCardsRegistered] = await Promise.all([
+        reconcileSelectedAssets(
+          selectedCompany.value,
+          accounts,
+          selectedAccountNumbers,
+          requestedAccountNumbers
+        ),
+        reconcileSelectedAssets(
+          cardCompany.value,
+          cards,
+          selectedCardNumbers,
+          requestedCardNumbers
+        ),
+      ]);
+
+      if (
+        areAccountsRegistered &&
+        areCardsRegistered &&
+        isCurrentOnboardingScreen('account-selection')
+      ) {
+        goToScreen('wedding-fund');
+        return;
+      }
+
       accountSelectionErrorMessage.value = getOnboardingApiErrorMessage(
         error,
         '선택한 계좌와 카드를 저장하지 못했어요. 다시 시도해주세요.'
@@ -340,10 +411,56 @@ export function useOnboardingFlow() {
     }
   }
 
-  // 계좌 선택 화면만 계좌 입력 화면으로 돌아가고, 독립 설정 화면에서는 홈으로 이동한다.
+  // 현재까지 모은 결혼자금을 원 단위 문자열로 저장한 뒤 홈으로 이동한다.
+  async function completeWeddingFund() {
+    const weddingFund = weddingFundAmountInWon.value;
+
+    if (weddingFund === null || isSavingWeddingFund.value) {
+      return;
+    }
+
+    isSavingWeddingFund.value = true;
+    weddingFundErrorMessage.value = '';
+
+    try {
+      const response = await saveOnboardingWeddingFund({
+        weddingFund: String(weddingFund),
+      });
+
+      if (!response.success) {
+        weddingFundErrorMessage.value =
+          response.message || '결혼자금을 저장하지 못했어요. 다시 시도해주세요.';
+        return;
+      }
+
+      if (isCurrentOnboardingScreen('wedding-fund')) {
+        goHome();
+      }
+    } catch (error: unknown) {
+      weddingFundErrorMessage.value = getOnboardingApiErrorMessage(
+        error,
+        '결혼자금을 저장하지 못했어요. 다시 시도해주세요.'
+      );
+    } finally {
+      isSavingWeddingFund.value = false;
+    }
+  }
+
+  // 계좌 연결 하위 화면은 바로 전 화면으로 돌아가고, 첫 화면은 진입 출처(마이페이지 등)로,
+  // 출처가 없으면 홈으로 이동한다.
   function goBack() {
+    if (screen.value === 'wedding-fund') {
+      goToScreen('account-selection');
+      return;
+    }
+
     if (screen.value === 'account-selection') {
       goToScreen('account');
+      return;
+    }
+
+    if (screen.value === 'account' && route.query.from === 'myinfo') {
+      router.push({ name: 'myinfo' });
       return;
     }
 
@@ -373,6 +490,8 @@ export function useOnboardingFlow() {
     cards,
     canContinueAccount,
     canContinueAccountSelection,
+    canContinueWeddingFund,
+    completeWeddingFund,
     connectAccount,
     continueFromCouple,
     goBack,
@@ -380,6 +499,7 @@ export function useOnboardingFlow() {
     internetBankingId,
     internetBankingPassword,
     isConnectingAccount,
+    isSavingWeddingFund,
     isSelectingAccounts,
     screen,
     selectConnectedAccounts,
@@ -387,5 +507,7 @@ export function useOnboardingFlow() {
     selectedCardNumbers,
     toggleAccount,
     toggleCard,
+    weddingFundAmountInWon,
+    weddingFundErrorMessage,
   };
 }

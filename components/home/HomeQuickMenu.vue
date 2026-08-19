@@ -4,7 +4,11 @@ import { RouterLink } from 'vue-router';
 const QUICK_MENU_ITEMS = [
   { label: '목표 설정', icon: '/icons/goal.png', to: { name: 'goal-schedule' } },
   { label: '시안 목록', icon: '/icons/goalList.png', to: { name: 'goal-list' } },
-  { label: '월별 지출', icon: '/icons/monthly.png', to: { name: 'expense' } },
+  {
+    label: '월별 지출',
+    icon: '/icons/monthly.png',
+    to: { name: 'expense', query: { from: 'home' } },
+  },
   { label: '카드 추천', icon: '/icons/card.png', to: { name: 'card' } },
 ] as const;
 </script>

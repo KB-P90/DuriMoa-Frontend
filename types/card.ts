@@ -8,7 +8,7 @@ export interface RecommendedCard {
   rankLabel: string;
   benefits: string;
   expectedBenefitAmount: number;
-  cardImage: string;
+  cardImage: string | null;
   bgColor: string;
 }
 
@@ -27,7 +27,7 @@ export interface BestCardRecommendation {
   cardProductKey: string;
   cardCompany: string;
   cardName: string;
-  cardImage: string;
+  cardImage: string | null;
   annualFee: number;
   expectedBenefitAmount: number;
   benefitRate: number;
@@ -53,7 +53,7 @@ export interface CardDetail {
   cardProductKey: string;
   cardCompany: string;
   cardName: string;
-  cardImage: string;
+  cardImage: string | null;
   annualFee: number;
   annualFeeFormatted: string;
   annualFeeObj?: {

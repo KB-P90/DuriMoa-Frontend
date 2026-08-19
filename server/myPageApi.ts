@@ -26,6 +26,13 @@ export const updateMyPageProfile = async (formData: FormData) => {
   return data.data;
 };
 
+export const checkPhoneAvailability = async (phone: string) => {
+  const { data } = await api.get<ApiResponse<{ available: boolean }>>('/users/phone-availability', {
+    params: { phone },
+  });
+  return data.data.available;
+};
+
 export const updateMyPageShare = async () => {
   const { data } = await api.patch<ApiResponse<boolean>>('/users/share');
   return data.data;

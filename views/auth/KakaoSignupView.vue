@@ -6,9 +6,8 @@ import TermsAgreementCard from '@/components/auth/TermsAgreementCard.vue';
 import { useKakaoSignup } from '@/composables/useKakaoLogin';
 
 const {
-  canSubmit,
+  financeTermsAgreed,
   isSubmitting,
-  marketingTermsAgreed,
   name,
   privacyTermsAgreed,
   profileImage,
@@ -91,7 +90,7 @@ onMounted(validateSignupSession);
       </fieldset>
 
       <TermsAgreementCard
-        v-model:marketing-terms-agreed="marketingTermsAgreed"
+        v-model:finance-terms-agreed="financeTermsAgreed"
         v-model:privacy-terms-agreed="privacyTermsAgreed"
         v-model:service-terms-agreed="serviceTermsAgreed"
         return-to="/auth/kakao/signup"
@@ -109,7 +108,7 @@ onMounted(validateSignupSession);
         <button
           class="grid min-h-[50px] w-full place-items-center rounded-xl bg-brand text-[15px] font-extrabold text-white transition hover:bg-brand-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 disabled:cursor-not-allowed disabled:opacity-60"
           type="submit"
-          :disabled="!canSubmit"
+          :disabled="isSubmitting"
         >
           {{ isSubmitting ? '가입 처리 중...' : '동의하고 시작하기' }}
         </button>

@@ -1,11 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import type {
-  BestCardRecommendation,
-  CardDetail,
-  CardStrategy,
-  UserCardGroup,
-} from '@/types/card';
+import type { BestCardRecommendation, CardDetail, CardStrategy, UserCardGroup } from '@/types/card';
 import { getCardDetailApi, getCardStrategyApi } from '@/server/cardApi';
 import { toCardDetail, toCardStrategy } from '@/models/Card';
 
@@ -32,6 +27,12 @@ export const useCardStore = defineStore('card', () => {
   const userCardGroups = computed<UserCardGroup[]>(() => {
     return cardStrategyData.value?.userCardGroups ?? [];
   });
+
+  const hasNoOwnedCards = computed(
+    () =>
+      cardStrategyData.value !== null &&
+      userCardGroups.value.every((group) => group.ownedCardCount === 0 && group.cards.length === 0)
+  );
 
   const isValidAmount = computed(() => amount.value >= MIN_AMOUNT);
 
@@ -150,6 +151,7 @@ export const useCardStore = defineStore('card', () => {
     selectedCardDetail,
     bestRecommendation,
     userCardGroups,
+    hasNoOwnedCards,
     cardStrategyData,
     setAmount,
     addAmount,

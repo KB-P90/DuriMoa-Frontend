@@ -8,6 +8,7 @@ import { useMyPageStore } from '@/stores/myPageStore';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { getNotificationSettings, updateNotificationSettings } from '@/server/notificationApi';
 import { ALL_NOTIFICATION_SETTING_TYPES } from '@/constants/notificationConsent';
+import { ONBOARDING_ROUTE_NAMES } from '@/constants/onboard';
 import type { ShareScope } from '@/types/myPage';
 import PageHeader from '@/components/common/PageHeader.vue';
 import { MyPageSkeleton } from '@/components/skeleton/myPage';
@@ -72,7 +73,7 @@ const selectedShareCaption = computed(() => {
   }
 
   const selectedOption = shareOptions.find(
-    (option) => option.value === myPage.value.shareSetting.selectedScope
+    (option) => option.value === myPage.value?.shareSetting.selectedScope
   );
   return selectedOption?.caption ?? '';
 });
@@ -105,8 +106,16 @@ function goProfileEdit() {
   router.push({ name: 'myinfo-profile' });
 }
 
-function goAssetConnect(id: AssetSummary['id']) {
-  router.push({ name: id === 'accounts' ? 'myinfo-account-connect' : 'myinfo-card-connect' });
+function goAssetConnect(asset: AssetSummary) {
+  if (asset.count === 0) {
+    router.push({
+      name: ONBOARDING_ROUTE_NAMES.ONBOARDING,
+      query: { screen: 'account', from: 'myinfo' },
+    });
+    return;
+  }
+
+  router.push({ name: asset.id === 'accounts' ? 'myinfo-account-connect' : 'myinfo-card-connect' });
 }
 
 function goCoupleConnect() {
@@ -142,7 +151,10 @@ onMounted(async () => {
 
 <template>
   <div class="flex min-h-full flex-col">
-    <PageHeader title="마이페이지" />
+    <PageHeader
+      title="마이페이지"
+      :show-back="false"
+    />
     <MyPageSkeleton v-if="isLoading && !myPage" />
     <div
       v-else-if="myPage"
@@ -197,8 +209,17 @@ onMounted(async () => {
         v-if="isPartnerConnected && myPage.partner"
         class="flex items-center gap-3 rounded-2xl border border-brand-border bg-pink-01 px-4 py-4"
       >
-        <div class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white">
+        <div
+          class="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full bg-white"
+        >
+          <img
+            v-if="myPage.partner.profileImage"
+            :src="myPage.partner.profileImage"
+            alt=""
+            class="h-full w-full object-cover"
+          />
           <UserRound
+            v-else
             class="h-5 w-5 text-brand"
             :stroke-width="2"
           />
@@ -253,7 +274,7 @@ onMounted(async () => {
             :key="item.id"
             type="button"
             class="flex flex-1 items-center gap-2.5 rounded-xl bg-dm-mint-light p-3.5 text-left h-[80px]"
-            @click="goAssetConnect(item.id)"
+            @click="goAssetConnect(item)"
           >
             <component
               :is="item.icon"

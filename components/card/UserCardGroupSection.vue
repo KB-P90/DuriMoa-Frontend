@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { ChevronDown, ChevronUp } from '@lucide/vue';
 import type { RecommendedCard, UserCardGroup } from '@/types/card';
+import { getCardCompanyColor } from '@/utils/card';
 
 const props = defineProps<{
   group: UserCardGroup;
@@ -12,6 +13,8 @@ defineEmits<{
 }>();
 
 const isExpanded = ref(false);
+const failedImageCardIds = ref<Set<string>>(new Set());
+const portraitImageCardIds = ref<Set<string>>(new Set());
 
 const displayedCards = computed(() => {
   if (isExpanded.value || props.group.cards.length <= 2) {
@@ -22,6 +25,27 @@ const displayedCards = computed(() => {
 
 function toggleExpand() {
   isExpanded.value = !isExpanded.value;
+}
+
+function hasUsableImage(card: RecommendedCard) {
+  return Boolean(card.cardImage) && !failedImageCardIds.value.has(card.id);
+}
+
+function handleImageError(cardId: string) {
+  failedImageCardIds.value = new Set(failedImageCardIds.value).add(cardId);
+}
+
+function handleImageLoad(cardId: string, event: Event) {
+  const image = event.currentTarget;
+  if (!(image instanceof HTMLImageElement)) return;
+
+  const portraitCardIds = new Set(portraitImageCardIds.value);
+  if (image.naturalHeight > image.naturalWidth) {
+    portraitCardIds.add(cardId);
+  } else {
+    portraitCardIds.delete(cardId);
+  }
+  portraitImageCardIds.value = portraitCardIds;
 }
 </script>
 
@@ -43,13 +67,29 @@ function toggleExpand() {
       >
         <!-- Card Graphic Plate -->
         <div
-          class="relative flex h-14 w-20 shrink-0 flex-col justify-between rounded-xl p-2 shadow-sm min-[390px]:h-16 min-[390px]:w-24 min-[390px]:p-2.5"
-          :class="card.bgColor"
+          class="relative flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl shadow-sm min-[390px]:h-16 min-[390px]:w-24"
+          :class="hasUsableImage(card) ? 'bg-white' : getCardCompanyColor(card.cardCompany)"
         >
-          <div class="h-2.5 w-3.5 rounded-[2px] bg-white/70" />
-          <span class="self-end text-[9px] font-bold tracking-wider text-white/90">
-            {{ card.cardCompany || 'CARD' }}
-          </span>
+          <img
+            v-if="hasUsableImage(card)"
+            :src="card.cardImage"
+            :alt="card.name"
+            class="object-contain"
+            :class="
+              portraitImageCardIds.has(card.id)
+                ? 'h-20 w-14 max-w-none rotate-90 min-[390px]:h-24 min-[390px]:w-16'
+                : 'h-full w-full'
+            "
+            @load="handleImageLoad(card.id, $event)"
+            @error="handleImageError(card.id)"
+          />
+          <div
+            v-else
+            class="flex h-full w-full p-2 min-[390px]:p-2.5"
+            aria-hidden="true"
+          >
+            <div class="h-2.5 w-3.5 rounded-[2px] bg-white/70" />
+          </div>
         </div>
 
         <!-- Card Info -->

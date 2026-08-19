@@ -44,7 +44,7 @@ const {
       <PageHeader title="상대 연결" />
 
       <main class="p-4">
-        <h2 class="text-[21px] font-extrabold leading-tight">파트너를 연결해주세요</h2>
+        <h2 class="text-[21px] font-extrabold leading-tight">상대를 연결해주세요</h2>
         <p class="mt-1.5 text-[12px] leading-5 text-dm-gray-dark">
           초대 코드로 두 사람의 공동 공간을 만들어요
         </p>

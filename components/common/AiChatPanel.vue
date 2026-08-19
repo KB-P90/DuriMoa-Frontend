@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Bot, Send, X } from '@lucide/vue';
+import { Bot, PieChart, PiggyBank, Send, WalletCards, X } from '@lucide/vue';
+import { nextTick, ref, watch } from 'vue';
 import {
   DialogClose,
   DialogContent,
@@ -9,21 +10,39 @@ import {
   DialogRoot,
   DialogTitle,
 } from 'reka-ui';
-import type { AiChatMessage } from '@/types/aiChat';
+import AiWeddingBudgetFlow from '@/components/ai/AiWeddingBudgetFlow.vue';
+import type {
+  AiChatMessage,
+  AiWeddingBudgetStep,
+  WeddingBudgetRecommendation,
+} from '@/types/aiChat';
+import type { RegionName } from '@/types/goal';
 
-defineProps<{
+const props = defineProps<{
   open: boolean;
   title: string;
   description: string;
   messages: readonly AiChatMessage[];
   canSend: boolean;
+  isSending: boolean;
+  isFlowInputLocked: boolean;
+  weddingBudgetStep: AiWeddingBudgetStep;
+  weddingDate: string;
+  weddingRegion: RegionName | null;
+  recommendation: WeddingBudgetRecommendation | null;
 }>();
 
 const draft = defineModel<string>('draft', { required: true });
+const messageViewport = ref<HTMLElement | null>(null);
 
 const emit = defineEmits<{
   'update:open': [value: boolean];
+  'update:weddingDate': [value: string];
+  'update:weddingRegion': [value: RegionName];
   submit: [];
+  confirmWeddingDate: [];
+  confirmWeddingRegion: [];
+  applyWeddingBudget: [];
 }>();
 
 function handleComposerKeydown(event: KeyboardEvent) {
@@ -31,6 +50,17 @@ function handleComposerKeydown(event: KeyboardEvent) {
   event.preventDefault();
   emit('submit');
 }
+
+watch(
+  () => [props.messages.length, props.isSending],
+  async () => {
+    await nextTick();
+    messageViewport.value?.scrollTo({
+      top: messageViewport.value.scrollHeight,
+      behavior: 'smooth',
+    });
+  }
+);
 </script>
 
 <template>
@@ -81,40 +111,81 @@ function handleComposerKeydown(event: KeyboardEvent) {
         </header>
 
         <div
+          ref="messageViewport"
           class="flex min-h-0 flex-1 flex-col overflow-y-auto bg-dm-gray-light/55 px-4 py-5 scrollbar-none"
           aria-live="polite"
+          :aria-busy="isSending"
           aria-label="대화 메시지"
         >
-          <div
-            v-if="messages.length === 0"
-            class="m-auto flex max-w-64 flex-col items-center text-center"
-          >
-            <span
-              class="grid h-14 w-14 place-items-center rounded-full bg-dm-mint-light text-dm-mint-darker"
-              aria-hidden="true"
-            >
-              <Bot
-                class="h-7 w-7"
-                :stroke-width="1.8"
-              />
-            </span>
-            <p class="mt-4 text-sm font-bold text-gray-800">무엇을 도와드릴까요?</p>
-            <p class="mt-1.5 text-xs leading-5 text-dm-gray-dark">
-              결혼 준비와 예산에 관해 궁금한 내용을 입력해 주세요.
-            </p>
-          </div>
-
-          <ol
-            v-else
-            class="flex flex-col gap-3"
-          >
+          <ol class="flex flex-col gap-3">
             <li
               v-for="message in messages"
               :key="message.id"
               class="flex"
               :class="message.role === 'user' ? 'justify-end' : 'justify-start'"
             >
+              <div
+                v-if="message.variant === 'welcome'"
+                class="max-w-[88%] rounded-2xl rounded-bl-md border border-dm-gray/25 bg-white p-3.5 text-sm shadow-sm"
+              >
+                <p class="whitespace-pre-wrap font-semibold leading-5 text-gray-800">
+                  {{ message.content }}
+                </p>
+
+                <ul class="mt-3 space-y-2.5">
+                  <li class="flex items-start gap-2.5">
+                    <span
+                      class="mt-0.5 shrink-0 text-dm-mint-darker"
+                      aria-hidden="true"
+                    >
+                      <WalletCards class="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p class="text-xs font-extrabold text-gray-800">맞춤 결혼 예산 추천</p>
+                      <p class="mt-0.5 text-[11px] leading-4 text-dm-gray-dark">
+                        소비 내역을 바탕으로 항목별 예산을 구성해요
+                      </p>
+                    </div>
+                  </li>
+
+                  <li class="flex items-start gap-2.5">
+                    <span
+                      class="mt-0.5 shrink-0 text-dm-mint-darker"
+                      aria-hidden="true"
+                    >
+                      <PieChart class="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p class="text-xs font-extrabold text-gray-800">결혼 준비 소비 리포트</p>
+                      <p class="mt-0.5 text-[11px] leading-4 text-dm-gray-dark">
+                        지출 흐름과 항목별 소비를 분석해요
+                      </p>
+                    </div>
+                  </li>
+
+                  <li class="flex items-start gap-2.5">
+                    <span
+                      class="mt-0.5 shrink-0 text-dm-mint-darker"
+                      aria-hidden="true"
+                    >
+                      <PiggyBank class="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p class="text-xs font-extrabold text-gray-800">커플 저축 플랜</p>
+                      <p class="mt-0.5 text-[11px] leading-4 text-dm-gray-dark">
+                        목표일까지 월별 저축 계획을 제안해요
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+
+                <p class="mt-3 border-t border-dm-gray/20 pt-2.5 text-xs text-dm-gray-dark">
+                  궁금한 내용이나 필요한 도움을 자유롭게 말씀해 주세요.
+                </p>
+              </div>
+
               <p
+                v-else
                 class="max-w-[82%] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2.5 text-sm leading-5 shadow-sm"
                 :class="
                   message.role === 'user'
@@ -125,7 +196,29 @@ function handleComposerKeydown(event: KeyboardEvent) {
                 {{ message.content }}
               </p>
             </li>
+            <li
+              v-if="isSending && weddingBudgetStep !== 'analyzing'"
+              class="flex justify-start"
+            >
+              <p
+                class="rounded-2xl rounded-bl-md border border-dm-gray/25 bg-white px-3.5 py-2.5 text-sm text-dm-gray-dark shadow-sm"
+              >
+                답변을 작성하고 있어요...
+              </p>
+            </li>
           </ol>
+
+          <AiWeddingBudgetFlow
+            :step="weddingBudgetStep"
+            :wedding-date="weddingDate"
+            :wedding-region="weddingRegion"
+            :recommendation="recommendation"
+            @update:wedding-date="emit('update:weddingDate', $event)"
+            @update:wedding-region="emit('update:weddingRegion', $event)"
+            @confirm-date="emit('confirmWeddingDate')"
+            @confirm-region="emit('confirmWeddingRegion')"
+            @apply="emit('applyWeddingBudget')"
+          />
         </div>
 
         <form
@@ -136,8 +229,11 @@ function handleComposerKeydown(event: KeyboardEvent) {
             v-model="draft"
             rows="1"
             maxlength="1000"
+            :disabled="isFlowInputLocked"
             aria-label="메시지 입력"
-            placeholder="메시지를 입력해 주세요"
+            :placeholder="
+              isFlowInputLocked ? '위 선택을 먼저 완료해 주세요' : '메시지를 입력해 주세요'
+            "
             class="max-h-28 min-h-11 flex-1 resize-none rounded-2xl border border-dm-gray/40 bg-dm-gray-light px-3.5 py-2.5 text-sm leading-5 text-gray-900 outline-none transition placeholder:text-dm-gray-dark focus-visible:border-brand focus-visible:ring-3 focus-visible:ring-brand/10"
             @keydown="handleComposerKeydown"
           />

@@ -7,15 +7,18 @@ import { Toaster } from '@/components/ui/sonner';
 import NotificationPanel from '@/components/common/NotificationPanel.vue';
 import NotificationToast from '@/components/common/NotificationToast.vue';
 import { useNotificationStream } from '@/composables/useNotificationStream';
+import { useHomeStore } from '@/stores/homeStore';
 import { useMyPageStore } from '@/stores/myPageStore';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { isAccessTokenValid } from '@/utils/auth';
 
+const homeStore = useHomeStore();
 const myPageStore = useMyPageStore();
 const notificationStore = useNotificationStore();
 
 function showNotificationToast(event) {
   notificationStore.incrementUnreadCount();
+  void homeStore.refreshDashboard();
   toast.custom(NotificationToast, {
     componentProps: {
       type: event.type,
@@ -39,7 +42,7 @@ import AiChatFloatingWidget from '@/components/common/AiChatFloatingWidget.vue';
 
 const route = useRoute();
 
-const AI_CHAT_HIDDEN_ROUTES = new Set(['login', 'signup']);
+const AI_CHAT_HIDDEN_ROUTES = new Set(['login', 'signup', 'onboarding']);
 
 const isAiChatVisible = computed(() => {
   const routeName = String(route.name);

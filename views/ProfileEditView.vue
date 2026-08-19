@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { Camera, UserRound } from '@lucide/vue';
@@ -7,6 +7,8 @@ import PageHeader from '@/components/common/PageHeader.vue';
 import { toast } from 'vue-sonner';
 import { useAuthCheck } from '@/composables/useAuthCheck';
 import { useMyPageStore } from '@/stores/myPageStore';
+import { checkPhoneAvailability } from '@/server/myPageApi';
+import { formatPhoneNumber } from '@/utils/format';
 import type { CoupleRole, MyPageProfileForm } from '@/types/myPage';
 
 // 백엔드 요청 크기 제한(파일당 5MB)과 동일하게 맞춘 값
@@ -21,6 +23,11 @@ const { isSavingProfile, myPage } = storeToRefs(myPageStore);
 const fileInput = ref<HTMLInputElement | null>(null);
 const form = ref<MyPageProfileForm | null>(myPageStore.buildProfileForm());
 const selectedImageFile = ref<File | null>(null);
+const imageRemoved = ref(false);
+let previewObjectUrl: string | null = null;
+
+type PhoneCheckState = 'idle' | 'checking' | 'available' | 'unavailable';
+const phoneCheckState = ref<PhoneCheckState>('idle');
 
 const roleOptions: readonly { value: CoupleRole; label: string }[] = [
   { value: 'GROOM', label: '🤵 신랑' },
@@ -37,7 +44,9 @@ const canSave = computed(
   () =>
     form.value !== null &&
     form.value.name.trim().length > 0 &&
-    (!form.value.newPassword || form.value.newPassword === form.value.newPasswordConfirm) &&
+    (!form.value.newPassword ||
+      (form.value.newPassword === form.value.newPasswordConfirm &&
+        form.value.currentPassword.trim().length > 0)) &&
     !isSavingProfile.value
 );
 
@@ -48,8 +57,37 @@ watch(
   }
 );
 
+watch(
+  () => form.value?.phoneNumber,
+  () => {
+    phoneCheckState.value = 'idle';
+  }
+);
+
 function openFilePicker() {
   fileInput.value?.click();
+}
+
+function handlePhoneInput(event: Event) {
+  if (!form.value) {
+    return;
+  }
+
+  const input = event.target;
+  if (!(input instanceof HTMLInputElement)) {
+    return;
+  }
+
+  const formattedPhone = formatPhoneNumber(input.value);
+  form.value.phoneNumber = formattedPhone;
+  input.value = formattedPhone;
+}
+
+function setPreview(url: string | null) {
+  if (previewObjectUrl) {
+    URL.revokeObjectURL(previewObjectUrl);
+  }
+  previewObjectUrl = url;
 }
 
 function handleImageSelected(event: Event) {
@@ -70,8 +108,11 @@ function handleImageSelected(event: Event) {
     return;
   }
 
+  const objectUrl = URL.createObjectURL(file);
+  setPreview(objectUrl);
   selectedImageFile.value = file;
-  myPage.value.user.profileImage = URL.createObjectURL(file);
+  imageRemoved.value = false;
+  myPage.value.user.profileImage = objectUrl;
   target.value = '';
 }
 
@@ -80,8 +121,26 @@ function resetDefaultImage() {
     return;
   }
 
+  setPreview(null);
   selectedImageFile.value = null;
+  imageRemoved.value = true;
   myPage.value.user.profileImage = null;
+}
+
+async function checkPhone() {
+  if (!form.value || !form.value.phoneNumber.trim()) {
+    return;
+  }
+
+  phoneCheckState.value = 'checking';
+
+  try {
+    const available = await checkPhoneAvailability(form.value.phoneNumber);
+    phoneCheckState.value = available ? 'available' : 'unavailable';
+  } catch {
+    phoneCheckState.value = 'idle';
+    toast.error('전화번호 확인에 실패했어요. 다시 시도해주세요.');
+  }
 }
 
 async function saveProfile() {
@@ -89,25 +148,39 @@ async function saveProfile() {
     return;
   }
 
-  await myPageStore.saveProfile(form.value, selectedImageFile.value);
-  router.push({ name: 'myinfo' });
+  const success = await myPageStore.saveProfile(
+    form.value,
+    selectedImageFile.value,
+    imageRemoved.value
+  );
+
+  if (success) {
+    router.push({ name: 'myinfo' });
+    return;
+  }
+
+  toast.error(myPageStore.lastErrorMessage);
 }
 
 onMounted(() => {
   void myPageStore.fetchMyPage();
+});
+
+onUnmounted(() => {
+  setPreview(null);
 });
 </script>
 
 <template>
   <div class="profile-stage relative aspect-[390/799] w-full md:aspect-auto md:min-h-[799px]">
     <section
-      class="absolute inset-0 origin-top-left h-[799px] w-[390px] overflow-hidden bg-white text-[#292934] scale-[var(--profile-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
+      class="absolute inset-0 origin-top-left relative h-[799px] w-[390px] overflow-hidden bg-white text-[#292934] scale-[var(--profile-scale)] md:relative md:h-auto md:min-h-[799px] md:w-full md:scale-100 md:overflow-visible"
     >
       <PageHeader title="프로필 수정" />
 
       <main
         v-if="myPage && form"
-        class="h-[749px] overflow-y-auto scrollbar-none bg-gradient-to-b from-white to-[#FFFBFC] p-4"
+        class="h-[749px] overflow-y-auto scrollbar-none bg-gradient-to-b from-white to-[#FFFBFC] p-4 pb-[86px]"
       >
         <section class="flex flex-col items-center pb-6 pt-5">
           <div class="relative">
@@ -204,18 +277,34 @@ onMounted(() => {
             <span class="text-[11px] font-bold leading-[13px] text-[#5A5B69]">전화번호</span>
             <div class="flex gap-2">
               <input
-                v-model="form.phoneNumber"
+                :value="form.phoneNumber"
                 type="tel"
+                inputmode="numeric"
+                placeholder="010-1234-5678"
                 class="h-[44px] min-w-0 flex-1 rounded-[11px] border border-[#E9E9F0] bg-white px-[14px] text-[12px] font-bold outline-none"
+                @input="handlePhoneInput"
               />
               <button
                 type="button"
-                class="h-[44px] w-[50px] rounded-[11px] border border-[#E9E9F0] bg-white text-[10.5px] font-bold text-brand"
+                class="h-[44px] w-[50px] shrink-0 rounded-[11px] border border-[#E9E9F0] bg-white text-[10.5px] font-bold text-brand disabled:text-dm-gray-dark"
+                :disabled="phoneCheckState === 'checking' || !form.phoneNumber.trim()"
+                @click="checkPhone"
               >
-                인증
+                {{ phoneCheckState === 'checking' ? '확인 중' : '중복확인' }}
               </button>
             </div>
-            <p class="text-[9.5px] leading-[11px] text-btn-mt-dark">✓ 인증된 번호예요</p>
+            <p
+              v-if="phoneCheckState === 'available'"
+              class="text-[9.5px] leading-[11px] text-btn-mt-dark"
+            >
+              ✓ 사용 가능한 번호예요
+            </p>
+            <p
+              v-else-if="phoneCheckState === 'unavailable'"
+              class="text-[9.5px] leading-[11px] text-brand-dark"
+            >
+              이미 사용 중인 전화번호예요
+            </p>
           </label>
         </section>
 
@@ -266,25 +355,20 @@ onMounted(() => {
             </label>
           </div>
         </section>
-
-        <div class="mt-6 flex flex-col gap-3">
-          <button
-            type="button"
-            class="h-[50px] rounded-[12px] bg-brand text-[14px] font-extrabold text-white shadow-[0_6px_14px_rgba(255,143,132,0.26)] disabled:bg-dm-gray"
-            :disabled="!canSave"
-            @click="saveProfile"
-          >
-            저장하기
-          </button>
-          <button
-            type="button"
-            class="h-[44px] rounded-[12px] border border-[#E9E9F0] bg-white text-[13px] font-bold text-brand"
-            @click="router.back()"
-          >
-            취소
-          </button>
-        </div>
       </main>
+      <footer
+        v-if="myPage && form"
+        class="absolute bottom-0 left-0 right-0 z-10 border-t border-divider bg-white/95 p-4 backdrop-blur-sm"
+      >
+        <button
+          type="button"
+          class="h-[50px] w-full rounded-[12px] bg-brand text-[14px] font-extrabold text-white shadow-[0_6px_14px_rgba(255,143,132,0.26)] disabled:bg-dm-gray"
+          :disabled="!canSave"
+          @click="saveProfile"
+        >
+          저장하기
+        </button>
+      </footer>
       <div
         v-else
         class="flex h-[749px] items-center justify-center px-4 text-center text-sm text-dm-gray-dark"

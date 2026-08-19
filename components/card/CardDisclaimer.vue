@@ -14,19 +14,17 @@ import { ChevronRight } from '@lucide/vue';
       </li>
       <li class="flex items-start gap-1">
         <span class="shrink-0">·</span>
-        <span>한도 · 전월실적 · 제외조건이 반영된 값이에요</span>
-      </li>
-      <li class="flex items-start gap-1">
-        <span class="shrink-0">·</span>
         <span>
           종료 · 변경된 상품은 추천에서 제외돼요 ·
-          <button
-            type="button"
+          <a
+            href="https://www.card-gorilla.com/"
+            target="_blank"
+            rel="noopener noreferrer"
             class="inline-flex items-center font-bold text-brand hover:underline"
           >
             <span>공식 페이지에서 확인</span>
             <ChevronRight class="h-3 w-3" />
-          </button>
+          </a>
         </span>
       </li>
     </ul>

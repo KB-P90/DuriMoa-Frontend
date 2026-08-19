@@ -60,7 +60,7 @@ const AUTH_TERM_PAGES = {
   },
   finance: {
     title: '금융정보 연동 약관',
-    intro: '금융정보 연동은 선택 사항이며, 동의하지 않아도 기본 서비스를 이용할 수 있습니다.',
+    intro: '금융정보 연동 약관에 동의해야 회원가입을 완료할 수 있습니다.',
     sections: [
       {
         heading: '제1조 (연동 목적)',

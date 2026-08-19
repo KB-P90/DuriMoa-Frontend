@@ -6,7 +6,9 @@ import CardBestRecommendBanner from '@/components/card/CardBestRecommendBanner.v
 import UserCardGroupSection from '@/components/card/UserCardGroupSection.vue';
 import CardDisclaimer from '@/components/card/CardDisclaimer.vue';
 import CardDetailModal from '@/components/card/CardDetailModal.vue';
+import CardStrategySkeleton from '@/components/skeleton/card/CardStrategySkeleton.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
+import CoupleConnectionRequired from '@/components/common/CoupleConnectionRequired.vue';
 import { useCardStore } from '@/stores/cardStore';
 import { formatWon } from '@/utils/format';
 import type { RecommendedCard } from '@/types/card';
@@ -54,15 +56,7 @@ onBeforeRouteLeave((to) => {
 
     <div class="p-4">
       <!-- Loading State -->
-      <div
-        v-if="cardStore.isLoading"
-        class="py-12 text-center text-dm-gray-dark"
-      >
-        <div
-          class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-pink-03 border-t-transparent mb-2"
-        ></div>
-        <p class="text-sm font-semibold">카드 추천 정보를 불러오는 중입니다...</p>
-      </div>
+      <CardStrategySkeleton v-if="cardStore.isLoading" />
 
       <!-- Error State -->
       <div
@@ -78,6 +72,16 @@ onBeforeRouteLeave((to) => {
           다시 시도
         </button>
       </div>
+
+      <CoupleConnectionRequired
+        v-else-if="cardStore.hasNoOwnedCards"
+        eyebrow="CARD CONNECTION"
+        title="두 분의 카드를 먼저 연결해주세요"
+        description="보유 카드를 연결하면 결제 금액에 맞는 혜택을 비교해드려요."
+        route-name="onboarding"
+        :route-query="{ screen: 'account', from: 'card' }"
+        button-message="카드 연결하러 가기"
+      />
 
       <!-- Main Content -->
       <template v-else>

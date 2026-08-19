@@ -1,7 +1,9 @@
 import { computed, ref, watch } from 'vue';
 import { isAxiosError } from 'axios';
+import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
-import type { SignupRequestDto, SignupResponseDto, SignupRoleDto } from '@/types/dto/auth.dto';
+import { useSignupStore } from '@/stores/signupStore';
+import type { SignupRequestDto, SignupResponseDto } from '@/types/dto/auth.dto';
 import { formatPhoneNumber } from '@/utils/phone';
 import { PENDING_NOTIFICATION_CONSENT_KEY } from '@/constants/notificationConsent';
 
@@ -24,15 +26,19 @@ function hasMessage(value: unknown): value is { message: string } {
 // 주입된 회원가입 API로 요청하고 성공하면 로그인 화면으로 이동한다.
 export function useSignup(signupGateway?: SignupGateway) {
   const router = useRouter();
-  const name = ref('');
-  const phone = ref('');
-  const role = ref<SignupRoleDto | ''>('');
-  const password = ref('');
-  const passwordConfirm = ref('');
-  const serviceTermsAgreed = ref(false);
-  const privacyTermsAgreed = ref(false);
-  const marketingTermsAgreed = ref(false);
+  const signupStore = useSignupStore();
+  const {
+    financeTermsAgreed,
+    name,
+    password,
+    passwordConfirm,
+    phone,
+    privacyTermsAgreed,
+    role,
+    serviceTermsAgreed,
+  } = storeToRefs(signupStore);
   const notificationAgreed = ref(false);
+
   const signupError = ref('');
   const signupResponse = ref<SignupResponseDto | null>(null);
   const isSubmitting = ref(false);
@@ -55,7 +61,7 @@ export function useSignup(signupGateway?: SignupGateway) {
       passwordConfirm,
       serviceTermsAgreed,
       privacyTermsAgreed,
-      marketingTermsAgreed,
+      financeTermsAgreed,
     ],
     () => {
       signupError.value = '';
@@ -73,7 +79,7 @@ export function useSignup(signupGateway?: SignupGateway) {
       role: role.value,
       serviceTermsAgreed: serviceTermsAgreed.value,
       privacyTermsAgreed: privacyTermsAgreed.value,
-      marketingTermsAgreed: marketingTermsAgreed.value,
+      financeTermsAgreed: financeTermsAgreed.value,
     };
   }
 
@@ -85,7 +91,7 @@ export function useSignup(signupGateway?: SignupGateway) {
       return;
     }
 
-    if (!serviceTermsAgreed.value || !privacyTermsAgreed.value) {
+    if (!serviceTermsAgreed.value || !privacyTermsAgreed.value || !financeTermsAgreed.value) {
       signupError.value = REQUIRED_TERMS_MESSAGE;
       return;
     }
@@ -102,7 +108,7 @@ export function useSignup(signupGateway?: SignupGateway) {
       }
 
       localStorage.setItem(PENDING_NOTIFICATION_CONSENT_KEY, String(notificationAgreed.value));
-
+      signupStore.reset();
       await router.replace({ name: LOGIN_ROUTE_NAME });
     } catch (error: unknown) {
       signupError.value =
@@ -115,9 +121,9 @@ export function useSignup(signupGateway?: SignupGateway) {
   }
 
   return {
+    financeTermsAgreed,
     isSubmitting,
     notificationAgreed,
-    marketingTermsAgreed,
     name,
     password,
     passwordConfirm,

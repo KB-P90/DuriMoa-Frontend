@@ -23,7 +23,7 @@ export function useOnboardingCouple(isActive: Readonly<Ref<boolean>>) {
   // 사용자가 입력하는 초대 코드 원본이다.
   const inviteCodeDraft = ref('');
 
-  // 로그인한 사용자가 파트너에게 공유할 초대 코드다.
+  // 로그인한 사용자가 상대에게 공유할 초대 코드다.
   const myInviteCode = ref('');
 
   // 서버에서 조회한 커플 연결 요청 목록이다.
@@ -64,7 +64,7 @@ export function useOnboardingCouple(isActive: Readonly<Ref<boolean>>) {
     () => inviteCode.value.length > 0 && !ONBOARDING_INVITE_CODE_PATTERN.test(inviteCode.value)
   );
 
-  // 한 명의 파트너와 이미 연결되었는지 나타낸다.
+  // 한 명의 상대와 이미 연결되었는지 나타낸다.
   const isConnected = computed(() =>
     requests.value.some((request) => request.status === 'CONNECTED')
   );
