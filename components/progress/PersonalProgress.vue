@@ -99,7 +99,7 @@ const members = computed(() => progressStore.personalProgress.members);
 
           <div class="my-2 flex justify-between">
             <span class="text-base font-bold text-dm-mint-darker">
-              {{ member.progressRate }}%
+              {{ Math.min(100, member.progressRate) }}%
             </span>
           </div>
         </div>
