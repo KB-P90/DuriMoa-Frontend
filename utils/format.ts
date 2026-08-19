@@ -37,6 +37,11 @@ export function formatCompactWonAmount(amount: number): string {
 export const formatWon = (amount: number) =>
   `${new Intl.NumberFormat('ko-KR').format(amount / 10_000)}만원`;
 
+// 금액을 만원 단위로 반올림하여 표시
+export function formatManWon(amount: number): string {
+  return ` ${formatAmount(Math.round(amount / 10_000))}만원`;
+}
+
 // 입력값에서 숫자만 남기고 010-1234-5678 형식으로 하이픈을 붙입니다.
 export function formatPhoneNumber(value: string): string {
   const digits = value.replace(/\D/g, '').slice(0, 11);

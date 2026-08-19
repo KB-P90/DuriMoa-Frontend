@@ -3,6 +3,7 @@ import { computed } from 'vue';
 
 import { useProgressStore } from '@/stores/progressStore';
 import type { CategoryProgress } from '@/types/progress';
+import { formatManWon } from '@/utils/format';
 
 const WEDDING_CATEGORY_NAMES = ['예식장', '스튜디오', '드레스', '메이크업', '예비비'] as const;
 
@@ -99,8 +100,7 @@ async function handleToggleCompletion(item: ChecklistItem) {
             v-if="item.targetAmount != 0"
             class="mt-0.5 text-sm text-dm-gray-dark"
           >
-            목표 {{ Math.round(item.targetAmount / 10000).toLocaleString() }}만원 /
-            {{ Math.round(item.currentAmount / 10000).toLocaleString() }}만원 사용
+            목표 {{ formatManWon(item.targetAmount) }} / {{ formatManWon(item.currentAmount) }} 사용
           </p>
         </div>
 

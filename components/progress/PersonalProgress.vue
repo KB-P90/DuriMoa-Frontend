@@ -2,7 +2,7 @@
 import { LockKeyhole, UserRound } from '@lucide/vue';
 import { useProgressStore } from '@/stores/progressStore';
 import { computed } from 'vue';
-import { formatWon } from '@/utils/format';
+import { formatManWon } from '@/utils/format';
 
 const progressStore = useProgressStore();
 
@@ -114,8 +114,8 @@ const members = computed(() => progressStore.personalProgress.members);
           </div>
 
           <p class="mt-2 text-xs text-dm-gray-dark">
-            목표 {{ formatWon(member.targetAmount) }} 중
-            {{ formatWon(member.assetAmount ?? 0) }} 달성
+            목표 {{ formatManWon(member.targetAmount) }} 중
+            {{ formatManWon(member.assetAmount ?? 0) }} 달성
           </p>
         </div>
       </div>

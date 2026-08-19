@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { Check } from 'lucide-vue-next';
 import { useProgressStore } from '@/stores/progressStore';
+import { formatManWon } from '@/utils/format';
 
 const progressStore = useProgressStore();
 
@@ -44,7 +45,7 @@ const months = computed(() => progressStore.monthlyProgress?.months ?? []);
           </div>
 
           <p class="mt-1 text-sm font-medium text-dm-gray-dark">
-            {{ Math.round(month.expenseAmount / 10000).toLocaleString() }}만원 지출
+            {{ formatManWon(month.expenseAmount) }} 지출
           </p>
         </div>
       </div>

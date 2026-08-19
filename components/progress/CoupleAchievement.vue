@@ -3,6 +3,7 @@ import { ChevronRight } from '@lucide/vue';
 import { computed } from 'vue';
 import { useProgressStore } from '@/stores/progressStore';
 import { useRouter } from 'vue-router';
+import { formatManWon } from '@/utils/format';
 
 const props = withDefaults(
   defineProps<{
@@ -55,10 +56,8 @@ function handleViewMonthlyProgress() {
       class="mt-3 flex justify-between align-center"
     >
       <span class="flex gap-1 text-sm font-semibold">
-        <p>{{ Math.round(overallProgress.currentAmount / 10000).toLocaleString() }}만원</p>
-        <p class="text-dm-gray-dark">
-          / {{ Math.round(overallProgress.targetAmount / 10000).toLocaleString() }}만원
-        </p>
+        <p>{{ formatManWon(overallProgress.currentAmount) }}</p>
+        <p class="text-dm-gray-dark">/ {{ formatManWon(overallProgress.targetAmount) }}</p>
       </span>
 
       <button
