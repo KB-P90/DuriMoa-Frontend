@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import { getHomeDashboard, getMonthlySavingMissions } from '@/server/homeApi';
-import { toHomeDashboard, toSavingMission } from '@/models/Home';
-import type { HomeDashboard, SavingMission } from '@/types/home';
+import { toHomeDashboard } from '@/models/Home';
+import type { HomeDashboard } from '@/types/home';
+import type { SavingMission } from '@/types/expense';
 
 const EMPTY_DASHBOARD: HomeDashboard = {
   coupleStatus: 'WAIT',
@@ -59,7 +60,7 @@ export const useHomeStore = defineStore('home', {
         this.isRefreshingDashboard = false;
       }
     },
-    async fetchHome(year = 2026, month = 7) {
+    async fetchHome(year = new Date().getFullYear(), month = new Date().getMonth() + 1) {
       this.isLoading = true;
 
       try {
@@ -72,7 +73,7 @@ export const useHomeStore = defineStore('home', {
           this.dashboard = toHomeDashboard(dashboardResult.value);
         }
         if (missionsResult.status === 'fulfilled') {
-          this.missions = missionsResult.value.missions.map(toSavingMission);
+          this.missions = missionsResult.value.missions;
         }
       } finally {
         this.isLoading = false;

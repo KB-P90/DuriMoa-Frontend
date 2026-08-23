@@ -7,6 +7,9 @@ import { formatManWon } from '@/utils/format';
 const progressStore = useProgressStore();
 
 const members = computed(() => progressStore.personalProgress.members);
+
+// 진행 바는 100%를 넘지 않도록 처리 (텍스트 라벨과 동일한 기준으로 클램프)
+const clampProgressRate = (rate: number) => Math.min(100, Math.max(0, rate));
 </script>
 
 <template>
@@ -54,17 +57,16 @@ const members = computed(() => progressStore.personalProgress.members);
           </div>
 
           <span
-            v-if="member.assetShared && member.currentAmount != null"
+            v-if="member.assetShared || index === 0"
             class="text-sm font-bold"
           >
-            {{ formatManWon(member.currentAmount) }}
+            {{ formatManWon(member.assetAmount ?? 0) }}
           </span>
           <span
             v-else
-            class="flex gap-2 text-sm text-disable font-semibold"
+            class="flex items-center gap-2 text-sm text-disable font-semibold"
           >
             <LockKeyhole :size="25" />
-            <span v-if="index == 0">{{ formatManWon(member.currentAmount ?? 0) }}</span>
           </span>
         </div>
       </div>
@@ -105,7 +107,7 @@ const members = computed(() => progressStore.personalProgress.members);
 
             <div class="my-2 flex justify-between">
               <span class="text-base font-bold text-dm-mint-darker">
-                {{ Math.min(100, member.progressRate) }}%
+                {{ clampProgressRate(member.progressRate) }}%
               </span>
             </div>
           </div>
@@ -115,13 +117,13 @@ const members = computed(() => progressStore.personalProgress.members);
               <div
                 class="h-full rounded-full transition-all duration-1000"
                 :class="index === 0 ? 'bg-brand' : 'bg-dm-mint-darker'"
-                :style="{ width: `${member.progressRate}%` }"
+                :style="{ width: `${clampProgressRate(member.progressRate)}%` }"
               />
             </div>
 
             <p class="mt-2 text-xs text-dm-gray-dark">
               목표 {{ formatManWon(member.targetAmount) }} 중
-              {{ formatManWon(member.assetAmount ?? 0) }} 달성
+              {{ formatManWon(member.currentAmount ?? 0) }} 달성
             </p>
           </div>
         </div>

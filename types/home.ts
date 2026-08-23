@@ -1,11 +1,3 @@
-export interface SavingMission {
-  id: string;
-  title: string;
-  actionMethod: string;
-  status: string;
-  expectedSavingAmount: number;
-}
-
 export interface BudgetGoal {
   targetAmount: number;
   currentAmount: number;
