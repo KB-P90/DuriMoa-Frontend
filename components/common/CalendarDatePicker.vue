@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { CalendarDays, ChevronLeft, ChevronDown } from '@lucide/vue';
 import BottomSheet from './BottomSheet.vue';
 import WheelColumn from './WheelColumn.vue';
@@ -76,9 +76,13 @@ const jumpMonths = computed(() => {
   return Array.from({ length: 12 - start + 1 }, (_, i) => start + i);
 });
 
-watch(jumpMonths, (list) => {
-  if (!list.includes(jumpMonth.value)) jumpMonth.value = list[0];
-});
+// 연도를 옮기면 이전 스크롤 위치의 달이 새 연도에서도 우연히 유효해 그대로 남는 경우가 있어
+// (예: 12월에서 연도만 바꾸면 다음 해도 12월인 채로 보임), 연도가 바뀔 때는 항상 그 해의
+// 첫 선택 가능한 달로 리셋한다.
+function onJumpYearChange(year: number) {
+  jumpYear.value = year;
+  jumpMonth.value = jumpMonths.value[0];
+}
 
 interface CalendarCell {
   day: number;
@@ -226,9 +230,10 @@ function confirm() {
         >
           <div class="flex w-full">
             <WheelColumn
-              v-model="jumpYear"
+              :model-value="jumpYear"
               :items="YEAR_RANGE"
               suffix="년"
+              @update:model-value="onJumpYearChange"
             />
             <WheelColumn
               v-model="jumpMonth"
