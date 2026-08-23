@@ -7,8 +7,8 @@ export interface AiChatMessage {
   variant?: 'welcome';
 }
 
-export type AiIntent = 'weddingBudgetRecommendation' | 'greeting' | 'unknown';
-export type AiAction = 'startWeddingBudgetFlow';
+export type AiIntent = 'weddingBudgetRecommendation' | 'spendingReport' | 'greeting' | 'unknown';
+export type AiAction = 'startWeddingBudgetFlow' | 'generateSpendingReport';
 
 export interface AiChatResponse {
   model: string;

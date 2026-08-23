@@ -11,12 +11,14 @@ import type {
 
 const INTENT_MAP: Record<AiChatResponseDto['intent'], AiIntent> = {
   WEDDING_BUDGET_RECOMMENDATION: 'weddingBudgetRecommendation',
+  SPENDING_REPORT: 'spendingReport',
   GREETING: 'greeting',
   UNKNOWN: 'unknown',
 };
 
 const ACTION_MAP: Record<NonNullable<AiChatResponseDto['action']>, AiAction> = {
   START_WEDDING_BUDGET_FLOW: 'startWeddingBudgetFlow',
+  GENERATE_SPENDING_REPORT: 'generateSpendingReport',
 };
 
 export function toAiChatResponse(dto: AiChatResponseDto): AiChatResponse {

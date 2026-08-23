@@ -1,7 +1,12 @@
 import { computed, ref, type Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { toAiChatResponse, toWeddingBudgetRecommendation } from '@/models/AiChat';
-import { postAiChatMessage, postWeddingBudgetRecommendation } from '@/server/aiApi';
+import { toSpendingReport } from '@/models/AiSpendingReport';
+import {
+  getSpendingReport,
+  postAiChatMessage,
+  postWeddingBudgetRecommendation,
+} from '@/server/aiApi';
 import { useGoalStore } from '@/stores/goalStore';
 import type {
   AiChatMessage,
@@ -9,6 +14,7 @@ import type {
   WeddingBudgetRecommendation,
 } from '@/types/aiChat';
 import type { RegionName } from '@/types/goal';
+import type { AiSpendingReportStep, SpendingReport } from '@/types/aiSpendingReport';
 
 let nextMessageId = 1;
 
@@ -25,9 +31,13 @@ export function useAiChat(messages: Ref<AiChatMessage[]>) {
   const weddingDate = ref('');
   const weddingRegion = ref<RegionName | null>(null);
   const recommendation = ref<WeddingBudgetRecommendation | null>(null);
+  const spendingReportStep = ref<AiSpendingReportStep>('idle');
+  const spendingReport = ref<SpendingReport | null>(null);
 
-  const isFlowInputLocked = computed(() =>
-    ['selectingDate', 'selectingRegion', 'analyzing'].includes(weddingBudgetStep.value)
+  const isFlowInputLocked = computed(
+    () =>
+      ['selectingDate', 'selectingRegion', 'analyzing'].includes(weddingBudgetStep.value) ||
+      spendingReportStep.value === 'analyzing'
   );
   const canSend = computed(
     () => draft.value.trim().length > 0 && !isSending.value && !isFlowInputLocked.value
@@ -60,6 +70,10 @@ export function useAiChat(messages: Ref<AiChatMessage[]>) {
       weddingBudgetStep.value = 'idle';
       recommendation.value = null;
     }
+    if (spendingReportStep.value === 'result') {
+      spendingReportStep.value = 'idle';
+      spendingReport.value = null;
+    }
     appendMessage('user', content);
     draft.value = '';
     isSending.value = true;
@@ -67,15 +81,39 @@ export function useAiChat(messages: Ref<AiChatMessage[]>) {
     try {
       const dto = await postAiChatMessage({ message: content });
       const result = toAiChatResponse(dto);
-      appendMessage('assistant', result.response);
 
       if (result.action === 'startWeddingBudgetFlow') {
         startWeddingBudgetFlow();
+      } else if (result.action === 'generateSpendingReport') {
+        await generateSpendingReport();
+      } else {
+        appendMessage('assistant', result.response);
       }
     } catch {
       appendMessage('assistant', 'AI 응답을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.');
     } finally {
       isSending.value = false;
+    }
+  }
+
+  async function generateSpendingReport() {
+    weddingBudgetStep.value = 'idle';
+    recommendation.value = null;
+    spendingReport.value = null;
+    spendingReportStep.value = 'analyzing';
+    appendMessage(
+      'assistant',
+      '회원가입일부터 지금까지의 개인 지출 흐름과 카테고리·요일 패턴을 분석하고 있어요.'
+    );
+
+    try {
+      const dto = await getSpendingReport();
+      spendingReport.value = toSpendingReport(dto);
+      spendingReportStep.value = 'result';
+      appendMessage('assistant', '분석이 끝났어요. 가입 후 소비 리포트를 확인해 주세요.');
+    } catch {
+      spendingReportStep.value = 'idle';
+      appendMessage('assistant', '소비 리포트를 불러오지 못했어요. 잠시 후 다시 요청해 주세요.');
     }
   }
 
@@ -179,6 +217,8 @@ export function useAiChat(messages: Ref<AiChatMessage[]>) {
     isSending,
     openChat,
     recommendation,
+    spendingReport,
+    spendingReportStep,
     sendMessage,
     updateOpen,
     updateWeddingDate,
