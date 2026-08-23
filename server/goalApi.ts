@@ -8,16 +8,20 @@ import type {
   MainProposalDecision,
 } from '@/types/goal';
 
-export const getGoalCategoryStat = async (region: string, category: string) => {
+export const getGoalCategoryStat = async (
+  region: string,
+  category: string,
+  weddingMonth: number
+) => {
   const { data } = await api.get<ApiResponse<GoalCategoryStat>>('/goal/stat', {
-    params: { region, category },
+    params: { region, category, weddingMonth },
   });
   return data.data;
 };
 
-export const getGoalBudgetEstimate = async (region: string) => {
+export const getGoalBudgetEstimate = async (region: string, weddingMonth: number) => {
   const { data } = await api.get<ApiResponse<GoalBudgetEstimate>>('/goal/stat/estimate', {
-    params: { region },
+    params: { region, weddingMonth },
   });
   return data.data;
 };

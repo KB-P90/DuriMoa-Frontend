@@ -65,6 +65,13 @@ export const useGoalStore = defineStore('goal', () => {
     Object.values(draft.items).reduce((sum: number, amount) => sum + (amount ?? 0), 0)
   );
 
+  const weddingMonth = computed(() => {
+    if (!draft.weddingDate) return null;
+
+    const month = Number(draft.weddingDate.split('-')[1]);
+    return Number.isInteger(month) && month >= 1 && month <= 12 ? month : null;
+  });
+
   // 시안 이름을 아직 안 정했을 때(새로 만드는 흐름) 쓰는 기본 이름.
   const defaultName = computed(() => '우리의 결혼 예산');
 
@@ -144,6 +151,7 @@ export const useGoalStore = defineStore('goal', () => {
     editingGoalId,
     editingGoalIsMain,
     totalBudget,
+    weddingMonth,
     defaultName,
     setSchedule,
     setBudgetType,

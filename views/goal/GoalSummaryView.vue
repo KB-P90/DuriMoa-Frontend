@@ -45,9 +45,9 @@ const goalName = computed({
 // GoalBudgetTypeView와 동일한 목업 표. GET /api/goal/stat이 전국 평균까지 함께
 // 내려주게 되면 그쪽 응답으로 교체한다.
 const NATIONAL_AVERAGE: Record<BudgetTypeCode, number> = {
-  saving: 5418,
-  balanced: 6120,
-  flex: 7450,
+  saving: 1700,
+  balanced: 2100,
+  flex: 2800,
 };
 
 // 자산/저축 가능액은 마이페이지·홈 도메인 데이터가 필요해서 아직 목업.
@@ -127,7 +127,10 @@ onMounted(async () => {
     goalStore.draft.name = goalStore.defaultName;
   }
 
-  if (!goalStore.draft.region) {
+  const region = goalStore.draft.region;
+  const weddingMonth = goalStore.weddingMonth;
+
+  if (!region || !weddingMonth) {
     statsLoading.value = false;
     return;
   }
@@ -138,7 +141,7 @@ onMounted(async () => {
         try {
           return [
             category.code,
-            await getGoalCategoryStat(goalStore.draft.region!, category.label),
+            await getGoalCategoryStat(region, category.label, weddingMonth),
           ] as const;
         } catch {
           return [category.code, null] as const;

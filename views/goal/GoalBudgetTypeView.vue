@@ -30,13 +30,16 @@ const budgetPreviews = ref<Record<BudgetTypeCode, number>>({
 const estimateLoading = ref(true);
 
 async function loadBudgetEstimate() {
-  if (!goalStore.draft.region) {
+  const region = goalStore.draft.region;
+  const weddingMonth = goalStore.weddingMonth;
+
+  if (!region || !weddingMonth) {
     estimateLoading.value = false;
     return;
   }
 
   try {
-    const estimate = await getGoalBudgetEstimate(goalStore.draft.region);
+    const estimate = await getGoalBudgetEstimate(region, weddingMonth);
     for (const { type, totalAmount } of estimate.estimates) {
       const budgetType = BUDGET_TYPES.find((item) => item.label === type);
       if (budgetType) budgetPreviews.value[budgetType.code] = totalAmount / 10_000;
