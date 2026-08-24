@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Bot, PieChart, PiggyBank, Send, WalletCards, X } from '@lucide/vue';
+import { Bot, PieChart, Send, WalletCards, X } from '@lucide/vue';
 import { nextTick, ref, watch } from 'vue';
 import {
   DialogClose,
@@ -11,12 +11,14 @@ import {
   DialogTitle,
 } from 'reka-ui';
 import AiWeddingBudgetFlow from '@/components/ai/AiWeddingBudgetFlow.vue';
+import AiSpendingReportFlow from '@/components/ai/AiSpendingReportFlow.vue';
 import type {
   AiChatMessage,
   AiWeddingBudgetStep,
   WeddingBudgetRecommendation,
 } from '@/types/aiChat';
 import type { RegionName } from '@/types/goal';
+import type { AiSpendingReportStep, SpendingReport } from '@/types/aiSpendingReport';
 
 const props = defineProps<{
   open: boolean;
@@ -30,6 +32,8 @@ const props = defineProps<{
   weddingDate: string;
   weddingRegion: RegionName | null;
   recommendation: WeddingBudgetRecommendation | null;
+  spendingReportStep: AiSpendingReportStep;
+  spendingReport: SpendingReport | null;
 }>();
 
 const draft = defineModel<string>('draft', { required: true });
@@ -156,31 +160,20 @@ watch(
                       <PieChart class="h-4 w-4" />
                     </span>
                     <div>
-                      <p class="text-xs font-extrabold text-gray-800">결혼 준비 소비 리포트</p>
+                      <p class="text-xs font-extrabold text-gray-800">가입 후 소비 리포트</p>
                       <p class="mt-0.5 text-[11px] leading-4 text-dm-gray-dark">
-                        지출 흐름과 항목별 소비를 분석해요
+                        전체 지출 흐름과 항목·요일별 소비를 분석해요
                       </p>
                     </div>
                   </li>
 
-                  <li class="flex items-start gap-2.5">
-                    <span
-                      class="mt-0.5 shrink-0 text-dm-mint-darker"
-                      aria-hidden="true"
-                    >
-                      <PiggyBank class="h-4 w-4" />
-                    </span>
-                    <div>
-                      <p class="text-xs font-extrabold text-gray-800">커플 저축 플랜</p>
-                      <p class="mt-0.5 text-[11px] leading-4 text-dm-gray-dark">
-                        목표일까지 월별 저축 계획을 제안해요
-                      </p>
-                    </div>
-                  </li>
                 </ul>
 
                 <p class="mt-3 border-t border-dm-gray/20 pt-2.5 text-xs text-dm-gray-dark">
                   궁금한 내용이나 필요한 도움을 자유롭게 말씀해 주세요.
+                  <span class="mt-1 block">
+                    더 다양한 결혼 준비 AI 기능도 계속 추가될 예정이에요.
+                  </span>
                 </p>
               </div>
 
@@ -197,7 +190,9 @@ watch(
               </p>
             </li>
             <li
-              v-if="isSending && weddingBudgetStep !== 'analyzing'"
+              v-if="
+                isSending && weddingBudgetStep !== 'analyzing' && spendingReportStep !== 'analyzing'
+              "
               class="flex justify-start"
             >
               <p
@@ -218,6 +213,11 @@ watch(
             @confirm-date="emit('confirmWeddingDate')"
             @confirm-region="emit('confirmWeddingRegion')"
             @apply="emit('applyWeddingBudget')"
+          />
+
+          <AiSpendingReportFlow
+            :step="spendingReportStep"
+            :report="spendingReport"
           />
         </div>
 

@@ -1,6 +1,7 @@
-export type AiIntentDto = 'WEDDING_BUDGET_RECOMMENDATION' | 'GREETING' | 'UNKNOWN';
+export type AiIntentDto =
+  'WEDDING_BUDGET_RECOMMENDATION' | 'SPENDING_REPORT' | 'GREETING' | 'UNKNOWN';
 
-export type AiActionDto = 'START_WEDDING_BUDGET_FLOW';
+export type AiActionDto = 'START_WEDDING_BUDGET_FLOW' | 'GENERATE_SPENDING_REPORT';
 
 export interface AiChatRequestDto {
   message: string;

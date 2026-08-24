@@ -31,6 +31,8 @@ const {
   isSending,
   openChat,
   recommendation,
+  spendingReport,
+  spendingReportStep,
   sendMessage,
   updateOpen,
   updateWeddingDate,
@@ -83,6 +85,8 @@ const {
     :wedding-date="weddingDate"
     :wedding-region="weddingRegion"
     :recommendation="recommendation"
+    :spending-report="spendingReport"
+    :spending-report-step="spendingReportStep"
     @submit="sendMessage"
     @update:open="updateOpen"
     @update:wedding-date="updateWeddingDate"
