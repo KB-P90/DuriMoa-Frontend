@@ -251,7 +251,7 @@ onMounted(() => {
             class="flex flex-col gap-2"
           >
             <h1 class="text-xl font-bold leading-7 text-[#292934] max-[381px]:text-lg md:text-2xl">
-              {{ dashboard.groomName }}님과 {{ dashboard.brideName }}님은
+              {{ dashboard.userName }}님과 {{ dashboard.partnerName }}님은
             </h1>
             <h1 class="text-xl font-bold leading-7 text-[#292934] max-[381px]:text-lg md:text-2xl">
               <span class="bg-[linear-gradient(to_top,#ffdfea_45%,transparent_45%)]">{{

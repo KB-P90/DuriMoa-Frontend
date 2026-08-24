@@ -6,6 +6,8 @@ import type { SavingMission } from '@/types/expense';
 
 const EMPTY_DASHBOARD: HomeDashboard = {
   coupleStatus: 'WAIT',
+  userName: '',
+  partnerName: '',
   groomName: '',
   brideName: '',
   totalAccumulatedAmount: 0,

@@ -20,6 +20,8 @@ export interface SetupChecklist {
 
 export interface HomeDashboard {
   coupleStatus: 'CONNECTED' | 'WAIT' | 'DISCONNECTED';
+  userName: string;
+  partnerName: string;
   groomName: string;
   brideName: string;
   totalAccumulatedAmount: number;
