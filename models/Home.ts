@@ -9,6 +9,8 @@ export const toHomeDashboard = (dto: HomeDashboardResponseDto): HomeDashboard =>
 
   return {
     coupleStatus: dto.couple.couple_status ?? 'DISCONNECTED',
+    userName: dto.couple.user_name,
+    partnerName: dto.couple.partner_name ?? '',
     groomName:
       dto.couple.user_role === 'G' ? dto.couple.user_name : (dto.couple.partner_name ?? ''),
     brideName:

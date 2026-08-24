@@ -87,7 +87,7 @@ const { authorizationError, startKakaoLogin } = useKakaoAuthorization();
         </p>
 
         <button
-          class="mt-0.5 grid min-h-[50px] w-full place-items-center rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light transition hover:bg-brand-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 disabled:cursor-not-allowed disabled:opacity-60"
+          class="mt-0.5 grid min-h-[50px] w-full place-items-center rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light transition hover:bg-brand-dark focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           type="submit"
           :disabled="isSubmitting"
         >
@@ -97,7 +97,7 @@ const { authorizationError, startKakaoLogin } = useKakaoAuthorization();
 
       <!-- TODO: 카카오 브랜드 색상 #FEE500 공통 토큰 등록 검토 -->
       <button
-        class="mt-3 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl border-0 bg-[#FEE500] p-0 transition hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
+        class="mt-3 flex h-[50px] w-full items-center justify-center gap-2 rounded-xl border-0 bg-[#FEE500] p-0 transition hover:brightness-[0.98] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 cursor-pointer"
         type="button"
         aria-label="카카오 계정으로 계속하기"
         @click="startKakaoLogin"

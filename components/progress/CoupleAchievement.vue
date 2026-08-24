@@ -43,9 +43,7 @@ function handleViewMonthlyProgress() {
         <p class="text-base font-bold text-brand">{{ progressRateLabel }}%</p>
       </div>
 
-      <div
-        class="h-5 w-full overflow-hidden rounded-full border border-1 border-pink-03 bg-dm-gray-light"
-      >
+      <div class="h-5 w-full overflow-hidden rounded-full bg-dm-mint-lighter">
         <div
           class="h-full rounded-full bg-brand transition-all duration-1000"
           :style="{ width: `${progressBarWidth}%` }"

@@ -185,7 +185,9 @@ const endMissionDrag = () => {
 };
 
 // 홈에는 실제로 도전중인 미션만 노출한다.
-const inProgressMissions = computed(() => missions.value.filter((mission) => mission.status === '도전중'));
+const inProgressMissions = computed(() =>
+  missions.value.filter((mission) => mission.status === '도전중')
+);
 
 const missionIcon = (mission: (typeof inProgressMissions.value)[number]) =>
   getMonthlyExpenseCategoryIcon(mission.categoryCode);
@@ -249,7 +251,7 @@ onMounted(() => {
             class="flex flex-col gap-2"
           >
             <h1 class="text-xl font-bold leading-7 text-[#292934] max-[381px]:text-lg md:text-2xl">
-              {{ dashboard.groomName }}님과 {{ dashboard.brideName }}님은
+              {{ dashboard.userName }}님과 {{ dashboard.partnerName }}님은
             </h1>
             <h1 class="text-xl font-bold leading-7 text-[#292934] max-[381px]:text-lg md:text-2xl">
               <span class="bg-[linear-gradient(to_top,#ffdfea_45%,transparent_45%)]">{{
@@ -340,7 +342,7 @@ onMounted(() => {
         <button
           v-if="dashboard.savingAlert"
           type="button"
-          class="saving-alert flex h-[39px] w-full items-center gap-2 rounded-[11px] bg-pink-01 px-[13px] text-left md:h-11"
+          class="saving-alert flex h-[39px] w-full items-center gap-2 rounded-[11px] bg-pink-01 px-[13px] text-left md:h-11 cursor-pointer"
           @click="notificationStore.openPanel()"
         >
           <span class="text-[10px] font-extrabold leading-3 text-brand">알림</span>

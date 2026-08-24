@@ -57,16 +57,17 @@ const clampProgressRate = (rate: number) => Math.min(100, Math.max(0, rate));
           </div>
 
           <span
-            v-if="member.assetShared || index === 0"
+            v-if="member.assetShared"
             class="text-sm font-bold"
           >
             {{ formatManWon(member.assetAmount ?? 0) }}
           </span>
           <span
             v-else
-            class="flex items-center gap-2 text-sm text-disable font-semibold"
+            class="flex items-center gap-2 text-sm text-dm-gray font-semibold"
           >
-            <LockKeyhole :size="25" />
+            <LockKeyhole :size="20" />
+            <span v-if="index == 0">{{ formatManWon(member.currentAmount ?? 0) }}</span>
           </span>
         </div>
       </div>
@@ -95,7 +96,7 @@ const clampProgressRate = (rate: number) => Math.min(100, Math.max(0, rate));
                 />
                 <UserRound
                   v-else
-                  class="h-6 w-6 text-[#292934]"
+                  class="h-6 w-6"
                   :class="index === 0 ? 'text-brand' : 'text-btn-mt-dark'"
                 />
               </div>
@@ -106,14 +107,17 @@ const clampProgressRate = (rate: number) => Math.min(100, Math.max(0, rate));
             </div>
 
             <div class="my-2 flex justify-between">
-              <span class="text-base font-bold text-dm-mint-darker">
-                {{ clampProgressRate(member.progressRate) }}%
+              <span
+                class="text-base font-bold"
+                :class="index === 0 ? 'text-brand' : 'text-dm-mint-darker'"
+              >
+                {{ member.progressRate }}%
               </span>
             </div>
           </div>
 
           <div class="mt-3">
-            <div class="h-4 rounded-full bg-gray-100">
+            <div class="h-4 w-full overflow-hidden rounded-full bg-dm-gray-light">
               <div
                 class="h-full rounded-full transition-all duration-1000"
                 :class="index === 0 ? 'bg-brand' : 'bg-dm-mint-darker'"

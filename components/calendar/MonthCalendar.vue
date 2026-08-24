@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import type { CalendarDay } from '@/types/calendar';
 
 defineProps<{
@@ -23,21 +24,23 @@ const MARKER_COLORS = {
   <section
     class="min-w-0 rounded-3xl border border-dm-gray/30 bg-background px-2 pb-4 pt-4 shadow-sm sm:px-5"
   >
-    <div class="mb-3 flex items-center justify-between px-1 text-dm-gray-dark">
+    <div class="mb-3 flex items-center justify-center gap-7 px-1 text-dm-gray-dark">
       <button
         type="button"
         aria-label="이전 달"
+        class="cursor-pointer"
         @click="emit('change-month', -1)"
       >
-        ‹
+        <ChevronLeft :size="20" />
       </button>
       <strong class="text-base font-semibold text-gray-800">{{ monthLabel }}</strong>
       <button
         type="button"
         aria-label="다음 달"
+        class="cursor-pointer"
         @click="emit('change-month', 1)"
       >
-        ›
+        <ChevronRight :size="20" />
       </button>
     </div>
     <div class="grid grid-cols-7 text-center">
@@ -56,6 +59,7 @@ const MARKER_COLORS = {
         class="relative mx-auto flex h-10 w-10 flex-col items-center justify-center rounded-xl text-sm font-semibold sm:h-11 sm:w-11"
         :class="[
           !day.currentMonth && 'text-dm-gray/50',
+          day.currentMonth && 'cursor-pointer',
           day.currentMonth && index % 7 === 0 && 'text-brand',
           day.currentMonth && index % 7 !== 0 && 'text-gray-800',
           day.currentMonth && day.isoDate === selectedDate && '!bg-brand !text-white',

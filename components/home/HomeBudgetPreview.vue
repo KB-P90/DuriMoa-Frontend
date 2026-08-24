@@ -27,7 +27,7 @@ const selectedRegion = ref<(typeof REGIONAL_BUDGETS)[number]['region']>('서울'
         v-for="budget in REGIONAL_BUDGETS"
         :key="budget.region"
         type="button"
-        class="relative flex min-w-0 flex-1 flex-col items-center justify-end gap-1"
+        class="relative flex min-w-0 flex-1 flex-col items-center justify-end gap-1 cursor-pointer"
         @click="selectedRegion = budget.region"
       >
         <Transition name="budget-amount">
