@@ -70,10 +70,10 @@ const activeCalendarLabel = computed(() => activeCalendar.value.label);
           type="button"
           role="tab"
           :aria-selected="mode === item.value"
-          class="relative flex-1 cursor-pointer whitespace-nowrap pb-5 text-base font-bold transition-colors"
+          class="relative flex-1 cursor-pointer whitespace-nowrap pb-3 text-base font-semibold transition-colors"
           :class="[
             mode === item.value
-              ? `text-brand after:absolute after:-bottom-px after:left-0 after:h-[4px] after:w-full after:bg-brand after:content-['']`
+              ? `text-brand after:absolute after:-bottom-px after:left-0 after:h-[3.5px] after:w-full after:bg-brand after:content-['']`
               : 'text-dm-gray-dark hover:bg-dm-gray-light/60',
           ]"
           @click="emit('update:mode', item.value)"

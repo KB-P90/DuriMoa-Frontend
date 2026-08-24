@@ -77,19 +77,29 @@ const TYPE_COLORS: Record<TransactionType, string> = {
       </span>
       <span class="min-w-0 flex-1">
         <span class="flex min-w-0 items-center gap-1.5">
-          <strong class="truncate text-sm font-semibold text-gray-800">{{ transaction.title }}</strong>
+          <strong class="truncate text-sm font-semibold text-gray-800"
+            >{{ transaction.title }} {{ transaction.memo ? ' · ' + transaction.memo : '' }}
+          </strong>
+        </span>
+
+        <span class="flex gap-2">
+          <small class="mt-0.5 block text-xs text-dm-gray-dark">
+            {{ transaction.category }} · {{ transaction.owner }}
+          </small>
           <span
             v-if="transaction.isUserCreated"
-            class="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-pink-01 text-brand"
+            class="px-2 py-1 flex shrink-0 items-center justify-center rounded-full bg-dm-gray-light text-dm-gray-dark"
             title="직접 입력한 내역"
             aria-label="직접 입력한 내역"
           >
-            <Pencil class="h-2.5 w-2.5" :stroke-width="2" aria-hidden="true" />
-          </span>
-        </span>
-        <small class="mt-0.5 block text-xs text-dm-gray-dark">
-          {{ transaction.category }} · {{ transaction.owner }}
-        </small>
+            <Pencil
+              class="h-2.5 w-2.5"
+              :stroke-width="2"
+              aria-hidden="true"
+            />
+            <p class="pl-1 text-xs">직접 추가</p>
+          </span></span
+        >
       </span>
       <strong
         class="shrink-0 text-sm font-semibold tracking-tight"
