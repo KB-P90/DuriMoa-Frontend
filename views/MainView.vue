@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import { Bell, BellDot, ChevronRight, Coffee } from '@lucide/vue';
 import HeroThermometer from '@/components/home/HeroThermometer.vue';
 import HomeChecklistCard from '@/components/home/HomeChecklistCard.vue';
@@ -12,7 +12,10 @@ import { useHomeStore } from '@/stores/homeStore';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { formatWon } from '@/utils/format';
 import { isAccessTokenValid } from '@/utils/auth';
+import { getMonthlyExpenseCategoryIcon } from '@/utils/expense';
+import { ExpenseCategoryName } from '@/types/category';
 
+const router = useRouter();
 const homeStore = useHomeStore();
 const { dashboard, missions } = storeToRefs(homeStore);
 const notificationStore = useNotificationStore();
@@ -153,26 +156,62 @@ const personalRate = computed(() =>
 );
 const jointRate = computed(() => (isLoggedIn ? dashboard.value.jointGoal.achievementRate : 30));
 
+// 캐러셀에 pointer capture를 걸어 두면 탭(클릭) 이벤트가 캡처한 요소로만 전달되고
+// 카드 버튼까지 전파되지 않는 브라우저가 있어(특히 모바일 터치), 순수 click 핸들러로는
+// 카드 클릭이 씹힌다. 그래서 pointerdown~up 사이 이동 거리로 드래그 여부를 직접 판별한다.
+const MISSION_DRAG_THRESHOLD_PX = 6;
+const dragMoved = ref(false);
+const dragStartedOnCard = ref(false);
+
 const startMissionDrag = (event: PointerEvent) => {
   if (!missionCarousel.value) return;
   dragStartX.value = event.clientX;
   dragStartScrollLeft.value = missionCarousel.value.scrollLeft;
+  dragMoved.value = false;
+  dragStartedOnCard.value = !!(event.target as HTMLElement).closest('.mission-card');
   missionCarousel.value.setPointerCapture(event.pointerId);
 };
 
 const moveMissionDrag = (event: PointerEvent) => {
   if (dragStartX.value === null || !missionCarousel.value) return;
-  missionCarousel.value.scrollLeft = dragStartScrollLeft.value - (event.clientX - dragStartX.value);
+  const delta = event.clientX - dragStartX.value;
+  if (Math.abs(delta) > MISSION_DRAG_THRESHOLD_PX) dragMoved.value = true;
+  missionCarousel.value.scrollLeft = dragStartScrollLeft.value - delta;
 };
 
 const endMissionDrag = () => {
   dragStartX.value = null;
+  dragStartedOnCard.value = false;
+};
+
+// 홈에는 실제로 도전중인 미션만 노출한다.
+const inProgressMissions = computed(() => missions.value.filter((mission) => mission.status === '도전중'));
+
+const missionIcon = (mission: (typeof inProgressMissions.value)[number]) =>
+  getMonthlyExpenseCategoryIcon(mission.categoryCode);
+
+const missionCategoryName = (mission: (typeof inProgressMissions.value)[number]) =>
+  ExpenseCategoryName[mission.categoryCode] ?? mission.title;
+
+// 백엔드 문구가 "~줄이면"으로 내려와 "~줄이기"(행동 유도형)로 바꿔 보여준다.
+const missionActionText = (mission: (typeof inProgressMissions.value)[number]) =>
+  mission.title.replace(/줄이면$/, '줄이기');
+
+const goToMissionChallenge = () => {
+  void router.push({ name: 'expense', query: { from: 'home' } });
+};
+
+const handleMissionPointerUp = () => {
+  if (!dragMoved.value && dragStartedOnCard.value) {
+    goToMissionChallenge();
+  }
+  endMissionDrag();
 };
 
 const handleMissionScroll = () => {
   if (!missionCarousel.value) return;
   const index = Math.round(missionCarousel.value.scrollLeft / missionCarousel.value.clientWidth);
-  missionActiveIndex.value = Math.min(Math.max(index, 0), missions.value.length - 1);
+  missionActiveIndex.value = Math.min(Math.max(index, 0), inProgressMissions.value.length - 1);
 };
 
 onMounted(() => {
@@ -315,20 +354,20 @@ onMounted(() => {
         <div class="flex h-[19px] items-center justify-between my-3">
           <h2 class="text-base font-bold leading-4 text-gray-900">이번 달 절약 미션</h2>
           <span
-            v-if="missions.length > 0"
+            v-if="inProgressMissions.length > 0"
             class="text-[11px] leading-4 text-dm-gray-dark"
             >{{ dashboard.inProgressMissionCount }} / {{ dashboard.totalMissionCount }} 진행</span
           >
         </div>
 
         <div
-          v-if="missions.length > 0"
+          v-if="inProgressMissions.length > 0"
           ref="missionCarousel"
           aria-label="절약 미션 목록"
           class="mt-2 flex snap-x snap-mandatory overflow-x-auto gap-3 scrollbar-none"
           @pointerdown="startMissionDrag"
           @pointermove="moveMissionDrag"
-          @pointerup="endMissionDrag"
+          @pointerup="handleMissionPointerUp"
           @pointercancel="endMissionDrag"
           @pointerleave="endMissionDrag"
           @scroll="handleMissionScroll"
@@ -340,24 +379,23 @@ onMounted(() => {
             class="contents"
           >
             <button
-              v-for="(mission, index) in missions"
-              :key="mission.id"
+              v-for="(mission, index) in inProgressMissions"
+              :key="mission.missionId"
               type="button"
               class="mission-card flex h-[62px] w-full shrink-0 snap-center items-center rounded-2xl border border-[#F0E7E5] bg-white p-4 text-left md:h-[72px]"
               :style="{ transitionDelay: `${index * 60}ms` }"
             >
               <span
-                class="grid h-8 w-8 place-items-center rounded-[11px] bg-[#FFFAFA] text-[#5A5B69]"
-                ><Coffee
-                  class="h-3 w-3"
-                  :stroke-width="1.6"
-              /></span>
+                class="grid h-8 w-8 place-items-center rounded-[11px] bg-[#FFFAFA] text-base"
+                aria-hidden="true"
+                >{{ missionIcon(mission) }}</span
+              >
               <span class="ml-[18px] flex flex-1 flex-col gap-px">
                 <strong class="text-[12.5px] font-bold leading-[15px] tracking-[-0.25px]">{{
-                  mission.title
+                  missionCategoryName(mission)
                 }}</strong>
                 <span class="text-[11px] leading-4 text-dm-gray-dark">{{
-                  mission.actionMethod
+                  missionActionText(mission)
                 }}</span>
               </span>
               <span
@@ -369,19 +407,19 @@ onMounted(() => {
         </div>
 
         <div
-          v-if="missions.length > 1"
+          v-if="inProgressMissions.length > 1"
           class="mt-2 flex items-center justify-center gap-1.5"
         >
           <span
-            v-for="(mission, index) in missions"
-            :key="mission.id"
+            v-for="(mission, index) in inProgressMissions"
+            :key="mission.missionId"
             class="h-1.5 w-1.5 rounded-full"
             :class="index === missionActiveIndex ? 'bg-brand' : 'bg-[#E5E5EA]'"
           />
         </div>
 
         <RouterLink
-          v-if="missions.length === 0"
+          v-if="inProgressMissions.length === 0"
           :to="{ name: 'expense', query: { from: 'home' } }"
           class="mission-empty mt-2 flex h-[62px] items-center gap-3 rounded-2xl border border-[#F0E7E5] bg-white px-4 text-left md:h-[72px]"
         >

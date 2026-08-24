@@ -1,5 +1,5 @@
-import type { HomeDashboardResponseDto, SavingMissionDto } from '@/types/dto/home.dto';
-import type { HomeDashboard, SavingMission } from '@/types/home';
+import type { HomeDashboardResponseDto } from '@/types/dto/home.dto';
+import type { HomeDashboard } from '@/types/home';
 
 export const toHomeDashboard = (dto: HomeDashboardResponseDto): HomeDashboard => {
   const assetSummary = dto.asset_summary;
@@ -50,11 +50,3 @@ export const toHomeDashboard = (dto: HomeDashboardResponseDto): HomeDashboard =>
     },
   };
 };
-
-export const toSavingMission = (dto: SavingMissionDto, index: number): SavingMission => ({
-  id: String(dto.mission_id ?? dto.mission_key ?? index),
-  title: dto.mission_title ?? dto.title ?? dto.expense_category ?? '절약 미션',
-  actionMethod: dto.action_method ?? dto.title ?? '',
-  status: dto.mission_status ?? dto.status ?? '도전하기',
-  expectedSavingAmount: dto.expected_saving_amount,
-});

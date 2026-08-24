@@ -71,12 +71,6 @@ export interface SavingMissionDto {
   created_at?: string;
 }
 
-export interface MonthlySavingMissionsResponseDto {
-  year_month: string;
-  total_expected_saving_amount: number;
-  missions: SavingMissionDto[];
-}
-
 export interface GoalSummaryDto {
   goal_id?: number;
   user_id?: number;
