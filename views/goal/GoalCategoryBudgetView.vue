@@ -63,15 +63,18 @@ function applyDefaultAmount() {
 }
 
 async function loadStat() {
+  const region = goalStore.draft.region;
+  const weddingMonth = goalStore.weddingMonth;
+
   // 예비비는 지역/유형별 시세 통계가 없는 카테고리라 기본 슬라이더만 사용한다.
-  if (category.value.code === 'reserve' || !goalStore.draft.region) {
+  if (category.value.code === 'reserve' || !region || !weddingMonth) {
     stat.value = null;
     return;
   }
 
   statLoading.value = true;
   try {
-    stat.value = await getGoalCategoryStat(goalStore.draft.region, category.value.label);
+    stat.value = await getGoalCategoryStat(region, category.value.label, weddingMonth);
     applyDefaultAmount();
   } catch {
     stat.value = null;
