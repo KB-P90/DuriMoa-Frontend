@@ -64,7 +64,18 @@ export function useMonthlyExpense(yearMonth: MaybeRefOrGetter<string | undefined
 
   function goBack() {
     const routeName = route.query.from === 'home' ? 'home' : 'calendar';
-    void router.push({ name: routeName });
+    if (routeName === 'home') {
+      void router.push({ name: routeName });
+      return;
+    }
+
+    const { year, month } = selectedMonth.value;
+    void router.push({
+      name: routeName,
+      query: {
+        month: `${year}${String(month).padStart(2, '0')}`,
+      },
+    });
   }
 
   return { selectedMonth, expenseLoading, missionLoading, changeMonth, goBack };
