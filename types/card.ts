@@ -1,7 +1,9 @@
+export type CardRecommendationCategory = '가구' | '여행';
+
 export interface RecommendedCard {
   id: string;
   cardId: string;
-  cardProductKey: string;
+  cardProductId: string;
   cardCompany: string;
   name: string;
   rank: number;
@@ -24,14 +26,20 @@ export interface BestCardRecommendation {
   cardId: string;
   userId: number;
   userName: string;
-  cardProductKey: string;
+  cardProductId: string;
   cardCompany: string;
   cardName: string;
   cardImage: string | null;
   annualFee: number;
   expectedBenefitAmount: number;
-  benefitRate: number;
+  benefitRate: number | null;
   ownerName: string;
+  categoryCode: string;
+  categoryName: string;
+  recommendationLabel: string;
+  benefitTitle: string;
+  conditionSummary: string;
+  recommendationNotice: string;
   cardBgColor: string;
 }
 
@@ -50,7 +58,7 @@ export interface CardBenefitItem {
 export interface CardDetail {
   id: string;
   cardId: string;
-  cardProductKey: string;
+  cardProductId: string;
   cardCompany: string;
   cardName: string;
   cardImage: string | null;

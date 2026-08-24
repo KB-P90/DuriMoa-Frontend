@@ -1,13 +1,21 @@
 export interface BestCardDto {
-  card_id: number;
-  owner_type: string;
-  owner_name: string;
+  card_id: number | null;
+  card_product_id?: number | null;
+  category?: string | null;
+  category_name?: string | null;
+  owner_type: string | null;
+  owner_name: string | null;
   company: string;
   card_name: string;
   image: string | null;
+  annual_fee?: number | null;
   expected_benefit_amount: number;
-  benefit_rate: number;
+  benefit_rate: number | null;
+  benefit_title?: string | null;
+  monthly_benefit_limit?: number | null;
+  condition_summary?: string | null;
   recommendable_status: string;
+  recommendation_notice?: string | null;
 }
 
 export interface OwnerCardDto {
@@ -62,7 +70,7 @@ export interface CardBenefitItemDto {
 }
 
 export interface CardDetailResponseDto {
-  card_id: number;
+  card_id: number | null;
   card_product_id: number;
   company: string;
   card_name: string;

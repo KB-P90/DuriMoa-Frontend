@@ -1,19 +1,43 @@
 import { api } from '@/server/axios.js';
 import type { ApiResponse } from '@/types/common';
+import type { CardRecommendationCategory } from '@/types/card';
 import type { CardDetailResponseDto, CardStrategyDataDto } from '@/types/dto/card.dto';
 
-export const getCardStrategyApi = async (amount?: number): Promise<CardStrategyDataDto> => {
-  console.log('카드추천 api 요청', { amount });
+export const getCardStrategyApi = async (
+  amount?: number,
+  category?: CardRecommendationCategory | null
+): Promise<CardStrategyDataDto> => {
   const { data } = await api.get<ApiResponse<CardStrategyDataDto>>('/strategy/card', {
-    params: amount ? { amount } : undefined,
+    params: {
+      ...(amount ? { amount } : {}),
+      ...(category ? { category } : {}),
+    },
+    headers: {
+      Accept: 'application/json',
+    },
   });
-  console.log('카드추천 api 응답', data);
   return data.data;
 };
 
-export const getCardDetailApi = async (cardId: string): Promise<CardDetailResponseDto> => {
-  console.log('카드상세 api 요청', { cardId });
-  const { data } = await api.get<ApiResponse<CardDetailResponseDto>>(`/strategy/card/${cardId}`);
-  console.log('카드상세 api 응답', data);
+export const getOwnedCardDetailApi = async (cardId: string): Promise<CardDetailResponseDto> => {
+  const { data } = await api.get<ApiResponse<CardDetailResponseDto>>(`/strategy/card/${cardId}`, {
+    headers: {
+      Accept: 'application/json',
+    },
+  });
+  return data.data;
+};
+
+export const getRecommendedCardProductDetailApi = async (
+  cardProductId: string
+): Promise<CardDetailResponseDto> => {
+  const { data } = await api.get<ApiResponse<CardDetailResponseDto>>(
+    `/strategy/card/products/${cardProductId}`,
+    {
+      headers: {
+        Accept: 'application/json',
+      },
+    }
+  );
   return data.data;
 };

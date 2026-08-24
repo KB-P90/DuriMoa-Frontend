@@ -9,6 +9,7 @@ import { GoalBudgetEstimateSkeleton, GoalSavingsNoticeSkeleton } from '@/compone
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
 import { useAuthCheck } from '@/composables/useAuthCheck';
+import { useGoalAssetSummary } from '@/composables/useGoalAssetSummary';
 import { getGoalBudgetEstimate } from '@/server/goalApi';
 import { useGoalStore } from '@/stores/goalStore';
 import type { BudgetTypeCode } from '@/types/goal';
@@ -18,6 +19,7 @@ useAuthCheck();
 
 const router = useRouter();
 const goalStore = useGoalStore();
+const { currentAssetManwon, isAssetLoading, loadCurrentAsset } = useGoalAssetSummary();
 
 const selected = ref<BudgetTypeCode>(goalStore.draft.budgetType ?? 'balanced');
 
@@ -46,11 +48,9 @@ async function loadBudgetEstimate() {
   }
 }
 
-onMounted(loadBudgetEstimate);
-
-// 자산/저축 가능액은 마이페이지·홈 도메인 데이터가 필요해서 아직 목업.
-const CURRENT_ASSET = 3119;
-const AVAILABLE_MONTHLY = 180;
+onMounted(() => {
+  void Promise.all([loadBudgetEstimate(), loadCurrentAsset()]);
+});
 
 const remainingMonths = computed(() => {
   if (!goalStore.draft.weddingDate) return null;
@@ -65,9 +65,10 @@ const remainingMonths = computed(() => {
 
 function previewFor(code: BudgetTypeCode) {
   const predicted = budgetPreviews.value[code];
-  const requiredMonthly = remainingMonths.value
-    ? Math.max(Math.round((predicted - CURRENT_ASSET) / remainingMonths.value), 0)
-    : null;
+  const requiredMonthly =
+    remainingMonths.value && currentAssetManwon.value !== null
+      ? Math.max(Math.round((predicted - currentAssetManwon.value) / remainingMonths.value), 0)
+      : null;
 
   return { predicted, requiredMonthly };
 }
@@ -75,6 +76,7 @@ function previewFor(code: BudgetTypeCode) {
 // 경고 박스는 Tabs 컨텍스트가 아니라 selected를 직접 보고 그리는 반응형 블록이라
 // <Tabs> 바깥, TabsContent와 분리된 자리에 둬도 선택 탭에 맞게 그대로 바뀐다.
 const selectedPreview = computed(() => previewFor(selected.value));
+const savingsNoticeLoading = computed(() => estimateLoading.value || isAssetLoading.value);
 
 function handleNext() {
   goalStore.setBudgetType(selected.value);
@@ -143,16 +145,17 @@ function handlePrev() {
 
     <div class="mt-4 flex gap-2 rounded-xl bg-pink-01 p-4">
       <span aria-hidden="true">⚠️</span>
-      <GoalSavingsNoticeSkeleton v-if="estimateLoading" />
+      <GoalSavingsNoticeSkeleton v-if="savingsNoticeLoading" />
       <p
         v-else
         class="text-xs leading-5 text-[#232631]"
       >
-        <template v-if="selectedPreview.requiredMonthly !== null">
-          현재 자산 {{ formatAmount(CURRENT_ASSET) }}만원 · 남은 {{ remainingMonths }}개월 기준 월
-          {{ formatAmount(selectedPreview.requiredMonthly) }}만원을 모아야 해요. 지금 저축 가능액(월
-          {{ formatAmount(AVAILABLE_MONTHLY) }}만원)보다
-          {{ selectedPreview.requiredMonthly > AVAILABLE_MONTHLY ? '많아요' : '적어요' }}.
+        <template v-if="currentAssetManwon === null">
+          현재 자산 정보를 불러오지 못해 필요 저축액을 계산할 수 없어요.
+        </template>
+        <template v-else-if="selectedPreview.requiredMonthly !== null">
+          현재 자산 {{ formatAmount(currentAssetManwon) }}만원 · 남은 {{ remainingMonths }}개월 기준
+          월 {{ formatAmount(selectedPreview.requiredMonthly) }}만원을 모아야 해요.
         </template>
         <template v-else>결혼 예정일을 입력하면 필요 저축액을 계산해드려요.</template>
       </p>

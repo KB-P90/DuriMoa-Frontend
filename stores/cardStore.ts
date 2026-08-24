@@ -1,14 +1,26 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import type { BestCardRecommendation, CardDetail, CardStrategy, UserCardGroup } from '@/types/card';
-import { getCardDetailApi, getCardStrategyApi } from '@/server/cardApi';
-import { toCardDetail, toCardStrategy } from '@/models/Card';
+import type {
+  BestCardRecommendation,
+  CardDetail,
+  CardRecommendationCategory,
+  CardStrategy,
+  UserCardGroup,
+} from '@/types/card';
+import {
+  getCardStrategyApi,
+  getOwnedCardDetailApi,
+  getRecommendedCardProductDetailApi,
+} from '@/server/cardApi';
+import { toCardDetail, toCardStrategy, toRecommendedProductDetail } from '@/models/Card';
 
 export const useCardStore = defineStore('card', () => {
   const DEFAULT_AMOUNT = 100000;
+  const DEFAULT_CATEGORY: CardRecommendationCategory = '가구';
   const MIN_AMOUNT = 1000;
 
   const amount = ref<number>(DEFAULT_AMOUNT);
+  const category = ref<CardRecommendationCategory>(DEFAULT_CATEGORY);
   const isCustomAmountSet = ref<boolean>(false);
   const selectedCardDetail = ref<CardDetail | null>(null);
   const isLoading = ref<boolean>(false);
@@ -35,6 +47,7 @@ export const useCardStore = defineStore('card', () => {
   );
 
   const isValidAmount = computed(() => amount.value >= MIN_AMOUNT);
+  const isValidRecommendation = computed(() => isValidAmount.value && category.value !== null);
 
   function setAmount(val: number) {
     amount.value = Math.max(0, Number.isNaN(val) ? 0 : val);
@@ -44,12 +57,16 @@ export const useCardStore = defineStore('card', () => {
     amount.value = (amount.value || 0) + val;
   }
 
+  function setCategory(val: CardRecommendationCategory) {
+    category.value = val;
+  }
+
   async function fetchCardStrategy(targetAmount?: number) {
     isLoading.value = true;
     error.value = null;
     try {
       const fetchVal = targetAmount !== undefined ? targetAmount : amount.value;
-      const dto = await getCardStrategyApi(fetchVal);
+      const dto = await getCardStrategyApi(fetchVal, category.value);
       const domainData = toCardStrategy(dto);
       cardStrategyData.value = domainData;
       amount.value = domainData.paymentAmount;
@@ -61,11 +78,11 @@ export const useCardStore = defineStore('card', () => {
         domainData.userCardGroups.forEach((group) => {
           group.cards.forEach((card) => {
             if (card.cardId && !card.benefits) {
-              const promise = getCardDetailApi(card.cardId)
+              const promise = getOwnedCardDetailApi(card.cardId)
                 .then((detailDto) => {
                   const cardDetailObj = toCardDetail(detailDto);
                   // 캐시에 저장하여 클릭 시 또 요청하지 않고 즉시 재사용
-                  cardDetailCache.set(card.cardId, cardDetailObj);
+                  cardDetailCache.set(`card:${card.cardId}`, cardDetailObj);
 
                   if (cardDetailObj?.benefits && cardDetailObj.benefits.length > 0) {
                     const topBenefits = cardDetailObj.benefits
@@ -101,7 +118,7 @@ export const useCardStore = defineStore('card', () => {
   }
 
   async function applyCustomAmount() {
-    if (isValidAmount.value) {
+    if (isValidRecommendation.value) {
       isCustomAmountSet.value = true;
       await fetchCardStrategy(amount.value);
     }
@@ -110,30 +127,64 @@ export const useCardStore = defineStore('card', () => {
   async function resetToDefaultView() {
     isCustomAmountSet.value = false;
     amount.value = DEFAULT_AMOUNT;
+    category.value = DEFAULT_CATEGORY;
     await fetchCardStrategy(DEFAULT_AMOUNT);
   }
 
-  async function openCardDetail(cardId?: string) {
-    if (!cardId) return;
-
+  async function loadCardDetail(
+    cacheKey: string,
+    fetchDetail: () => Promise<CardDetail>,
+    fallbackDetail?: CardDetail
+  ) {
     // 이미 저장(캐싱)된 카드 상세 데이터가 있는 경우 굳이 또 API 요청하지 않고 즉시 가져옴
-    if (cardDetailCache.has(cardId)) {
-      console.log(`[CARD STORE] ⚡ 캐시된 카드 상세 데이터를 재사용합니다. (cardId: ${cardId})`);
-      selectedCardDetail.value = cardDetailCache.get(cardId)!;
+    const cachedDetail = cardDetailCache.get(cacheKey);
+    if (cachedDetail) {
+      selectedCardDetail.value = cachedDetail;
       return;
+    }
+
+    if (fallbackDetail) {
+      selectedCardDetail.value = fallbackDetail;
     }
 
     isDetailLoading.value = true;
     try {
-      const dto = await getCardDetailApi(cardId);
-      const detailObj = toCardDetail(dto);
-      cardDetailCache.set(cardId, detailObj);
+      const detailObj = await fetchDetail();
+      cardDetailCache.set(cacheKey, detailObj);
       selectedCardDetail.value = detailObj;
     } catch (e: unknown) {
-      console.error(`Failed to fetch card detail for key (${cardId}):`, e);
+      console.error(`Failed to fetch card detail (${cacheKey}):`, e);
     } finally {
       isDetailLoading.value = false;
     }
+  }
+
+  async function openOwnedCardDetail(cardId?: string) {
+    if (!cardId) return;
+
+    await loadCardDetail(`card:${cardId}`, async () => {
+      const dto = await getOwnedCardDetailApi(cardId);
+      return toCardDetail(dto);
+    });
+  }
+
+  async function openRecommendedCardProductDetail(cardProductId?: string) {
+    if (!cardProductId) return;
+
+    const recommendation = bestRecommendation.value;
+    const fallbackDetail =
+      recommendation?.cardProductId === cardProductId
+        ? toRecommendedProductDetail(null, recommendation)
+        : undefined;
+
+    await loadCardDetail(
+      `product:${cardProductId}`,
+      async () => {
+        const dto = await getRecommendedCardProductDetailApi(cardProductId);
+        return recommendation ? toRecommendedProductDetail(dto, recommendation) : toCardDetail(dto);
+      },
+      fallbackDetail
+    );
   }
 
   function closeCardDetail() {
@@ -142,7 +193,9 @@ export const useCardStore = defineStore('card', () => {
 
   return {
     amount,
+    category,
     isValidAmount,
+    isValidRecommendation,
     MIN_AMOUNT,
     isCustomAmountSet,
     isLoading,
@@ -155,10 +208,12 @@ export const useCardStore = defineStore('card', () => {
     cardStrategyData,
     setAmount,
     addAmount,
+    setCategory,
     fetchCardStrategy,
     applyCustomAmount,
     resetToDefaultView,
-    openCardDetail,
+    openOwnedCardDetail,
+    openRecommendedCardProductDetail,
     closeCardDetail,
   };
 });

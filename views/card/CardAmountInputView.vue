@@ -17,7 +17,7 @@ function handleBack() {
 }
 
 async function handleSubmit() {
-  if (!cardStore.isValidAmount) return;
+  if (!cardStore.isValidRecommendation) return;
   await cardStore.applyCustomAmount();
   router.push({ name: 'card' });
 }
@@ -48,9 +48,11 @@ async function handleSubmit() {
       <section class="mb-6">
         <CardAmountForm
           v-model:amount="cardStore.amount"
-          :is-valid="cardStore.isValidAmount"
+          :category="cardStore.category"
+          :is-valid="cardStore.isValidRecommendation"
           :min-amount="cardStore.MIN_AMOUNT"
           @add-amount="cardStore.addAmount"
+          @update:category="cardStore.setCategory"
           @reset="cardStore.setAmount(0)"
           @submit="handleSubmit"
         />

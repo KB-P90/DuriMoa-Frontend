@@ -27,16 +27,11 @@ function handleGoToAmountInput() {
 }
 
 function handleSelectCard(card: RecommendedCard) {
-  const key = card.cardId || card.id;
-  if (key) {
-    cardStore.openCardDetail(key);
-  }
+  cardStore.openOwnedCardDetail(card.cardId || card.id);
 }
 
-function handleSelectBestCard(cardId: string) {
-  if (cardId) {
-    cardStore.openCardDetail(cardId);
-  }
+function handleSelectBestCard(cardProductId: string) {
+  cardStore.openRecommendedCardProductDetail(cardProductId);
 }
 
 onBeforeRouteLeave((to) => {
@@ -91,6 +86,7 @@ onBeforeRouteLeave((to) => {
           <CardBestRecommendBanner
             v-if="cardStore.isCustomAmountSet && cardStore.bestRecommendation"
             :amount="cardStore.amount"
+            :category="cardStore.category"
             :best="cardStore.bestRecommendation"
             @click-change-amount="handleGoToAmountInput"
             @click-card="handleSelectBestCard"
@@ -114,6 +110,12 @@ onBeforeRouteLeave((to) => {
           >
             입력하신
             <strong class="font-bold text-btn-mt-dark">{{ formatWon(cardStore.amount) }}</strong>
+            <template v-if="cardStore.bestRecommendation?.categoryName">
+              과
+              <strong class="font-bold text-btn-mt-dark">
+                {{ cardStore.bestRecommendation.categoryName }} 혜택
+              </strong>
+            </template>
             기준 추천 카드 순위입니다.
           </p>
 
