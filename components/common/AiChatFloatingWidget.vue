@@ -1,22 +1,14 @@
 <script setup lang="ts">
-import { MessageCircleMore } from '@lucide/vue';
+import { Bot } from '@lucide/vue';
 import AiChatPanel from '@/components/common/AiChatPanel.vue';
 import { useAiChat } from '@/composables/useAiChat';
 import type { AiChatMessage } from '@/types/aiChat';
 
-const props = withDefaults(
-  defineProps<{
-    buttonLabel?: string;
-    buttonImageSrc?: string;
-    chatTitle?: string;
-    chatDescription?: string;
-  }>(),
-  {
-    buttonLabel: 'AI 채팅 열기',
-    chatTitle: '두리모아 AI',
-    chatDescription: '결혼 준비와 예산을 함께 살펴봐요',
-  }
-);
+const props = defineProps<{
+  buttonLabel?: string;
+  chatTitle?: string;
+  chatDescription?: string;
+}>();
 
 const messages = defineModel<AiChatMessage[]>('messages', { default: () => [] });
 
@@ -44,39 +36,31 @@ const {
 </script>
 
 <template>
-  <div
-    class="pointer-events-none fixed inset-x-0 bottom-[calc(7rem+env(safe-area-inset-bottom))] z-[70] mx-auto h-20 w-full max-w-[768px]"
-  >
+  <div class="relative flex h-full w-full items-center justify-center overflow-visible">
     <button
       type="button"
-      :aria-label="buttonLabel"
+      :aria-label="buttonLabel ?? 'AI 채팅 열기'"
       aria-haspopup="dialog"
       :aria-expanded="isOpen"
-      title="AI 채팅 열기"
-      class="group pointer-events-auto absolute bottom-0 right-[max(1.25rem,env(safe-area-inset-right))] grid h-20 w-20 cursor-pointer select-none place-items-center rounded-full bg-transparent text-white transition-[filter,transform] hover:drop-shadow-[0_8px_12px_rgb(234_48_111_/_0.3)] active:scale-95 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand/35"
+      :title="buttonLabel ?? 'AI 채팅 열기'"
+      class="pointer-events-auto relative translate-y-0.5 flex h-22 w-22 flex-col items-center justify-center rounded-full bg-brand text-white cursor-pointer"
       @click="openChat"
     >
-      <img
-        v-if="buttonImageSrc"
-        :src="buttonImageSrc"
-        alt=""
-        aria-hidden="true"
-        draggable="false"
-        class="h-full w-full object-contain transition duration-200 group-hover:scale-105"
-      />
-      <MessageCircleMore
-        v-else
+      <Bot
         class="h-7 w-7"
         :stroke-width="2.2"
       />
+      <span class="mt-1 mb-3 text-xs leading-none tracking-[-0.02em]">
+        {{ buttonLabel ?? 'AI 채팅' }}
+      </span>
     </button>
   </div>
 
   <AiChatPanel
     v-model:draft="draft"
     :open="isOpen"
-    :title="chatTitle"
-    :description="chatDescription"
+    :title="chatTitle ?? '두리모아 AI'"
+    :description="chatDescription ?? '결혼 준비와 예산을 함께 살펴봐요'"
     :messages="messages"
     :can-send="canSend"
     :is-sending="isSending"
