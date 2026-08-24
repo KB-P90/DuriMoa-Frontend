@@ -28,7 +28,7 @@ const {
       <button
         type="button"
         aria-label="피드백 작성 또는 수정"
-        class="text-deep-green"
+        class="text-deep-green cursor-pointer"
         @click="openEditor"
       >
         <SquarePen
@@ -61,7 +61,7 @@ const {
         <div class="flex gap-2">
           <button
             type="button"
-            class="rounded-full bg-dm-gray-light px-4 py-2 text-xs font-semibold text-dm-gray-dark"
+            class="rounded-full bg-dm-gray-light px-4 py-2 text-xs font-semibold text-dm-gray-dark cursor-pointer"
             :disabled="feedbackSaving"
             @click="closeEditor"
           >
@@ -69,7 +69,7 @@ const {
           </button>
           <button
             type="submit"
-            class="rounded-full bg-dm-mint-darker px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
+            class="rounded-full bg-dm-mint-darker px-4 py-2 text-xs font-semibold text-white disabled:opacity-50 cursor-pointer"
             :disabled="feedbackSaving"
           >
             {{ feedbackSaving ? '저장 중' : '저장' }}

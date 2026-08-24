@@ -69,7 +69,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
 
       <button
         type="button"
-        class="flex h-[52px] items-center justify-center gap-1 rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[12px] font-extrabold transition enabled:hover:border-pink-03 enabled:hover:bg-pink-01 disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
+        class="flex h-[52px] items-center justify-center gap-1 rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[12px] font-extrabold transition enabled:hover:border-pink-03 enabled:hover:bg-pink-01 disabled:cursor-not-allowed disabled:text-dm-gray focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 cursor-pointer"
         :disabled="isLoadingMyInviteCode || !myInviteCode"
         aria-label="내 초대 코드 복사"
         @click="$emit('copyMyInviteCode')"
@@ -178,7 +178,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
 
       <button
         type="submit"
-        class="grid h-[52px] place-items-center rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[13px] font-extrabold text-black transition enabled:hover:border-pink-03 enabled:hover:bg-pink-01 disabled:cursor-not-allowed focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
+        class="grid h-[52px] place-items-center rounded-[13px] border border-dm-gray/35 bg-dm-gray-light text-[13px] font-extrabold text-black transition enabled:hover:border-pink-03 enabled:hover:bg-pink-01 disabled:cursor-not-allowed focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 cursor-pointer"
         :disabled="!canConfirm"
       >
         {{ isInviting ? '확인 중' : '확인' }}
@@ -243,7 +243,7 @@ const inviteCode = defineModel<string>('inviteCode', { required: true });
     </p>
     <button
       type="button"
-      class="shrink-0 rounded-[9px] px-2.5 py-1.5 text-[11px] font-extrabold text-brand-dark transition hover:bg-pink-01 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
+      class="shrink-0 rounded-[9px] px-2.5 py-1.5 text-[11px] font-extrabold text-brand-dark transition hover:bg-pink-01 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 cursor-pointer"
       :disabled="isLoadingStatus"
       @click="$emit('retryStatus')"
     >

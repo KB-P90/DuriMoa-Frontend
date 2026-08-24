@@ -196,7 +196,7 @@ onMounted(async () => {
           <div class="ml-auto shrink-0">
             <button
               type="button"
-              class="h-8 rounded-lg bg-white px-3 text-xs font-bold text-brand shadow-[0_0.5px_2px_rgba(0,0,0,0.25)]"
+              class="h-8 rounded-lg bg-white px-3 text-xs font-bold text-brand shadow-[0_0.5px_2px_rgba(0,0,0,0.25)] cursor-pointer"
               @click="goProfileEdit"
             >
               프로필 설정
@@ -244,7 +244,7 @@ onMounted(async () => {
       <button
         v-else
         type="button"
-        class="flex items-center gap-3 rounded-2xl border border-[0.5px] border-brand-border bg-pink-01 px-4 py-4 text-left shadow-[0_1px_2px_rgba(34,34,43,0.04)]"
+        class="flex items-center gap-3 rounded-2xl border border-[0.5px] border-brand-border bg-pink-01 px-4 py-4 text-left shadow-[0_1px_2px_rgba(34,34,43,0.04)] cursor-pointer"
         @click="goCoupleConnect"
       >
         <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white">
@@ -273,7 +273,7 @@ onMounted(async () => {
             v-for="item in assetSummaries"
             :key="item.id"
             type="button"
-            class="flex flex-1 items-center gap-5 rounded-xl bg-dm-mint-light p-5 text-left h-[80px]"
+            class="flex flex-1 items-center gap-5 rounded-xl bg-dm-mint-light p-5 text-left h-[80px] cursor-pointer"
             @click="goAssetConnect(item)"
           >
             <component
@@ -312,7 +312,7 @@ onMounted(async () => {
             v-for="option in shareOptions"
             :key="option.value"
             type="button"
-            class="flex flex-1 items-center justify-center rounded-lg text-xs font-bold disabled:cursor-wait"
+            class="flex flex-1 items-center justify-center rounded-lg text-xs font-bold disabled:cursor-wait cursor-pointer"
             :class="
               myPage.shareSetting.selectedScope === option.value
                 ? 'bg-white text-brand shadow-[0_2px_8px_rgba(82,55,64,0.08)]'
@@ -373,7 +373,7 @@ onMounted(async () => {
 
       <button
         type="button"
-        class="h-14 w-full shrink-0 rounded-xl border border-[#E9E9F0] bg-white text-sm font-bold text-dm-gray-dark"
+        class="h-14 w-full shrink-0 rounded-xl border border-[#E9E9F0] bg-white text-sm font-bold text-dm-gray-dark cursor-pointer"
         @click="handleLogout"
       >
         로그아웃

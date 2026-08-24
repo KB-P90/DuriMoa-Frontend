@@ -93,20 +93,20 @@ const CATEGORY_ICONS: Record<string, Component> = {
 };
 
 const CATEGORY_ICON_COLORS: Record<string, string> = {
-  '급여': 'text-deep-blue',
-  '부수입': 'text-dm-mint-darker',
-  '기타': 'text-dm-gray-dark',
-  '축의금': 'text-brand',
-  '식비': 'text-pink-05',
-  '생활': 'text-deep-green',
-  '쇼핑': 'text-blue',
+  급여: 'text-deep-blue',
+  부수입: 'text-dm-mint-darker',
+  기타: 'text-dm-gray-dark',
+  축의금: 'text-brand',
+  식비: 'text-pink-05',
+  생활: 'text-deep-green',
+  쇼핑: 'text-blue',
   '문화/여가': 'text-sky-09',
-  '예식장': 'text-brand-dark',
-  '스튜디오': 'text-deep-blue',
-  '메이크업': 'text-pink-06',
-  '드레스': 'text-pink-05',
-  '예비비': 'text-red',
-  '저축': 'text-dm-mint-darker',
+  예식장: 'text-brand-dark',
+  스튜디오: 'text-deep-blue',
+  메이크업: 'text-pink-06',
+  드레스: 'text-pink-05',
+  예비비: 'text-red',
+  저축: 'text-dm-mint-darker',
   '결혼 자금': 'text-brand',
 };
 
@@ -148,9 +148,7 @@ function save() {
 </script>
 
 <template>
-  <div
-    class="fixed inset-0 z-[60] mx-auto w-full max-w-[768px] overflow-y-auto bg-background pb-6"
-  >
+  <div class="fixed inset-0 z-[60] mx-auto w-full max-w-[768px] overflow-y-auto bg-background pb-6">
     <div class="relative">
       <PageHeader
         :title="isEditMode ? '내역 수정' : '내역 생성'"
@@ -160,7 +158,7 @@ function save() {
       <button
         v-if="isEditMode && !isCodefTransaction"
         type="button"
-        class="absolute right-4 top-0 flex h-[50px] items-center text-sm font-semibold text-brand"
+        class="absolute right-4 top-0 flex h-[50px] items-center text-sm font-semibold text-brand cursor-pointer"
         :disabled="isSubmitting"
         @click="deleteConfirmationVisible = true"
       >
@@ -182,13 +180,13 @@ function save() {
             v-for="type in TRANSACTION_TYPES"
             :key="type.key"
             type="button"
-            class="relative rounded-2xl border py-3.5 text-sm font-semibold"
+            class="relative rounded-2xl border py-3.5 text-sm font-semibold cursor-pointer disabled:cursor-not-allowed"
             :class="
               isCodefTransaction
                 ? 'cursor-not-allowed border-dm-gray/30 bg-dm-gray-light text-dm-gray-dark'
                 : selectedType === type.key
-                ? TRANSACTION_TYPE_STYLES[type.key]
-                : 'border-dm-gray/30 text-gray-600'
+                  ? TRANSACTION_TYPE_STYLES[type.key]
+                  : 'border-dm-gray/30 text-gray-600'
             "
             @click="selectType(type.key)"
           >
@@ -206,11 +204,7 @@ function save() {
         >
           <p
             class="mb-2 text-xs font-semibold"
-            :class="
-              group.mode === 'personal'
-                ? 'text-btn-mt-dark'
-                : 'text-brand-dark'
-            "
+            :class="group.mode === 'personal' ? 'text-btn-mt-dark' : 'text-brand-dark'"
           >
             {{ group.label }}
           </p>
@@ -220,7 +214,7 @@ function save() {
               :key="`${group.mode}-${option}`"
               type="button"
               variant="outline"
-              class="h-10 min-w-0 flex-row gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:translate-y-0"
+              class="h-10 min-w-0 flex-row gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 cursor-pointer"
               :class="
                 group.mode === 'personal'
                   ? category === option
@@ -235,9 +229,7 @@ function save() {
             >
               <span
                 class="grid h-5 w-5 place-items-center transition-colors"
-                :class="
-                  category === option ? 'text-white' : CATEGORY_ICON_COLORS[option]
-                "
+                :class="category === option ? 'text-white' : CATEGORY_ICON_COLORS[option]"
                 aria-hidden="true"
               >
                 <component
@@ -303,7 +295,7 @@ function save() {
       >
         <button
           type="submit"
-          class="w-full rounded-2xl bg-brand py-3.5 text-base font-semibold text-white shadow-sm transition disabled:cursor-not-allowed disabled:bg-pink-03 disabled:text-white"
+          class="w-full rounded-2xl bg-brand py-3.5 text-base font-semibold text-white shadow-sm transition disabled:cursor-not-allowed disabled:bg-pink-03 disabled:text-white cursor-pointer"
           :disabled="isSubmitting || !isFormValid"
         >
           {{ isSubmitting ? '처리 중...' : isEditMode ? '수정하기' : '등록하기' }}

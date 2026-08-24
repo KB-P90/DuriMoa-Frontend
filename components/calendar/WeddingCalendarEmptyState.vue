@@ -34,7 +34,7 @@ const isTutorialOpen = ref(false);
 
     <Button
       type="button"
-      class="mt-5 h-12 w-full rounded-2xl border border-dm-mint-dark bg-btn-mt text-sm font-semibold text-btn-mt-dark hover:bg-dm-mint"
+      class="mt-5 h-12 w-full rounded-2xl border border-dm-mint-dark bg-btn-mt text-sm font-semibold text-btn-mt-dark hover:bg-dm-mint cursor-pointer"
       @click="isTutorialOpen = true"
     >
       결혼비용 추가 방법 보기

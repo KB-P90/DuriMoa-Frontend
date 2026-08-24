@@ -20,7 +20,7 @@ defineEmits<{ primary: [] }>();
   >
     <button
       type="button"
-      class="h-[54px] w-full rounded-[13px] bg-brand text-[15px] font-extrabold text-dm-gray-light transition enabled:hover:bg-brand-dark disabled:cursor-not-allowed disabled:bg-dm-gray/45 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30"
+      class="h-[54px] w-full rounded-[13px] bg-brand text-[15px] font-extrabold text-dm-gray-light transition enabled:hover:bg-brand-dark disabled:cursor-not-allowed disabled:bg-dm-gray/45 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 cursor-pointer"
       :disabled="disabled"
       @click="$emit('primary')"
     >

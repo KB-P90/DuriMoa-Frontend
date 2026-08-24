@@ -75,7 +75,7 @@ const {
 
         <button
           type="button"
-          class="mt-5 h-[52px] w-full rounded-[12px] bg-brand text-[14px] font-extrabold text-white shadow-[0_6px_14px_rgba(255,143,132,0.24)] disabled:bg-dm-gray"
+          class="mt-5 h-[52px] w-full rounded-[12px] bg-brand text-[14px] font-extrabold text-white shadow-[0_6px_14px_rgba(255,143,132,0.24)] disabled:bg-dm-gray cursor-pointer"
           :disabled="isInviting || isLoadingStatus || acceptingUserIds.length > 0"
           @click="router.back()"
         >

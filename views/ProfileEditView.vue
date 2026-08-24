@@ -36,8 +36,7 @@ const roleOptions: readonly { value: CoupleRole; label: string }[] = [
 
 const isPasswordMatched = computed(
   () =>
-    Boolean(form.value?.newPassword) &&
-    form.value?.newPassword === form.value?.newPasswordConfirm
+    Boolean(form.value?.newPassword) && form.value?.newPassword === form.value?.newPasswordConfirm
 );
 
 const canSave = computed(
@@ -202,7 +201,7 @@ onUnmounted(() => {
             <button
               type="button"
               aria-label="프로필 사진 변경"
-              class="absolute bottom-1 right-0 grid h-[29px] w-[29px] place-items-center rounded-full border-[3px] border-white bg-[#98A2A4] text-white shadow-[0_2px_6px_rgba(34,34,43,0.16)]"
+              class="absolute bottom-1 right-0 grid h-[29px] w-[29px] place-items-center rounded-full border-[3px] border-white bg-[#98A2A4] text-white shadow-[0_2px_6px_rgba(34,34,43,0.16)] cursor-pointer"
               :disabled="isSavingProfile"
               @click="openFilePicker"
             >
@@ -222,14 +221,14 @@ onUnmounted(() => {
           <div class="mt-[14px] flex gap-2">
             <button
               type="button"
-              class="h-[28px] rounded-full bg-[#FFF8F8] px-3 text-[10px] font-bold leading-3 text-brand"
+              class="h-[28px] rounded-full bg-[#FFF8F8] px-3 text-[10px] font-bold leading-3 text-brand cursor-pointer"
               @click="openFilePicker"
             >
               사진 선택
             </button>
             <button
               type="button"
-              class="h-[28px] rounded-full bg-[#FFF8F8] px-3 text-[10px] font-bold leading-3 text-brand"
+              class="h-[28px] rounded-full bg-[#FFF8F8] px-3 text-[10px] font-bold leading-3 text-brand cursor-pointer"
               @click="resetDefaultImage"
             >
               기본 이미지
@@ -257,7 +256,7 @@ onUnmounted(() => {
                 v-for="role in roleOptions"
                 :key="role.value"
                 type="button"
-                class="rounded-[8px] text-[10.5px] font-bold leading-[13px]"
+                class="rounded-[8px] text-[10.5px] font-bold leading-[13px] cursor-pointer"
                 :class="
                   form.role === role.value
                     ? 'bg-white text-brand shadow-[0_2px_8px_rgba(82,55,64,0.08)]'
@@ -286,7 +285,7 @@ onUnmounted(() => {
               />
               <button
                 type="button"
-                class="h-[44px] w-[50px] shrink-0 rounded-[11px] border border-[#E9E9F0] bg-white text-[10.5px] font-bold text-brand disabled:text-dm-gray-dark"
+                class="h-[44px] w-[50px] shrink-0 rounded-[11px] border border-[#E9E9F0] bg-white text-[10.5px] font-bold text-brand disabled:text-dm-gray-dark cursor-pointer"
                 :disabled="phoneCheckState === 'checking' || !form.phoneNumber.trim()"
                 @click="checkPhone"
               >
@@ -362,7 +361,7 @@ onUnmounted(() => {
       >
         <button
           type="button"
-          class="h-[50px] w-full rounded-[12px] bg-brand text-[14px] font-extrabold text-white shadow-[0_6px_14px_rgba(255,143,132,0.26)] disabled:bg-dm-gray"
+          class="h-[50px] w-full rounded-[12px] bg-brand text-[14px] font-extrabold text-white shadow-[0_6px_14px_rgba(255,143,132,0.26)] disabled:bg-dm-gray cursor-pointer"
           :disabled="!canSave"
           @click="saveProfile"
         >

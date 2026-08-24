@@ -108,7 +108,7 @@ const activeCalendarLabel = computed(() => activeCalendar.value.label);
       <button
         v-if="!isLoading"
         type="button"
-        class="mt-4 flex w-full items-center justify-between rounded-2xl bg-brand px-4 py-3 text-left shadow-md transition-colors hover:bg-brand-dark"
+        class="mt-4 flex w-full items-center justify-between rounded-2xl bg-brand px-4 py-3 text-left shadow-md transition-colors hover:bg-brand-dark cursor-pointer"
         @click="emit('view-expense-analysis')"
       >
         <span class="flex items-center gap-3">
@@ -152,7 +152,7 @@ const activeCalendarLabel = computed(() => activeCalendar.value.label);
             </span>
             <button
               type="button"
-              class="rounded-full bg-brand px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm"
+              class="rounded-full bg-brand px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm cursor-pointer"
               @click="emit('create-transaction', activeCalendarLabel)"
             >
               내역 추가

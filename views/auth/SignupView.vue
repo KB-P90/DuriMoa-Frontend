@@ -220,7 +220,7 @@ const {
         </p>
 
         <button
-          class="grid min-h-[50px] w-full place-items-center rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light transition hover:bg-brand focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 disabled:cursor-not-allowed disabled:opacity-60"
+          class="grid min-h-[50px] w-full place-items-center rounded-xl bg-brand text-[15px] font-extrabold text-dm-gray-light transition hover:bg-brand focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/30 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           type="submit"
           :disabled="isSubmitting"
         >

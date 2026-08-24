@@ -63,6 +63,7 @@ const TYPE_COLORS: Record<TransactionType, string> = {
       :key="transaction.id"
       type="button"
       class="flex w-full items-center gap-3 border-b border-dm-gray/30 px-4 py-3.5 text-left last:border-b-0"
+      :class="transaction.isMine && 'cursor-pointer'"
       @click="emit('select', transaction)"
     >
       <span

@@ -30,7 +30,7 @@ function handleBack() {
       v-if="showBack"
       type="button"
       aria-label="뒤로가기"
-      class="grid h-6 w-6 shrink-0 place-items-center"
+      class="grid h-6 w-6 shrink-0 place-items-center cursor-pointer"
       @click="handleBack"
     >
       <ChevronLeft
