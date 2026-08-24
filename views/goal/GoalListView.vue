@@ -10,6 +10,7 @@ import MainProposalDialog from '@/components/goal/MainProposalDialog.vue';
 import PageHeader from '@/components/common/PageHeader.vue';
 import { Separator } from '@/components/ui/separator';
 import { useAuthCheck } from '@/composables/useAuthCheck';
+import { useGoalAssetSummary } from '@/composables/useGoalAssetSummary';
 import {
   cancelMainProposalRequest,
   decideMainProposalRequest,
@@ -32,11 +33,9 @@ useAuthCheck();
 const router = useRouter();
 const goalStore = useGoalStore();
 const { lastRealtimeNotification } = storeToRefs(useNotificationStore());
+const { currentAssetManwon, loadCurrentAsset } = useGoalAssetSummary();
 
 const proposals = ref<GoalProposal[]>([]);
-
-// 자산 데이터는 마이페이지 도메인이 필요해서 GoalSummaryView와 동일한 값으로 목업.
-const CURRENT_ASSET = 3119;
 
 function remainingMonthsUntil(weddingDate: string) {
   const today = new Date();
@@ -46,9 +45,9 @@ function remainingMonthsUntil(weddingDate: string) {
   return Math.max(months, 1);
 }
 
-function requiredMonthly(totalBudgetWon: number, weddingDate: string) {
+function requiredMonthly(totalBudgetWon: number, weddingDate: string, currentAsset: number) {
   const totalManwon = Math.round(totalBudgetWon / 10_000);
-  return Math.max(Math.round((totalManwon - CURRENT_ASSET) / remainingMonthsUntil(weddingDate)), 0);
+  return Math.max(Math.round((totalManwon - currentAsset) / remainingMonthsUntil(weddingDate)), 0);
 }
 
 function resolveStatus(goal: GoalProposal): BudgetProposalStatus {
@@ -96,7 +95,9 @@ async function loadProposals() {
   }
 }
 
-onMounted(loadProposals);
+onMounted(() => {
+  void Promise.all([loadProposals(), loadCurrentAsset()]);
+});
 
 // 이 화면이 떠있는 동안 결혼 시안 관련 실시간 알림이 오면 목록을 다시 불러온다.
 watch(lastRealtimeNotification, (notification) => {
@@ -121,6 +122,12 @@ function openAcceptDialog(goalId: number) {
   const goal = proposals.value.find((item) => item.goalId === goalId);
   if (!goal || !mainProposal.value) return;
 
+  const currentAsset = currentAssetManwon.value;
+  if (currentAsset === null) {
+    toast.error('현재 자산 정보를 불러온 뒤 다시 시도해 주세요.');
+    return;
+  }
+
   activeGoalId.value = goalId;
   dialogMode.value = 'accept';
   activeRequest.value = {
@@ -128,8 +135,12 @@ function openAcceptDialog(goalId: number) {
     proposal: { title: goal.name, amount: Math.round(goal.totalBudget / 10_000) },
     diffFromCurrentMain: Math.round((goal.totalBudget - mainProposal.value.totalBudget) / 10_000),
     monthlySaving: {
-      before: requiredMonthly(mainProposal.value.totalBudget, mainProposal.value.weddingDate),
-      after: requiredMonthly(goal.totalBudget, goal.weddingDate),
+      before: requiredMonthly(
+        mainProposal.value.totalBudget,
+        mainProposal.value.weddingDate,
+        currentAsset
+      ),
+      after: requiredMonthly(goal.totalBudget, goal.weddingDate, currentAsset),
     },
   };
   dialogOpen.value = true;

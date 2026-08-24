@@ -17,11 +17,16 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { GoalCategoryBadgeSkeleton, GoalCategoryDiffSkeleton } from '@/components/skeleton/goal';
+import {
+  GoalCategoryBadgeSkeleton,
+  GoalCategoryDiffSkeleton,
+  GoalSavingsNoticeSkeleton,
+} from '@/components/skeleton/goal';
 import { Slider } from '@/components/ui/slider';
 import PageHeader from '@/components/common/PageHeader.vue';
 import { BUDGET_TYPES, GOAL_CATEGORIES } from '@/constants/goal';
 import { useAuthCheck } from '@/composables/useAuthCheck';
+import { useGoalAssetSummary } from '@/composables/useGoalAssetSummary';
 import { useGoalStore } from '@/stores/goalStore';
 import type { BudgetTypeCode, GoalCategoryCode, GoalCategoryStat } from '@/types/goal';
 import { formatSignedAmount, formatWon } from '@/utils/format';
@@ -32,6 +37,7 @@ useAuthCheck();
 
 const router = useRouter();
 const goalStore = useGoalStore();
+const { currentAssetManwon, isAssetLoading, loadCurrentAsset } = useGoalAssetSummary();
 
 const isEditing = computed(() => goalStore.editingGoalId !== null);
 
@@ -49,10 +55,6 @@ const NATIONAL_AVERAGE: Record<BudgetTypeCode, number> = {
   balanced: 2100,
   flex: 2800,
 };
-
-// 자산/저축 가능액은 마이페이지·홈 도메인 데이터가 필요해서 아직 목업.
-const CURRENT_ASSET = 3119;
-const AVAILABLE_MONTHLY = 180;
 
 // 예식장 / 스튜디오·드레스·메이크업 / 예비비 3개 그룹으로 묶어서 예산 비중 막대를 그린다.
 const CATEGORY_BUDGET_GROUPS: { codes: GoalCategoryCode[]; colorClass: string }[] = [
@@ -87,8 +89,11 @@ const remainingMonths = computed(() => {
   return Math.max(months, 1);
 });
 const requiredMonthly = computed(() =>
-  remainingMonths.value
-    ? Math.max(Math.round((totalManwon.value - CURRENT_ASSET) / remainingMonths.value), 0)
+  remainingMonths.value && currentAssetManwon.value !== null
+    ? Math.max(
+        Math.round((totalManwon.value - currentAssetManwon.value) / remainingMonths.value),
+        0
+      )
     : null
 );
 
@@ -155,6 +160,10 @@ onMounted(async () => {
   } finally {
     statsLoading.value = false;
   }
+});
+
+onMounted(() => {
+  void loadCurrentAsset();
 });
 
 function budgetTypeFor(code: GoalCategoryCode): BudgetTypeCode {
@@ -405,12 +414,17 @@ async function confirmDelete() {
 
     <div class="mt-4 flex gap-2 rounded-xl bg-dm-mint-light p-4">
       <span aria-hidden="true">⚠️</span>
-      <p class="text-xs leading-5 text-[#232631]">
-        <template v-if="requiredMonthly !== null">
-          현재 자산 {{ CURRENT_ASSET.toLocaleString() }}만원 · 남은 {{ remainingMonths }}개월 기준
-          월 {{ requiredMonthly.toLocaleString() }}만원을 모아야 해요. 지금 저축 가능액(월
-          {{ AVAILABLE_MONTHLY.toLocaleString() }}만원)보다
-          {{ requiredMonthly > AVAILABLE_MONTHLY ? '많아요' : '적어요' }}.
+      <GoalSavingsNoticeSkeleton v-if="isAssetLoading" />
+      <p
+        v-else
+        class="text-xs leading-5 text-[#232631]"
+      >
+        <template v-if="currentAssetManwon === null">
+          현재 자산 정보를 불러오지 못해 필요 저축액을 계산할 수 없어요.
+        </template>
+        <template v-else-if="requiredMonthly !== null">
+          현재 자산 {{ currentAssetManwon.toLocaleString() }}만원 · 남은 {{ remainingMonths }}개월
+          기준 월 {{ requiredMonthly.toLocaleString() }}만원을 모아야 해요.
         </template>
         <template v-else>결혼 예정일을 입력하면 필요 저축액을 계산해드려요.</template>
       </p>

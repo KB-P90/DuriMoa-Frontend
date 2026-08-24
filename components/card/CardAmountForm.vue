@@ -2,16 +2,18 @@
 import { computed } from 'vue';
 import { ArrowRight, RotateCcw } from '@lucide/vue';
 import { formatAmount } from '@/utils/format';
-import type { QuickAmountOption } from '@/types/card';
+import type { CardRecommendationCategory, QuickAmountOption } from '@/types/card';
 
 const props = defineProps<{
   amount: number;
+  category: CardRecommendationCategory;
   isValid: boolean;
   minAmount: number;
 }>();
 
 const emit = defineEmits<{
   'update:amount': [amount: number];
+  'update:category': [category: CardRecommendationCategory];
   'add-amount': [val: number];
   reset: [];
   submit: [];
@@ -21,6 +23,11 @@ const quickOptions: QuickAmountOption[] = [
   { label: '+ 5만원', value: 50_000 },
   { label: '+ 10만원', value: 100_000 },
   { label: '+ 30만원', value: 300_000 },
+];
+
+const categoryOptions: { label: string; value: CardRecommendationCategory }[] = [
+  { label: '가구', value: '가구' },
+  { label: '여행', value: '여행' },
 ];
 
 const formattedAmount = computed(() => (props.amount > 0 ? formatAmount(props.amount) : ''));
@@ -98,6 +105,29 @@ function handleQuickAdd(value: number) {
     <p class="mt-2 text-xs text-dm-gray-dark">
       {{ minAmount.toLocaleString('ko-KR') }}원 이상 입력해 주세요.
     </p>
+
+    <fieldset class="mt-6 border-t border-gray-100 pt-5">
+      <legend class="text-[13px] font-bold text-dm-gray-dark">추천 카테고리</legend>
+      <p class="mt-1 text-xs text-dm-gray-dark">추천받을 카테고리를 선택해 주세요.</p>
+
+      <div class="mt-3 grid grid-cols-2 gap-2">
+        <button
+          v-for="option in categoryOptions"
+          :key="option.label"
+          type="button"
+          class="cursor-pointer rounded-xl border py-2.5 text-xs font-bold transition-colors"
+          :class="
+            category === option.value
+              ? 'border-pink-04 bg-pink-01 text-brand'
+              : 'border-gray-200 bg-white text-dm-gray-dark hover:bg-dm-gray-light'
+          "
+          :aria-pressed="category === option.value"
+          @click="emit('update:category', option.value)"
+        >
+          {{ option.label }}
+        </button>
+      </div>
+    </fieldset>
 
     <button
       type="button"

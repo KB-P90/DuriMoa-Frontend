@@ -22,10 +22,10 @@ defineEmits<{
 
       <button
         type="button"
-        class="mt-4 flex cursor-pointer items-center gap-1.5 rounded-2xl bg-brand px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-brand-dark sm:text-sm"
+        class="mt-4 flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-2xl bg-brand px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-brand-dark sm:text-sm"
         @click="$emit('click-input-amount')"
       >
-        <span>결제 금액 입력</span>
+        <span>금액 및 카테고리 입력</span>
         <ArrowRight
           class="h-3.5 w-3.5"
           :stroke-width="2.5"
