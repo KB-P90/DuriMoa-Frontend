@@ -1,3 +1,34 @@
+# 두리모아 🏆 최우수상
+예비부부를 위한 결혼식 자금 관리 서비스
+
+프로젝트 기간 : 202607 ~ 202608 (2개월)
+
+## 서비스 개요
+<img width="703" height="396" alt="image" src="https://github.com/user-attachments/assets/9aa7e34a-b507-48a6-9e7e-e95e9ae1a29e" />
+
+## User Flow
+<img width="698" height="388" alt="image" src="https://github.com/user-attachments/assets/fb21456e-2a2b-4e35-a800-c9b81b36dadf" />
+
+## 주요 기능
+### 1. 예산 설정
+<img width="697" height="391" alt="image" src="https://github.com/user-attachments/assets/fabafb3a-4ee5-4929-b2d8-84a4dc21b9ed" />
+
+<img width="702" height="391" alt="image" src="https://github.com/user-attachments/assets/8f1efe5f-e5b0-4482-9875-630e41aa207f" />
+
+
+### 2. 자금 관리
+### 2-1. 공간 마련
+<img width="704" height="394" alt="image" src="https://github.com/user-attachments/assets/dc66bca2-a6f3-4910-92bd-5b6cba5dbd3e" />
+
+### 2-2. 서비스 개입
+<img width="702" height="395" alt="image" src="https://github.com/user-attachments/assets/24334b80-29db-496e-a5c0-9c09cf05fa93" />
+
+## 트러블 슈팅
+<img width="707" height="393" alt="image" src="https://github.com/user-attachments/assets/a9ed700f-2f76-40da-b8c6-4003f91713ef" />
+
+## 시스템 아키텍처
+<img width="960" height="536" alt="image" src="https://github.com/user-attachments/assets/1f6b660b-838c-489b-8847-6c30b0882e58" />
+
 ## 👥 팀원 및 역할분담
 
 <div align="center">
@@ -54,6 +85,8 @@
   </tr>
 </table>
 </div>
+
+
 
 ## 🛠 기술스택
 
